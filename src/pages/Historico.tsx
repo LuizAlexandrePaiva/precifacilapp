@@ -21,12 +21,30 @@ interface Project {
 export default function Historico() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ cliente: '', valorCotado: 0, horasReais: 0, precoMinHora: 0, status: 'aprovado' as 'aprovado' | 'recusado' });
+  const [form, setForm] = useState({ cliente: '', valorCotado: '', horasReais: '', precoMinHora: '', status: 'aprovado' as 'aprovado' | 'recusado' });
+
+  const parseBR = (v: string): number => {
+    const cleaned = v.replace(/\./g, '').replace(',', '.');
+    return parseFloat(cleaned) || 0;
+  };
+
+  const formatBR = (v: string): string => {
+    const num = parseBR(v);
+    if (!v || num === 0) return '';
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
 
   const addProject = (e: React.FormEvent) => {
     e.preventDefault();
-    setProjects([...projects, { ...form, id: crypto.randomUUID() }]);
-    setForm({ cliente: '', valorCotado: 0, horasReais: 0, precoMinHora: 0, status: 'aprovado' });
+    setProjects([...projects, {
+      id: crypto.randomUUID(),
+      cliente: form.cliente,
+      valorCotado: parseBR(form.valorCotado),
+      horasReais: parseBR(form.horasReais),
+      precoMinHora: parseBR(form.precoMinHora),
+      status: form.status,
+    }]);
+    setForm({ cliente: '', valorCotado: '', horasReais: '', precoMinHora: '', status: 'aprovado' });
     setOpen(false);
   };
 
@@ -56,16 +74,37 @@ export default function Historico() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Valor cotado (R$)</Label>
-                  <Input type="number" min={0} value={form.valorCotado} onChange={(e) => setForm({ ...form, valorCotado: +e.target.value })} required />
+                  <Input
+                    inputMode="decimal"
+                    placeholder="Ex: 5.750,30"
+                    value={form.valorCotado}
+                    onChange={(e) => setForm({ ...form, valorCotado: e.target.value })}
+                    onBlur={(e) => setForm({ ...form, valorCotado: formatBR(e.target.value) })}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Horas reais gastas</Label>
-                  <Input type="number" min={0} value={form.horasReais} onChange={(e) => setForm({ ...form, horasReais: +e.target.value })} required />
+                  <Input
+                    inputMode="decimal"
+                    placeholder="Ex: 40"
+                    value={form.horasReais}
+                    onChange={(e) => setForm({ ...form, horasReais: e.target.value })}
+                    onBlur={(e) => setForm({ ...form, horasReais: formatBR(e.target.value) })}
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Preço mínimo/hora (R$)</Label>
-                <Input type="number" min={0} step={0.01} value={form.precoMinHora} onChange={(e) => setForm({ ...form, precoMinHora: +e.target.value })} required />
+                <Input
+                  inputMode="decimal"
+                  placeholder="Ex: 51,34"
+                  value={form.precoMinHora}
+                  onChange={(e) => setForm({ ...form, precoMinHora: e.target.value })}
+                  onBlur={(e) => setForm({ ...form, precoMinHora: formatBR(e.target.value) })}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label>Status</Label>

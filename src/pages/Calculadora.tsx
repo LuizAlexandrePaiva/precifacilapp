@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
-import { Calculator, ArrowRight } from 'lucide-react';
+import { Calculator, ArrowRight, HelpCircle } from 'lucide-react';
 
 export default function Calculadora() {
   const navigate = useNavigate();
@@ -68,7 +69,19 @@ export default function Calculadora() {
                 <Input type="number" min={0} value={input.custosFixos} onChange={(e) => setInput({ ...input, custosFixos: +e.target.value })} required />
               </div>
               <div className="space-y-2">
-                <Label>Semanas de férias por ano</Label>
+                <Label className="flex items-center gap-1">
+                  Semanas sem trabalhar por ano
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger type="button">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Label>
                 <Input type="number" min={0} max={12} value={input.semanasFerias} onChange={(e) => setInput({ ...input, semanasFerias: +e.target.value })} required />
               </div>
             </div>
@@ -104,7 +117,7 @@ export default function Calculadora() {
                 { icon: '💰', label: 'Meta líquida', value: `R$ ${input.metaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
                 { icon: '🧾', label: `Impostos estimados (${input.regime === 'mei' ? 'MEI ~5%' : input.regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${result.impostoEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
                 { icon: '🏠', label: 'Custos fixos', value: `R$ ${input.custosFixos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h` },
+                { icon: '⏱️', label: 'Horas faturáveis reais/mês (horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos)', value: `${result.horasFaturaveis.toFixed(0)}h` },
                 { icon: '📊', label: 'Total necessário', value: `R$ ${result.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-sm">
