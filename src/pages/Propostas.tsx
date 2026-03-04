@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FileText, Plus, Check, X, Clock } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { FileText, Plus, Check, X, Clock, HelpCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -30,18 +31,16 @@ interface Proposal {
   created_at: string;
 }
 
-interface ProposalForm {
-  cliente: string;
-  projeto: string;
-  escopo: string;
-  prazo: number;
-  prazoUnidade: PrazoUnidade;
-  precoHora: number;
-  pacote: 'basico' | 'padrao' | 'premium';
-}
-
 const pacoteMultiplier = { basico: 1, padrao: 1.4, premium: 2 };
-const pacoteLabel: Record<string, string> = { basico: 'Básico', padrao: 'Padrão', premium: 'Premium' };
+const pacoteLabel: Record<string, string> = { basico: 'Preço mínimo', padrao: 'Preço justo', premium: 'Preço premium' };
+
+const parseBR = (v: string) => {
+  const clean = v.replace(/\./g, '').replace(',', '.');
+  return parseFloat(clean);
+};
+
+const formatBR = (v: number) =>
+  v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function Propostas() {
   const location = useLocation();
@@ -51,19 +50,18 @@ export default function Propostas() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<ProposalForm>({
-    cliente: '',
-    projeto: '',
-    escopo: '',
-    prazo: 40,
-    prazoUnidade: 'horas',
-    precoHora: precoHoraFromCalc,
-    pacote: 'padrao',
-  });
+
+  const [cliente, setCliente] = useState('');
+  const [projeto, setProjeto] = useState('');
+  const [escopo, setEscopo] = useState('');
+  const [prazo, setPrazo] = useState('');
+  const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
+  const [precoHora, setPrecoHora] = useState('');
+  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium'>('padrao');
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
-      setForm(f => ({ ...f, precoHora: precoHoraFromCalc }));
+      setPrecoHora(formatBR(precoHoraFromCalc));
       setOpen(true);
     }
   }, [precoHoraFromCalc]);
@@ -86,26 +84,46 @@ export default function Propostas() {
     fetchProposals();
   }, [user]);
 
+  const getPrecoHoraNum = () => parseBR(precoHora) || 0;
+  const getPrazoNum = () => parseBR(prazo) || 0;
+
   const calcValorPacote = () => {
-    const prazoHoras = form.prazoUnidade === 'dias' ? form.prazo * 8 : form.prazo;
-    return form.precoHora * prazoHoras * pacoteMultiplier[form.pacote];
+    const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
+    return getPrecoHoraNum() * prazoHoras * pacoteMultiplier[pacote];
+  };
+
+  const handleBlurMoney = (value: string, setter: (v: string) => void) => {
+    const num = parseBR(value);
+    if (!isNaN(num) && num > 0) {
+      setter(formatBR(num));
+    }
+  };
+
+  const resetForm = () => {
+    setCliente('');
+    setProjeto('');
+    setEscopo('');
+    setPrazo('');
+    setPrazoUnidade('horas');
+    setPacote('padrao');
+    // keep precoHora
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     const valorPacote = calcValorPacote();
-    const prazoHoras = form.prazoUnidade === 'dias' ? form.prazo * 8 : form.prazo;
+    const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
 
     const { error } = await supabase.from('proposals').insert({
       user_id: user.id,
-      cliente: form.cliente,
-      projeto: form.projeto,
-      escopo: form.escopo,
+      cliente,
+      projeto,
+      escopo,
       prazo: prazoHoras,
-      prazo_unidade: form.prazoUnidade,
-      preco_hora: form.precoHora,
-      pacote: form.pacote,
+      prazo_unidade: prazoUnidade,
+      preco_hora: getPrecoHoraNum(),
+      pacote,
       valor_pacote: valorPacote,
       status: 'pendente',
     });
@@ -114,7 +132,7 @@ export default function Propostas() {
       toast.error('Erro ao salvar proposta');
     } else {
       toast.success('Proposta salva com sucesso!');
-      setForm({ cliente: '', projeto: '', escopo: '', prazo: 40, prazoUnidade: 'horas', precoHora: form.precoHora, pacote: 'padrao' });
+      resetForm();
       setOpen(false);
       fetchProposals();
     }
@@ -179,30 +197,49 @@ export default function Propostas() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nome do cliente</Label>
-                  <Input value={form.cliente} onChange={(e) => setForm({ ...form, cliente: e.target.value })} required placeholder="Ex: João Silva" />
+                  <Input value={cliente} onChange={(e) => setCliente(e.target.value)} required placeholder="Ex: João Silva" />
                 </div>
                 <div className="space-y-2">
                   <Label>Nome do projeto</Label>
-                  <Input value={form.projeto} onChange={(e) => setForm({ ...form, projeto: e.target.value })} required placeholder="Ex: Site institucional" />
+                  <Input value={projeto} onChange={(e) => setProjeto(e.target.value)} required placeholder="Ex: Site institucional" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Descrição do escopo</Label>
-                <Textarea value={form.escopo} onChange={(e) => setForm({ ...form, escopo: e.target.value })} placeholder="Descreva o que será entregue..." rows={3} />
+                <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Preço/hora (R$)</Label>
-                  <Input type="number" min={0} step={0.01} value={form.precoHora || ''} onChange={(e) => setForm({ ...form, precoHora: +e.target.value })} required placeholder="Ex: 51,34" />
+                  <Input
+                    inputMode="decimal"
+                    placeholder="Ex: 51,34"
+                    value={precoHora}
+                    onChange={(e) => setPrecoHora(e.target.value)}
+                    onBlur={() => handleBlurMoney(precoHora, setPrecoHora)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label>Pacote</Label>
-                  <Select value={form.pacote} onValueChange={(v) => setForm({ ...form, pacote: v as any })}>
+                  <Label className="flex items-center gap-1">
+                    Nível da proposta
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger type="button">
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          O nível define o valor final da proposta. Preço mínimo cobre seus custos. Preço justo adiciona uma margem saudável. Preço premium é ideal para projetos urgentes ou fora da sua especialidade.
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </Label>
+                  <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="basico">Básico (1x)</SelectItem>
-                      <SelectItem value="padrao">Padrão (1.4x)</SelectItem>
-                      <SelectItem value="premium">Premium (2x)</SelectItem>
+                      <SelectItem value="basico">Preço mínimo (×1) — apenas o necessário</SelectItem>
+                      <SelectItem value="padrao">Preço justo (×1,4) — recomendado</SelectItem>
+                      <SelectItem value="premium">Preço premium (×2) — projetos complexos ou urgentes</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -210,8 +247,15 @@ export default function Propostas() {
               <div className="space-y-2">
                 <Label>Prazo estimado</Label>
                 <div className="flex gap-2">
-                  <Input type="number" min={1} value={form.prazo} onChange={(e) => setForm({ ...form, prazo: +e.target.value })} required className="flex-1" />
-                  <Select value={form.prazoUnidade} onValueChange={(v) => setForm({ ...form, prazoUnidade: v as PrazoUnidade })}>
+                  <Input
+                    inputMode="decimal"
+                    placeholder="Ex: 40"
+                    value={prazo}
+                    onChange={(e) => setPrazo(e.target.value)}
+                    required
+                    className="flex-1"
+                  />
+                  <Select value={prazoUnidade} onValueChange={(v) => setPrazoUnidade(v as PrazoUnidade)}>
                     <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="horas">Horas</SelectItem>
@@ -220,9 +264,9 @@ export default function Propostas() {
                   </Select>
                 </div>
               </div>
-              {form.precoHora > 0 && (
+              {getPrecoHoraNum() > 0 && (
                 <div className="bg-accent rounded-lg p-3 text-center">
-                  <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[form.pacote]}</p>
+                  <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[pacote]}</p>
                   <p className="text-xl font-bold text-primary">
                     R$ {calcValorPacote().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
@@ -246,11 +290,25 @@ export default function Propostas() {
                 <TableRow>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Projeto</TableHead>
-                  <TableHead>Pacote</TableHead>
+                  <TableHead>Nível</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead>Data</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-1 justify-end">
+                      Ações
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -262,17 +320,17 @@ export default function Propostas() {
                     <TableCell>R$ {Number(p.valor_pacote).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell>{new Date(p.created_at).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
-                    <TableCell className="text-right">
-                      {p.status === 'pendente' && (
-                        <div className="flex gap-1 justify-end">
-                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleStatusChange(p, 'aprovada')}>
+                    <TableCell>
+                      {p.status === 'pendente' ? (
+                        <div className="flex flex-col gap-1 items-end">
+                          <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => handleStatusChange(p, 'aprovada')}>
                             <Check className="h-3 w-3 mr-1" />Aprovar
                           </Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive" onClick={() => handleStatusChange(p, 'recusada')}>
+                          <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24" onClick={() => handleStatusChange(p, 'recusada')}>
                             <X className="h-3 w-3 mr-1" />Recusar
                           </Button>
                         </div>
-                      )}
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}

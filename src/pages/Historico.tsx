@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { History } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { History, HelpCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -147,7 +148,19 @@ export default function Historico() {
             Projeto: <strong>{editProject?.projeto}</strong> — Cliente: <strong>{editProject?.cliente}</strong>
           </p>
           <div className="space-y-2">
-            <Label>Horas reais gastas</Label>
+            <Label className="flex items-center gap-1">
+              Horas reais gastas
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger type="button">
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
             <Input
               inputMode="decimal"
               placeholder="Ex: 45"
