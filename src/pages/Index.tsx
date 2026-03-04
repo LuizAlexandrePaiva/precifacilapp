@@ -104,7 +104,7 @@ export default function Index() {
             {plans.map((plan) => (
               <Card
                 key={plan.name}
-                className={`relative ${plan.highlighted ? 'border-primary shadow-lg scale-105' : 'border shadow-sm'}`}
+                className={`relative flex flex-col ${plan.highlighted ? 'border-primary shadow-lg scale-105' : 'border shadow-sm'}`}
               >
                 {plan.highlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
@@ -118,8 +118,8 @@ export default function Index() {
                     <span className="text-muted-foreground">{plan.period}</span>
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
+                <CardContent className="flex flex-col flex-1">
+                  <ul className="space-y-3 mb-6 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-sm">
                         <Check className="h-4 w-4 text-primary flex-shrink-0" />
