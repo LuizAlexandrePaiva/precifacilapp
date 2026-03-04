@@ -57,7 +57,7 @@ export default function Propostas() {
   const [prazo, setPrazo] = useState('');
   const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
   const [precoHora, setPrecoHora] = useState('');
-  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium'>('padrao');
+  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | ''>('');
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
