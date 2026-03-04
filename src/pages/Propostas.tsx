@@ -221,7 +221,6 @@ export default function Propostas() {
                   />
                 </div>
                 <div className="space-y-2">
-                <div className="space-y-2">
                   <Label className="flex items-center gap-1">
                     Nível da proposta
                     <TooltipProvider>
