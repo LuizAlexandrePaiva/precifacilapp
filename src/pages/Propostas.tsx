@@ -208,9 +208,11 @@ export default function Propostas() {
                 <Label>Descrição do escopo</Label>
                 <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 items-start">
                 <div className="space-y-2">
-                  <Label>Preço/hora (R$)</Label>
+                  <div className="flex items-center gap-1 h-5">
+                    <Label>Preço/hora (R$)</Label>
+                  </div>
                   <Input
                     inputMode="decimal"
                     placeholder="Ex: 51,34"
@@ -221,7 +223,7 @@ export default function Propostas() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 h-5">
                     <Label>Nível da proposta</Label>
                     <TooltipProvider>
                       <Tooltip>
