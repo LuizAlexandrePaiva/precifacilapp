@@ -194,6 +194,7 @@ export default function Propostas() {
               <DialogTitle>Nova Proposta</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSave} className="space-y-4">
+              {/* Linha 1: Cliente | Projeto */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nome do cliente</Label>
@@ -204,10 +205,7 @@ export default function Propostas() {
                   <Input value={projeto} onChange={(e) => setProjeto(e.target.value)} required placeholder="Ex: Site institucional" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>Descrição do escopo</Label>
-                <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
-              </div>
+              {/* Linha 2: Preço/hora | Nível */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Preço/hora (R$)</Label>
@@ -244,6 +242,7 @@ export default function Propostas() {
                   </Select>
                 </div>
               </div>
+              {/* Linha 3: Prazo (largura total) */}
               <div className="space-y-2">
                 <Label>Prazo estimado</Label>
                 <div className="flex gap-2">
@@ -263,6 +262,11 @@ export default function Propostas() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              {/* Linha 4: Escopo (largura total) */}
+              <div className="space-y-2">
+                <Label>Descrição do escopo</Label>
+                <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
               </div>
               {getPrecoHoraNum() > 0 && (
                 <div className="bg-accent rounded-lg p-3 text-center">
