@@ -1,131 +1,86 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { History, Plus, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { History } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface Project {
   id: string;
   cliente: string;
-  valorCotado: number;
-  horasReais: number;
-  precoMinHora: number;
-  status: 'aprovado' | 'recusado';
+  projeto: string;
+  valor_cotado: number;
+  horas_reais: number | null;
+  preco_min_hora: number;
+  status: string;
+  created_at: string;
 }
 
 export default function Historico() {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ cliente: '', valorCotado: '', horasReais: '', precoMinHora: '', status: 'aprovado' as 'aprovado' | 'recusado' });
+  const [loading, setLoading] = useState(true);
+  const [editProject, setEditProject] = useState<Project | null>(null);
+  const [horasReais, setHorasReais] = useState('');
 
-  const parseBR = (v: string): number => {
-    const cleaned = v.replace(/\./g, '').replace(',', '.');
-    return parseFloat(cleaned) || 0;
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      toast.error('Erro ao carregar projetos');
+    } else {
+      setProjects(data || []);
+    }
+    setLoading(false);
   };
 
-  const formatBR = (v: string): string => {
-    const num = parseBR(v);
-    if (!v || num === 0) return '';
-    return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
+  useEffect(() => {
+    fetchProjects();
+  }, [user]);
 
-  const addProject = (e: React.FormEvent) => {
-    e.preventDefault();
-    setProjects([...projects, {
-      id: crypto.randomUUID(),
-      cliente: form.cliente,
-      valorCotado: parseBR(form.valorCotado),
-      horasReais: parseBR(form.horasReais),
-      precoMinHora: parseBR(form.precoMinHora),
-      status: form.status,
-    }]);
-    setForm({ cliente: '', valorCotado: '', horasReais: '', precoMinHora: '', status: 'aprovado' });
-    setOpen(false);
+  const handleSaveHoras = async () => {
+    if (!editProject) return;
+    const horas = parseFloat(horasReais.replace(',', '.'));
+    if (isNaN(horas) || horas <= 0) {
+      toast.error('Informe um número válido de horas');
+      return;
+    }
+    const { error } = await supabase.from('projects').update({ horas_reais: horas }).eq('id', editProject.id);
+    if (error) {
+      toast.error('Erro ao salvar horas');
+    } else {
+      toast.success('Horas reais atualizadas!');
+      setEditProject(null);
+      setHorasReais('');
+      fetchProjects();
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <History className="h-6 w-6 text-primary" />
-            Histórico de Projetos
-          </h1>
-          <p className="text-muted-foreground mt-1">Acompanhe seus projetos e compare com o preço mínimo</p>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />Adicionar</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Novo Projeto</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={addProject} className="space-y-4">
-              <div className="space-y-2">
-                <Label>Cliente</Label>
-                <Input value={form.cliente} onChange={(e) => setForm({ ...form, cliente: e.target.value })} required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Valor cotado (R$)</Label>
-                  <Input
-                    inputMode="decimal"
-                    placeholder="Ex: 5.750,30"
-                    value={form.valorCotado}
-                    onChange={(e) => setForm({ ...form, valorCotado: e.target.value })}
-                    onBlur={(e) => setForm({ ...form, valorCotado: formatBR(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Horas reais gastas</Label>
-                  <Input
-                    inputMode="decimal"
-                    placeholder="Ex: 40"
-                    value={form.horasReais}
-                    onChange={(e) => setForm({ ...form, horasReais: e.target.value })}
-                    onBlur={(e) => setForm({ ...form, horasReais: formatBR(e.target.value) })}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Preço mínimo/hora (R$)</Label>
-                <Input
-                  inputMode="decimal"
-                  placeholder="Ex: 51,34"
-                  value={form.precoMinHora}
-                  onChange={(e) => setForm({ ...form, precoMinHora: e.target.value })}
-                  onBlur={(e) => setForm({ ...form, precoMinHora: formatBR(e.target.value) })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as 'aprovado' | 'recusado' })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="aprovado">Aprovado</SelectItem>
-                    <SelectItem value="recusado">Recusado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="submit" className="w-full">Salvar</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+      <div>
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <History className="h-6 w-6 text-primary" />
+          Histórico de Projetos
+        </h1>
+        <p className="text-muted-foreground mt-1">Acompanhe seus projetos aprovados e compare com o preço mínimo</p>
       </div>
 
-      {projects.length === 0 ? (
+      {loading ? (
+        <Card><CardContent className="py-12 text-center text-muted-foreground">Carregando...</CardContent></Card>
+      ) : projects.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Nenhum projeto registrado ainda. Clique em "Adicionar" para começar.
+            Nenhum projeto registrado ainda. Projetos aparecem aqui automaticamente ao aprovar uma proposta.
           </CardContent>
         </Card>
       ) : (
@@ -135,32 +90,44 @@ export default function Historico() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Cliente</TableHead>
+                  <TableHead>Projeto</TableHead>
                   <TableHead>Valor Cotado</TableHead>
                   <TableHead>Horas Reais</TableHead>
                   <TableHead>Valor/Hora Real</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Margem</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {projects.map((p) => {
-                  const valorHoraReal = p.horasReais > 0 ? p.valorCotado / p.horasReais : 0;
-                  const acimaMin = valorHoraReal >= p.precoMinHora;
+                  const valorHoraReal = p.horas_reais && p.horas_reais > 0 ? Number(p.valor_cotado) / p.horas_reais : null;
+                  const acimaMin = valorHoraReal !== null ? valorHoraReal >= Number(p.preco_min_hora) : null;
                   return (
                     <TableRow key={p.id}>
                       <TableCell className="font-medium">{p.cliente}</TableCell>
-                      <TableCell>R$ {p.valorCotado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                      <TableCell>{p.horasReais}h</TableCell>
-                      <TableCell>R$ {valorHoraReal.toFixed(2).replace('.', ',')}</TableCell>
+                      <TableCell>{p.projeto}</TableCell>
+                      <TableCell>R$ {Number(p.valor_cotado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
                       <TableCell>
-                        <Badge variant={p.status === 'aprovado' ? 'default' : 'destructive'}>
-                          {p.status}
-                        </Badge>
+                        {p.horas_reais !== null ? (
+                          `${p.horas_reais}h`
+                        ) : (
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setEditProject(p); setHorasReais(''); }}>
+                            Informar horas
+                          </Button>
+                        )}
                       </TableCell>
                       <TableCell>
-                        <Badge className={acimaMin ? 'bg-success text-success-foreground' : 'bg-destructive text-destructive-foreground'}>
-                          {acimaMin ? '✓ Acima' : '✗ Abaixo'}
-                        </Badge>
+                        {valorHoraReal !== null
+                          ? `R$ ${valorHoraReal.toFixed(2).replace('.', ',')}`
+                          : <span className="text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell>
+                        {acimaMin !== null ? (
+                          <Badge className={acimaMin ? 'bg-emerald-600 text-white' : 'bg-destructive text-destructive-foreground'}>
+                            {acimaMin ? '✓ Acima' : '✗ Abaixo'}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
@@ -170,6 +137,27 @@ export default function Historico() {
           </CardContent>
         </Card>
       )}
+
+      <Dialog open={!!editProject} onOpenChange={(open) => !open && setEditProject(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Informar Horas Reais</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Projeto: <strong>{editProject?.projeto}</strong> — Cliente: <strong>{editProject?.cliente}</strong>
+          </p>
+          <div className="space-y-2">
+            <Label>Horas reais gastas</Label>
+            <Input
+              inputMode="decimal"
+              placeholder="Ex: 45"
+              value={horasReais}
+              onChange={(e) => setHorasReais(e.target.value)}
+            />
+          </div>
+          <Button onClick={handleSaveHoras} className="w-full">Salvar</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
