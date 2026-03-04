@@ -117,13 +117,23 @@ export default function Calculadora() {
                 { icon: '💰', label: 'Meta líquida', value: `R$ ${input.metaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
                 { icon: '🧾', label: `Impostos estimados (${input.regime === 'mei' ? 'MEI ~5%' : input.regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${result.impostoEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
                 { icon: '🏠', label: 'Custos fixos', value: `R$ ${input.custosFixos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                { icon: '⏱️', label: 'Horas faturáveis reais/mês (horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos)', value: `${result.horasFaturaveis.toFixed(0)}h` },
+                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
                 { icon: '📊', label: 'Total necessário', value: `R$ ${result.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                     <span>{item.icon}</span>
                     <span className="text-muted-foreground">{item.label}</span>
+                    {item.tooltip && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger type="button">
+                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">{item.tooltip}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </span>
                   <span className="font-semibold">{item.value}</span>
                 </div>
