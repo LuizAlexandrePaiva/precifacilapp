@@ -57,7 +57,7 @@ export default function Propostas() {
   const [prazo, setPrazo] = useState('');
   const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
   const [precoHora, setPrecoHora] = useState('');
-  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium'>('padrao');
+  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | ''>('');
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
@@ -87,9 +87,10 @@ export default function Propostas() {
   const getPrecoHoraNum = () => parseBR(precoHora) || 0;
   const getPrazoNum = () => parseBR(prazo) || 0;
 
+  const getActivePacote = () => pacote || 'padrao';
   const calcValorPacote = () => {
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
-    return getPrecoHoraNum() * prazoHoras * pacoteMultiplier[pacote];
+    return getPrecoHoraNum() * prazoHoras * pacoteMultiplier[getActivePacote()];
   };
 
   const handleBlurMoney = (value: string, setter: (v: string) => void) => {
@@ -123,7 +124,7 @@ export default function Propostas() {
       prazo: prazoHoras,
       prazo_unidade: prazoUnidade,
       preco_hora: getPrecoHoraNum(),
-      pacote,
+      pacote: getActivePacote(),
       valor_pacote: valorPacote,
       status: 'pendente',
     });
@@ -236,8 +237,8 @@ export default function Propostas() {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione o nível..." /></SelectTrigger>
+                  <Select value={pacote || undefined} onValueChange={(v) => setPacote(v as any)}>
+                    <SelectTrigger className={!pacote ? 'text-muted-foreground' : ''}><SelectValue placeholder="Selecione o nível..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="basico">Preço mínimo (×1)</SelectItem>
                       <SelectItem value="padrao">Preço justo (×1,4) — Recomendado</SelectItem>
