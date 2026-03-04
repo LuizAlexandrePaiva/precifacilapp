@@ -98,9 +98,27 @@ export default function Calculadora() {
               </div>
             </div>
 
-            <div className="bg-muted rounded-lg p-4">
-              <h4 className="font-semibold mb-2">Como chegamos nesse valor?</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">{result.explicacao}</p>
+            <div className="bg-muted rounded-lg p-4 space-y-3">
+              <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
+              {[
+                { icon: '💰', label: 'Meta líquida', value: `R$ ${input.metaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                { icon: '🧾', label: `Impostos estimados (${input.regime === 'mei' ? 'MEI ~5%' : input.regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${result.impostoEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                { icon: '🏠', label: 'Custos fixos', value: `R$ ${input.custosFixos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h` },
+                { icon: '📊', label: 'Total necessário', value: `R$ ${result.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2">
+                    <span>{item.icon}</span>
+                    <span className="text-muted-foreground">{item.label}</span>
+                  </span>
+                  <span className="font-semibold">{item.value}</span>
+                </div>
+              ))}
+              <div className="border-t border-border pt-3 mt-3 flex items-center justify-between font-bold">
+                <span>✅ Resultado</span>
+                <span className="text-primary text-lg">R$ {result.precoHora.toFixed(2).replace('.', ',')}/hora</span>
+              </div>
             </div>
 
             <Button onClick={handleGoToProposal} className="w-full" variant="outline" size="lg">

@@ -5,13 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FileText, Check } from 'lucide-react';
+
+type PrazoUnidade = 'horas' | 'dias';
 
 interface ProposalForm {
   cliente: string;
   projeto: string;
   escopo: string;
-  prazoHoras: number;
+  prazo: number;
+  prazoUnidade: PrazoUnidade;
 }
 
 export default function Propostas() {
@@ -22,11 +26,13 @@ export default function Propostas() {
     cliente: '',
     projeto: '',
     escopo: '',
-    prazoHoras: 40,
+    prazo: 40,
+    prazoUnidade: 'horas',
   });
   const [generated, setGenerated] = useState(false);
 
-  const basico = precoHora * form.prazoHoras;
+  const prazoHoras = form.prazoUnidade === 'dias' ? form.prazo * 8 : form.prazo;
+  const basico = precoHora * prazoHoras;
   const padrao = basico * 1.4;
   const premium = basico * 2;
 
@@ -80,9 +86,20 @@ export default function Propostas() {
                   <Label>Descrição do escopo</Label>
                   <Textarea value={form.escopo} onChange={(e) => setForm({ ...form, escopo: e.target.value })} required placeholder="Descreva o que será entregue..." rows={3} />
                 </div>
-                <div className="space-y-2 max-w-xs">
-                  <Label>Prazo estimado (horas)</Label>
-                  <Input type="number" min={1} value={form.prazoHoras} onChange={(e) => setForm({ ...form, prazoHoras: +e.target.value })} required />
+                <div className="space-y-2 max-w-sm">
+                  <Label>Prazo estimado</Label>
+                  <div className="flex gap-2">
+                    <Input type="number" min={1} value={form.prazo} onChange={(e) => setForm({ ...form, prazo: +e.target.value })} required className="flex-1" />
+                    <Select value={form.prazoUnidade} onValueChange={(v) => setForm({ ...form, prazoUnidade: v as PrazoUnidade })}>
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="horas">Horas</SelectItem>
+                        <SelectItem value="dias">Dias</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" size="lg">Gerar Proposta</Button>
               </form>
@@ -129,7 +146,7 @@ export default function Propostas() {
                   <h3 className="font-semibold mb-2">Escopo do Projeto</h3>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">{form.escopo}</p>
                   <p className="text-sm text-muted-foreground mt-4">
-                    <strong>Prazo estimado:</strong> {form.prazoHoras} horas
+                    <strong>Prazo estimado:</strong> {form.prazo} {form.prazoUnidade}{form.prazoUnidade === 'dias' ? ` (${prazoHoras}h)` : ''}
                   </p>
                 </CardContent>
               </Card>
