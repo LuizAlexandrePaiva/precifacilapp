@@ -221,6 +221,7 @@ export default function Propostas() {
                   />
                 </div>
                 <div className="space-y-2">
+                <div className="space-y-2">
                   <Label className="flex items-center gap-1">
                     Nível da proposta
                     <TooltipProvider>
@@ -228,8 +229,8 @@ export default function Propostas() {
                         <TooltipTrigger type="button">
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          O nível define o valor final da proposta. Preço mínimo cobre seus custos. Preço justo adiciona uma margem saudável. Preço premium é ideal para projetos urgentes ou fora da sua especialidade.
+                    <TooltipContent className="max-w-xs">
+                          O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade.
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -237,9 +238,9 @@ export default function Propostas() {
                   <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="basico">Preço mínimo (×1) — apenas o necessário</SelectItem>
-                      <SelectItem value="padrao">Preço justo (×1,4) — recomendado</SelectItem>
-                      <SelectItem value="premium">Preço premium (×2) — projetos complexos ou urgentes</SelectItem>
+                      <SelectItem value="basico">Preço mínimo — cobre seus custos (×1)</SelectItem>
+                      <SelectItem value="padrao">Preço justo — margem saudável (×1,4) ✓</SelectItem>
+                      <SelectItem value="premium">Preço premium — projetos complexos (×2)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

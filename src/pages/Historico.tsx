@@ -93,7 +93,21 @@ export default function Historico() {
                   <TableHead>Cliente</TableHead>
                   <TableHead>Projeto</TableHead>
                   <TableHead>Valor Cotado</TableHead>
-                  <TableHead>Horas Reais</TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-1">
+                      Horas Reais
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableHead>
                   <TableHead>Valor/Hora Real</TableHead>
                   <TableHead>Margem</TableHead>
                 </TableRow>
