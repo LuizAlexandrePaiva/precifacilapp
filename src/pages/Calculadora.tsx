@@ -6,13 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CurrencyInput } from '@/components/CurrencyInput';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, HelpCircle } from 'lucide-react';
-
-const parseBR = (v: string) => {
-  const clean = v.replace(/\./g, '').replace(',', '.');
-  return parseFloat(clean);
-};
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -20,28 +16,21 @@ const formatBR = (v: number) =>
 export default function Calculadora() {
   const navigate = useNavigate();
 
-  const [metaLiquida, setMetaLiquida] = useState('');
+  const [metaLiquida, setMetaLiquida] = useState(0);
   const [horasPorSemana, setHorasPorSemana] = useState('');
   const [regime, setRegime] = useState<RegimeTributario>('mei');
-  const [custosFixos, setCustosFixos] = useState('');
+  const [custosFixos, setCustosFixos] = useState(0);
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
-
-  const handleBlurMoney = (value: string, setter: (v: string) => void) => {
-    const num = parseBR(value);
-    if (!isNaN(num) && num > 0) {
-      setter(formatBR(num));
-    }
-  };
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
     const input: CalculationInput = {
-      metaLiquida: parseBR(metaLiquida) || 0,
-      horasPorSemana: parseBR(horasPorSemana) || 0,
+      metaLiquida,
+      horasPorSemana: parseFloat(horasPorSemana) || 0,
       regime,
-      custosFixos: parseBR(custosFixos) || 0,
-      semanasFerias: parseBR(semanasFerias) || 0,
+      custosFixos,
+      semanasFerias: parseFloat(semanasFerias) || 0,
     };
     setResult(calcularPreco(input));
   };
@@ -68,13 +57,10 @@ export default function Calculadora() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Meta líquida mensal (R$)</Label>
-                <Input
-                  inputMode="decimal"
-                  placeholder="Ex: 5.000,00"
+                <CurrencyInput
                   value={metaLiquida}
-                  onChange={(e) => setMetaLiquida(e.target.value)}
-                  onBlur={() => handleBlurMoney(metaLiquida, setMetaLiquida)}
-                  required
+                  onValueChange={setMetaLiquida}
+                  placeholder="R$ 0,00"
                 />
               </div>
               <div className="space-y-2">
@@ -100,13 +86,10 @@ export default function Calculadora() {
               </div>
               <div className="space-y-2">
                 <Label>Custos fixos mensais (R$)</Label>
-                <Input
-                  inputMode="decimal"
-                  placeholder="Ex: 500,00"
+                <CurrencyInput
                   value={custosFixos}
-                  onChange={(e) => setCustosFixos(e.target.value)}
-                  onBlur={() => handleBlurMoney(custosFixos, setCustosFixos)}
-                  required
+                  onValueChange={setCustosFixos}
+                  placeholder="R$ 0,00"
                 />
               </div>
               <div className="space-y-2">
@@ -161,11 +144,11 @@ export default function Calculadora() {
             <div className="bg-muted rounded-lg p-4 space-y-3">
               <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
               {[
-                { icon: '💰', label: 'Meta líquida', value: `R$ ${(parseBR(metaLiquida) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                { icon: '🧾', label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${result.impostoEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-                { icon: '🏠', label: 'Custos fixos', value: `R$ ${(parseBR(custosFixos) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                { icon: '💰', label: 'Meta líquida', value: `R$ ${formatBR(metaLiquida)}` },
+                { icon: '🧾', label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
+                { icon: '🏠', label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
                 { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
-                { icon: '📊', label: 'Total necessário', value: `R$ ${result.custoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                { icon: '📊', label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">

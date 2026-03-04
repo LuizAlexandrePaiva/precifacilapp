@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,9 +41,6 @@ const parseBR = (v: string) => {
   return parseFloat(clean);
 };
 
-const formatBR = (v: number) =>
-  v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
@@ -57,12 +55,12 @@ export default function Propostas() {
   const [escopo, setEscopo] = useState('');
   const [prazo, setPrazo] = useState('');
   const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
-  const [precoHora, setPrecoHora] = useState('');
+  const [precoHora, setPrecoHora] = useState(0);
   const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | ''>('');
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
-      setPrecoHora(formatBR(precoHoraFromCalc));
+      setPrecoHora(precoHoraFromCalc);
       setOpen(true);
     }
   }, [precoHoraFromCalc]);
@@ -85,20 +83,12 @@ export default function Propostas() {
     fetchProposals();
   }, [user]);
 
-  const getPrecoHoraNum = () => parseBR(precoHora) || 0;
   const getPrazoNum = () => parseBR(prazo) || 0;
 
   const getActivePacote = () => pacote || 'padrao';
   const calcValorPacote = () => {
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
-    return getPrecoHoraNum() * prazoHoras * pacoteMultiplier[getActivePacote()];
-  };
-
-  const handleBlurMoney = (value: string, setter: (v: string) => void) => {
-    const num = parseBR(value);
-    if (!isNaN(num) && num > 0) {
-      setter(formatBR(num));
-    }
+    return precoHora * prazoHoras * pacoteMultiplier[getActivePacote()];
   };
 
   const resetForm = () => {
@@ -124,7 +114,7 @@ export default function Propostas() {
       escopo,
       prazo: prazoHoras,
       prazo_unidade: prazoUnidade,
-      preco_hora: getPrecoHoraNum(),
+      preco_hora: precoHora,
       pacote: getActivePacote(),
       valor_pacote: valorPacote,
       status: 'pendente',
@@ -225,12 +215,10 @@ export default function Propostas() {
                   <div className="flex items-center gap-1 h-5">
                     <Label>Preço/hora (R$)</Label>
                   </div>
-                  <Input
-                    inputMode="decimal"
-                    placeholder="Ex: 51,34"
+                  <CurrencyInput
                     value={precoHora}
-                    onChange={(e) => setPrecoHora(e.target.value)}
-                    onBlur={() => handleBlurMoney(precoHora, setPrecoHora)}
+                    onValueChange={setPrecoHora}
+                    placeholder="R$ 0,00"
                     required
                   />
                 </div>
@@ -278,7 +266,7 @@ export default function Propostas() {
                   </Select>
                 </div>
               </div>
-              {getPrecoHoraNum() > 0 && (
+              {precoHora > 0 && (
                 <div className="bg-accent rounded-lg p-3 text-center">
                   <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[pacote]}</p>
                   <p className="text-xl font-bold text-primary">
