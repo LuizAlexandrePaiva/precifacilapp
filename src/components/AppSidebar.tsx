@@ -1,4 +1,4 @@
-import { Calculator, LayoutDashboard, FileText, History, LogOut } from 'lucide-react';
+import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,8 @@ const menuItems = [
   { title: 'Dashboard', url: '/app', icon: LayoutDashboard },
   { title: 'Calculadora', url: '/app/calculadora', icon: Calculator },
   { title: 'Propostas', url: '/app/propostas', icon: FileText },
-  { title: 'Histórico', url: '/app/historico', icon: History },
+  { title: 'Histórico de Projetos', url: '/app/historico', icon: History },
+  { title: 'Tutorial', url: '/app/tutorial', icon: BookOpen },
 ];
 
 export function AppSidebar() {

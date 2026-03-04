@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Calculadora from "./pages/Calculadora";
 import Propostas from "./pages/Propostas";
 import Historico from "./pages/Historico";
+import Tutorial from "./pages/Tutorial";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="calculadora" element={<Calculadora />} />
               <Route path="propostas" element={<Propostas />} />
               <Route path="historico" element={<Historico />} />
+              <Route path="tutorial" element={<Tutorial />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

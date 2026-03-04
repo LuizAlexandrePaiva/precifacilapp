@@ -8,9 +8,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { FileText, Plus, Check, X, Clock, HelpCircle } from 'lucide-react';
+import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -165,6 +166,16 @@ export default function Propostas() {
       toast.success(`Proposta marcada como ${newStatus}`);
     }
     fetchProposals();
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from('proposals').delete().eq('id', id);
+    if (error) {
+      toast.error('Erro ao excluir proposta');
+    } else {
+      toast.success('Proposta excluída com sucesso');
+      fetchProposals();
+    }
   };
 
   const statusBadge = (status: string) => {
@@ -324,16 +335,39 @@ export default function Propostas() {
                     <TableCell>{new Date(p.created_at).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell>
-                      {p.status === 'pendente' ? (
-                        <div className="flex flex-col gap-1 items-end">
-                          <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => handleStatusChange(p, 'aprovada')}>
-                            <Check className="h-3 w-3 mr-1" />Aprovar
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24" onClick={() => handleStatusChange(p, 'recusada')}>
-                            <X className="h-3 w-3 mr-1" />Recusar
-                          </Button>
-                        </div>
-                      ) : null}
+                      <div className="flex flex-col gap-1 items-end">
+                        {p.status === 'pendente' && (
+                          <>
+                            <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => handleStatusChange(p, 'aprovada')}>
+                              <Check className="h-3 w-3 mr-1" />Aprovar
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24" onClick={() => handleStatusChange(p, 'recusada')}>
+                              <X className="h-3 w-3 mr-1" />Recusar
+                            </Button>
+                          </>
+                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24">
+                              <Trash2 className="h-3 w-3 mr-1" />Excluir
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
