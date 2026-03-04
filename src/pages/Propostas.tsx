@@ -221,21 +221,21 @@ export default function Propostas() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1">
-                    Nível da proposta
+                  <div className="flex items-center gap-1">
+                    <Label>Nível da proposta</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger type="button">
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
+                        <TooltipContent className="max-w-xs">
                           O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade.
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </Label>
+                  </div>
                   <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Selecione o nível..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="basico">Preço mínimo (×1)</SelectItem>
                       <SelectItem value="padrao">Preço justo (×1,4) — Recomendado</SelectItem>
