@@ -237,9 +237,9 @@ export default function Propostas() {
                   <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="basico">Preço mínimo — cobre seus custos (×1)</SelectItem>
-                      <SelectItem value="padrao">Preço justo — margem saudável (×1,4) ✓</SelectItem>
-                      <SelectItem value="premium">Preço premium — projetos complexos (×2)</SelectItem>
+                      <SelectItem value="basico">Preço mínimo (×1)</SelectItem>
+                      <SelectItem value="padrao">Preço justo (×1,4) — Recomendado</SelectItem>
+                      <SelectItem value="premium">Preço premium (×2)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
