@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      projects: {
+        Row: {
+          cliente: string
+          created_at: string
+          horas_reais: number | null
+          id: string
+          preco_min_hora: number
+          projeto: string
+          proposal_id: string | null
+          status: string
+          user_id: string
+          valor_cotado: number
+        }
+        Insert: {
+          cliente: string
+          created_at?: string
+          horas_reais?: number | null
+          id?: string
+          preco_min_hora?: number
+          projeto: string
+          proposal_id?: string | null
+          status?: string
+          user_id: string
+          valor_cotado?: number
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          horas_reais?: number | null
+          id?: string
+          preco_min_hora?: number
+          projeto?: string
+          proposal_id?: string | null
+          status?: string
+          user_id?: string
+          valor_cotado?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposals: {
+        Row: {
+          cliente: string
+          created_at: string
+          escopo: string
+          id: string
+          pacote: string
+          prazo: number
+          prazo_unidade: string
+          preco_hora: number
+          projeto: string
+          status: string
+          user_id: string
+          valor_pacote: number
+        }
+        Insert: {
+          cliente: string
+          created_at?: string
+          escopo?: string
+          id?: string
+          pacote?: string
+          prazo?: number
+          prazo_unidade?: string
+          preco_hora?: number
+          projeto: string
+          status?: string
+          user_id: string
+          valor_pacote?: number
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          escopo?: string
+          id?: string
+          pacote?: string
+          prazo?: number
+          prazo_unidade?: string
+          preco_hora?: number
+          projeto?: string
+          status?: string
+          user_id?: string
+          valor_pacote?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
