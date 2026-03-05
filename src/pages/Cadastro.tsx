@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { lovable } from '@/integrations/lovable/index';
+import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 
 export default function Cadastro() {
   const [fullName, setFullName] = useState('');
@@ -42,9 +42,7 @@ export default function Cadastro() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      const result = await signInWithGoogleOAuth();
       if (result.error) {
         toast.error('Erro ao entrar com Google: ' + result.error.message);
       }
