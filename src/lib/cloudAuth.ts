@@ -6,8 +6,10 @@ const lovableAuth = createLovableAuth({
 });
 
 export async function signInWithGoogleOAuth() {
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
   const result = await lovableAuth.signInWithOAuth("google", {
     redirect_uri: window.location.origin,
+    extraParams: projectId ? { project_id: projectId } : undefined,
   });
 
   if (result.redirected) {
