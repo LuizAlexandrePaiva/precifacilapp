@@ -42,7 +42,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
             alignItems: "center",
             justifyContent: "center",
           }}
-          onMouseDown={() => setOpen(false)}
+          onPointerDown={() => setOpen(false)}
         >
           {/* Modal */}
           <div
@@ -57,7 +57,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               border: "1px solid #e2e8f0",
               boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
             }}
-            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <h3
               style={{
@@ -81,8 +81,11 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
             </p>
             <button
               type="button"
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={() => setOpen(false)}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setOpen(false);
+              }}
               style={{
                 width: "100%",
                 padding: "10px 0",
