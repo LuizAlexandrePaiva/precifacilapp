@@ -1,14 +1,13 @@
-import { supabase } from "@/integrations/supabase/client";
-
-const GOOGLE_REDIRECT_TO = "https://precifacil.app.br";
+import { lovable } from "@/integrations/lovable/index";
 
 export async function signInWithGoogleOAuth() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: GOOGLE_REDIRECT_TO,
-    },
+  const result = await lovable.auth.signInWithOAuth("google", {
+    redirect_uri: window.location.origin,
   });
 
-  return { error };
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  return { error: null };
 }
