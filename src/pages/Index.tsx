@@ -209,8 +209,8 @@ export default function Index() {
             {painPoints.map((p, i) => (
               <Card key={i} className="border-0 shadow-md bg-card text-center">
                 <CardContent className="pt-8 pb-6 px-6">
-                  <div className="rounded-full bg-destructive/10 w-14 h-14 flex items-center justify-center mx-auto mb-5">
-                    <p.icon className="h-7 w-7 text-destructive" />
+                  <div className="rounded-full bg-primary/10 w-14 h-14 flex items-center justify-center mx-auto mb-5">
+                    <p.icon className="h-7 w-7 text-primary" />
                   </div>
                   <p className="font-medium text-foreground leading-snug">"{p.text}"</p>
                 </CardContent>
