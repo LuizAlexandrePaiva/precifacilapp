@@ -132,9 +132,9 @@ export function upgradeEmail(userName: string, newPlan: string): { subject: stri
   const features = newPlan.toLowerCase() === 'pro'
     ? `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};">
         <li>Exportação de propostas em PDF</li>
-        <li>Gráficos detalhados de desempenho</li>
+        <li>Dashboard completo com gráficos</li>
         <li>Cálculos e propostas ilimitados</li>
-        <li>Acesso a todos os recursos da plataforma</li>
+        <li>Suporte via WhatsApp</li>
       </ul>`
     : `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};">
         <li>Cálculos e propostas ilimitados</li>
