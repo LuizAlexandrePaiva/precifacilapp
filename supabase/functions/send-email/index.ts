@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'PreciFácil <noreply@precifacil.com.br>',
+      from: 'PreciFácil <noreply@precifacil.app.br>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,
