@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, Pencil, Check } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
@@ -25,6 +27,10 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const [portalLoading, setPortalLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [metaMensal, setMetaMensal] = useState<number>(5000);
+  const [editingMeta, setEditingMeta] = useState(false);
+  const [metaInput, setMetaInput] = useState('');
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -33,6 +39,7 @@ export default function Dashboard() {
     }
   }, [searchParams, refreshSubscription]);
 
+  // Fetch projects, proposals, and user meta
   useEffect(() => {
     if (!user) return;
     supabase
@@ -40,7 +47,39 @@ export default function Dashboard() {
       .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => setProjects(data || []));
+    supabase
+      .from('proposals')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setProposals(data || []));
+    supabase
+      .from('profiles')
+      .select('meta_mensal')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.meta_mensal != null) setMetaMensal(Number(data.meta_mensal));
+      });
   }, [user]);
+
+  const saveMeta = useCallback(async () => {
+    const value = parseFloat(metaInput);
+    if (isNaN(value) || value <= 0) {
+      toast.error('Informe um valor válido para a meta.');
+      return;
+    }
+    const { error } = await supabase
+      .from('profiles')
+      .update({ meta_mensal: value } as any)
+      .eq('id', user!.id);
+    if (error) {
+      toast.error('Erro ao salvar meta.');
+    } else {
+      setMetaMensal(value);
+      setEditingMeta(false);
+      toast.success('Meta atualizada!');
+    }
+  }, [metaInput, user]);
 
   // Build last 6 months chart data from projects
   const chartData = useMemo(() => {
@@ -69,20 +108,24 @@ export default function Dashboard() {
     const faturamentoMes = thisMonth
       .filter((p) => p.status === 'concluido')
       .reduce((s, p) => s + Number(p.valor_cotado || 0), 0);
+
+    const totalPropostas = proposals.length;
+    const propostasAprovadas = proposals.filter(p => p.status === 'aprovada' || p.status === 'aceita').length;
+    const taxaAprovacao = totalPropostas > 0
+      ? Math.round((propostasAprovadas / totalPropostas) * 100)
+      : 0;
+
     return {
       faturamentoMes,
-      metaMensal: 5000,
-      totalPropostas: projects.length,
-      taxaAprovacao: projects.length > 0
-        ? Math.round((projects.filter(p => p.status === 'aprovado' || p.status === 'concluido').length / projects.length) * 100)
-        : 0,
-      projetosAbaixoMinimo: 0,
+      totalPropostas,
+      taxaAprovacao,
     };
-  }, [projects]);
+  }, [projects, proposals]);
+
+  const metaProgress = metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
   const cards = [
     { title: 'Faturamento do Mês', value: `R$ ${stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-primary' },
-    { title: 'Meta Mensal', value: `R$ ${stats.metaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: Target, color: 'text-primary' },
     { title: 'Propostas Enviadas', value: stats.totalPropostas.toString(), icon: FileText, color: 'text-primary' },
     { title: 'Taxa de Aprovação', value: `${stats.taxaAprovacao}%`, icon: TrendingUp, color: 'text-primary' },
   ];
@@ -206,7 +249,8 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -219,6 +263,61 @@ export default function Dashboard() {
           </Card>
         ))}
       </div>
+
+      {/* Meta Mensal Card with Progress */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Meta Mensal
+          </CardTitle>
+          {!editingMeta ? (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-7 w-7"
+              onClick={() => { setMetaInput(String(metaMensal)); setEditingMeta(true); }}
+            >
+              <Pencil className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          ) : (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-7 w-7"
+              onClick={saveMeta}
+            >
+              <Check className="h-4 w-4 text-primary" />
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {editingMeta ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">R$</span>
+              <Input
+                type="number"
+                value={metaInput}
+                onChange={(e) => setMetaInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveMeta()}
+                className="max-w-[180px]"
+                autoFocus
+              />
+            </div>
+          ) : (
+            <div className="text-2xl font-bold">
+              R$ {metaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </div>
+          )}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              <span>{metaProgress}%</span>
+            </div>
+            <Progress value={metaProgress} className="h-2" />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Revenue Chart - Pro only */}
       {canViewChart ? (
@@ -251,17 +350,6 @@ export default function Dashboard() {
             <h3 className="font-semibold text-lg">Gráfico de evolução disponível no plano Pro</h3>
             <p className="text-sm text-muted-foreground">Acompanhe a evolução do seu faturamento mês a mês com o plano Pro (R$ 59/mês).</p>
             <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade para o Pro</Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {stats.projetosAbaixoMinimo > 0 && (
-        <Card className="border-destructive">
-          <CardContent className="flex items-center gap-3 py-4">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            <p className="text-sm">
-              <strong>{stats.projetosAbaixoMinimo}</strong> projeto(s) ficaram abaixo do preço mínimo este mês.
-            </p>
           </CardContent>
         </Card>
       )}

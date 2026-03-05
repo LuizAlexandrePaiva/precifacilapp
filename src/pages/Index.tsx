@@ -108,10 +108,6 @@ const faqs = [
     a: 'Não. O PreciFácil foi feito para quem não entende de contabilidade. Você responde perguntas simples em português e o sistema faz todos os cálculos automaticamente.',
   },
   {
-    q: 'Meus dados ficam salvos?',
-    a: 'Sim. Todos os seus cálculos, propostas e histórico ficam salvos na sua conta e acessíveis de qualquer dispositivo.',
-  },
-  {
     q: 'Posso cancelar quando quiser?',
     a: 'Sim. Não há fidelidade nem multa. Você cancela com um clique quando quiser.',
   },
@@ -194,7 +190,7 @@ export default function Index() {
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
             <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço grátis agora</Link>
           </Button>
-          <p className="text-sm text-blue-200/60 mt-4">Sem cartão de crédito. Resultado em 2 minutos.</p>
+          <p className="text-sm text-blue-200/60 mt-4">14 dias grátis, sem cartão de crédito. Resultado em 2 minutos.</p>
         </div>
       </section>
 
@@ -292,7 +288,7 @@ export default function Index() {
       <section className="py-20">
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Comece grátis. Evolua quando quiser.</h2>
-          <p className="text-center text-muted-foreground mb-14 text-lg">Cancele quando quiser. Sem taxas escondidas. Sem fidelidade.</p>
+          <p className="text-center text-muted-foreground mb-14 text-lg">14 dias grátis para testar. Cancele quando quiser. Sem fidelidade.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan) => (
               <Card
