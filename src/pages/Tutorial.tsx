@@ -112,18 +112,42 @@ export default function Tutorial() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-muted p-1">
+        {/* Desktop: grid tabs */}
+        <TabsList className="hidden sm:inline-flex w-full h-auto gap-1 bg-muted p-1">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="flex-1 min-w-[100px] text-xs sm:text-sm gap-1.5 data-[state=active]:bg-background data-[state=active]:text-primary"
+              className="flex-1 text-sm gap-1.5 data-[state=active]:bg-background data-[state=active]:text-primary"
             >
-              <tab.icon className="h-3.5 w-3.5 hidden sm:block" />
+              <tab.icon className="h-3.5 w-3.5" />
               {tab.label}
             </TabsTrigger>
           ))}
         </TabsList>
+
+        {/* Mobile: horizontal scroll pills */}
+        <div className="sm:hidden -mx-4 px-4 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 pb-2 w-max">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'bg-card text-muted-foreground border border-border hover:border-primary/30'
+                  }`}
+                >
+                  <tab.icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Calculadora */}
         <TabsContent value="calculadora">
