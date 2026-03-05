@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { TouchTooltip } from '@/components/TouchTooltip';
+import { InfoModal } from '@/components/InfoModal';
 import { History, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -98,6 +98,10 @@ export default function Historico() {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  const helpIcon = (title: string, text: string) => (
+    <InfoModal title={title} content={text} iconSize="h-3.5 w-3.5" />
+  );
+
   const renderMobileCards = () => (
     <div className="space-y-4">
       {projects.map((p) => {
@@ -105,17 +109,14 @@ export default function Historico() {
         return (
           <Card key={p.id}>
             <CardContent className="p-4 space-y-2.5">
-              {/* Linha 1: Cliente + Badge */}
               <div className="flex items-center justify-between">
                 <p className="font-bold text-base text-foreground">{p.cliente}</p>
                 {margemBadge(acimaMin)}
               </div>
-              {/* Linha 2: Projeto */}
               <p className="text-sm text-muted-foreground -mt-1">{p.projeto}</p>
 
               <Separator />
 
-              {/* Data grid */}
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 <div>
                   <p className="text-muted-foreground text-xs mb-0.5">Valor Cotado</p>
@@ -145,13 +146,12 @@ export default function Historico() {
                 <div>
                   <p className="text-muted-foreground text-xs mb-0.5 flex items-center gap-1">
                     Margem
-                    {helpIcon(margemTooltipText)}
+                    {helpIcon('Margem', margemTooltipText)}
                   </p>
                   <div>{margemBadge(acimaMin)}</div>
                 </div>
               </div>
 
-              {/* Linha 5: Excluir */}
               <div className="flex justify-end pt-1">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -180,10 +180,6 @@ export default function Historico() {
         );
       })}
     </div>
-  );
-
-  const helpIcon = (text: string) => (
-    <TouchTooltip content={text} iconSize="h-3.5 w-3.5" />
   );
 
   return (
@@ -218,19 +214,19 @@ export default function Historico() {
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Horas Reais
-                      {helpIcon('Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.')}
+                      {helpIcon('Horas Reais', 'Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.')}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Valor/Hora Real
-                      {helpIcon('Calculamos dividindo o valor total do projeto pelas horas que você realmente trabalhou. Se estiver abaixo do seu preço mínimo, o projeto foi menos rentável do que o esperado.')}
+                      {helpIcon('Valor/Hora Real', 'Calculamos dividindo o valor total do projeto pelas horas que você realmente trabalhou. Se estiver abaixo do seu preço mínimo, o projeto foi menos rentável do que o esperado.')}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Margem
-                      {helpIcon('Mostra se o projeto ficou acima ou abaixo do seu preço mínimo por hora. Verde significa que foi rentável. Vermelho significa que você cobrou menos do que o necessário.')}
+                      {helpIcon('Margem', margemTooltipText)}
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -304,7 +300,7 @@ export default function Historico() {
           <div className="space-y-2">
             <Label className="flex items-center gap-1">
               Horas reais gastas
-              <TouchTooltip content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
+              <InfoModal title="Horas reais gastas" content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
             </Label>
             <Input
               inputMode="decimal"

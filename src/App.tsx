@@ -1,7 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { GlobalTooltipProvider } from "@/contexts/TooltipContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -26,29 +24,25 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <SubscriptionProvider>
-        <GlobalTooltipProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/cadastro" element={<Cadastro />} />
-                <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="calculadora" element={<Calculadora />} />
-                  <Route path="propostas" element={<Propostas />} />
-                  <Route path="historico" element={<Historico />} />
-                  <Route path="tutorial" element={<Tutorial />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </GlobalTooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route index element={<Dashboard />} />
+              <Route path="calculadora" element={<Calculadora />} />
+              <Route path="propostas" element={<Propostas />} />
+              <Route path="historico" element={<Historico />} />
+              <Route path="tutorial" element={<Tutorial />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       </SubscriptionProvider>
     </AuthProvider>
   </QueryClientProvider>
