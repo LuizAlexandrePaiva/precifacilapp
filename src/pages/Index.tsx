@@ -7,6 +7,7 @@ import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Accordion,
   AccordionContent,
@@ -184,13 +185,13 @@ export default function Index() {
         }} />
         <div className="container text-center max-w-3xl mx-auto relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
-            Você trabalha muito e o dinheiro some.{' '}
+            Freelancer, MEI ou autônomo:{' '}
             <span className="bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
-              Descubra por quê.
+              descubra se você está no prejuízo.
             </span>
           </h1>
           <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            O PreciFácil calcula o preço real que você precisa cobrar — considerando impostos, férias e horas perdidas que você nem lembra de contar. Em 2 minutos você descobre se está trabalhando no prejuízo.
+            O PreciFácil calcula o preço real que você precisa cobrar — considerando impostos, férias e horas perdidas que você nem lembra de contar. Em 2 minutos você descobre quanto cobrar para parar de perder dinheiro.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
             <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço grátis agora</Link>
@@ -226,8 +227,8 @@ export default function Index() {
       {/* 3. How It Works */}
       <section className="py-20">
         <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Como o PreciFácil funciona</h2>
-          <p className="text-center text-muted-foreground mb-14 text-lg">Três passos simples. Resultado imediato.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Como funciona para você</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Feito para freelancers, MEIs e autônomos. Três passos simples.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((s, i) => (
               <div key={i} className="relative text-center">
