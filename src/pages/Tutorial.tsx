@@ -1,93 +1,331 @@
-import { BookOpen, Calculator, FileText, History, LayoutDashboard } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Calculator,
+  FileText,
+  History,
+  LayoutDashboard,
+  BookOpen,
+  ArrowRight,
+  Settings,
+  CreditCard,
+  Target,
+  TrendingUp,
+  Clock,
+  DollarSign,
+  Users,
+  BarChart3,
+  Pencil,
+  Download,
+  Send,
+  RefreshCw,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
-const sections = [
-  {
-    icon: Calculator,
-    title: '1. Como calcular seu preço mínimo',
-    description: 'O preço mínimo é o menor valor que você pode cobrar por hora sem ter prejuízo. Ele leva em conta todos os seus custos fixos, variáveis e quanto você quer trabalhar por mês.',
-    steps: [
-      'Acesse a Calculadora no menu lateral.',
-      'Preencha seus custos fixos mensais (aluguel, internet, ferramentas, etc.).',
-      'Informe seus custos variáveis e impostos estimados.',
-      'Defina quantas horas por dia e quantos dias por mês você pretende trabalhar.',
-      'O sistema calcula automaticamente seu preço mínimo por hora.',
-      'Clique em "Gerar Proposta" para usar esse valor como base de uma nova proposta.',
-    ],
-  },
-  {
-    icon: FileText,
-    title: '2. Como gerar uma proposta profissional',
-    description: 'Uma proposta registra o cliente, o escopo do trabalho e o valor que você vai cobrar. Você pode escolher entre três níveis de preço para ajustar a margem de lucro.',
-    steps: [
-      'Acesse Propostas no menu lateral e clique em "Nova Proposta".',
-      'Preencha o nome do cliente e o nome do projeto.',
-      'Descreva o escopo do trabalho (o que será entregue).',
-      'Informe o preço por hora (pode vir automaticamente da calculadora).',
-      'Escolha o nível da proposta: mínimo (×1), justo (×1,4) ou premium (×2).',
-      'Defina o prazo estimado em horas ou dias.',
-      'Confira o valor total calculado e clique em "Salvar Proposta".',
-    ],
-  },
-  {
-    icon: History,
-    title: '3. Como registrar o resultado de um projeto',
-    description: 'Depois de concluir um projeto, registre quantas horas você realmente gastou. Isso permite comparar o valor cobrado com o custo real e entender se o projeto foi rentável.',
-    steps: [
-      'Quando o cliente aceitar, vá até Propostas e clique em "Aprovar".',
-      'O projeto aparecerá automaticamente no Histórico de Projetos.',
-      'Após concluir o trabalho, acesse o Histórico de Projetos.',
-      'Clique em "Informar horas" na linha do projeto.',
-      'Digite quantas horas você realmente trabalhou.',
-      'O sistema mostra o valor/hora real e se sua margem ficou acima ou abaixo do mínimo.',
-    ],
-  },
-  {
-    icon: LayoutDashboard,
-    title: '4. Como interpretar o Dashboard',
-    description: 'O Dashboard reúne indicadores-chave para você acompanhar a saúde financeira dos seus projetos de forma rápida e visual.',
-    steps: [
-      'Acesse o Dashboard no menu lateral (é a tela inicial).',
-      'Veja o total de propostas enviadas, aprovadas e recusadas.',
-      'Confira o faturamento estimado com base nas propostas aprovadas.',
-      'Analise a taxa de aprovação para entender sua conversão.',
-      'Compare o valor cobrado com as horas reais gastas nos projetos concluídos.',
-      'Use essas informações para ajustar seus preços e melhorar sua rentabilidade.',
-    ],
-  },
+interface StepCardProps {
+  stepNumber: number;
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}
+
+function StepCard({ stepNumber, icon: Icon, title, description }: StepCardProps) {
+  return (
+    <Card className="border border-border hover:border-primary/30 transition-colors">
+      <CardContent className="p-4 flex gap-4 items-start">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold">
+          {stepNumber}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon className="h-4 w-4 text-primary flex-shrink-0" />
+            <h4 className="font-semibold text-sm text-foreground">{title}</h4>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface SectionProps {
+  steps: StepCardProps[];
+  actionLabel: string;
+  actionPath: string;
+  navigate: (path: string) => void;
+}
+
+function Section({ steps, actionLabel, actionPath, navigate }: SectionProps) {
+  return (
+    <div className="space-y-3">
+      {steps.map((step) => (
+        <StepCard key={step.stepNumber} {...step} />
+      ))}
+      <Button
+        onClick={() => navigate(actionPath)}
+        className="w-full sm:w-auto mt-2"
+        variant="outline"
+      >
+        {actionLabel}
+        <ArrowRight className="h-4 w-4 ml-1" />
+      </Button>
+    </div>
+  );
+}
+
+const tabs = [
+  { value: 'calculadora', label: 'Calculadora', icon: Calculator },
+  { value: 'propostas', label: 'Propostas', icon: FileText },
+  { value: 'historico', label: 'Histórico', icon: History },
+  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { value: 'salvas', label: 'Salvas', icon: RefreshCw },
+  { value: 'conta', label: 'Conta', icon: Settings },
 ];
 
 export default function Tutorial() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('calculadora');
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />
-          Tutorial
+          Como usar o PreciFácil?
         </h1>
         <p className="text-muted-foreground mt-1">
-          Aprenda a usar o PreciFácil do início ao fim
+          Aprenda cada funcionalidade em poucos passos
         </p>
       </div>
 
-      {sections.map((section) => (
-        <Card key={section.title}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <section.icon className="h-5 w-5 text-primary" />
-              {section.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">{section.description}</p>
-          </CardHeader>
-          <CardContent>
-            <ol className="list-decimal list-inside space-y-2 text-sm">
-              {section.steps.map((step, i) => (
-                <li key={i} className="leading-relaxed">{step}</li>
-              ))}
-            </ol>
-          </CardContent>
-        </Card>
-      ))}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-muted p-1">
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className="flex-1 min-w-[100px] text-xs sm:text-sm gap-1.5 data-[state=active]:bg-background data-[state=active]:text-primary"
+            >
+              <tab.icon className="h-3.5 w-3.5 hidden sm:block" />
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {/* Calculadora */}
+        <TabsContent value="calculadora">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Calculadora"
+            actionPath="/app/calculadora"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: DollarSign,
+                title: 'Informe sua meta líquida',
+                description:
+                  'Digite quanto você quer receber limpo por mês, depois de impostos e custos.',
+              },
+              {
+                stepNumber: 2,
+                icon: Calculator,
+                title: 'Preencha seus custos fixos',
+                description:
+                  'Inclua aluguel, internet, ferramentas, assinaturas e qualquer gasto recorrente.',
+              },
+              {
+                stepNumber: 3,
+                icon: Clock,
+                title: 'Defina suas horas de trabalho',
+                description:
+                  'Indique quantas horas por semana você trabalha e quantas semanas de férias tira por ano.',
+              },
+              {
+                stepNumber: 4,
+                icon: Target,
+                title: 'Veja seu preço mínimo por hora',
+                description:
+                  'O sistema calcula o menor valor/hora viável. Cobrar abaixo disso significa prejuízo.',
+              },
+              {
+                stepNumber: 5,
+                icon: ArrowRight,
+                title: 'Use esse número como base',
+                description:
+                  'Clique em "Gerar Proposta" para criar uma proposta usando seu preço mínimo como ponto de partida.',
+              },
+            ]}
+          />
+        </TabsContent>
+
+        {/* Propostas */}
+        <TabsContent value="propostas">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Propostas"
+            actionPath="/app/propostas"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: FileText,
+                title: 'Crie uma proposta em 2 minutos',
+                description:
+                  'Preencha cliente, projeto, escopo e prazo. O preço/hora pode vir direto da calculadora.',
+              },
+              {
+                stepNumber: 2,
+                icon: TrendingUp,
+                title: 'Escolha entre 3 níveis de preço',
+                description:
+                  'Mínimo (x1): cobre seus custos. Justo (x1,4): margem confortável. Premium (x2): projetos de alto valor.',
+              },
+              {
+                stepNumber: 3,
+                icon: Send,
+                title: 'Envie para o cliente',
+                description:
+                  'Compartilhe a proposta diretamente por WhatsApp ou e-mail com todos os detalhes formatados.',
+              },
+              {
+                stepNumber: 4,
+                icon: Download,
+                title: 'Gere o PDF profissional',
+                description:
+                  'Baixe um PDF com layout limpo contendo seus dados, escopo, valores e condições de pagamento.',
+              },
+            ]}
+          />
+        </TabsContent>
+
+        {/* Histórico */}
+        <TabsContent value="historico">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Histórico"
+            actionPath="/app/historico"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: FileText,
+                title: 'Aprove uma proposta',
+                description:
+                  'Quando o cliente aceitar, marque a proposta como aprovada. O projeto aparece automaticamente no histórico.',
+              },
+              {
+                stepNumber: 2,
+                icon: Clock,
+                title: 'Informe as horas reais trabalhadas',
+                description:
+                  'Após concluir o projeto, registre quantas horas você realmente gastou.',
+              },
+              {
+                stepNumber: 3,
+                icon: BarChart3,
+                title: 'Analise sua rentabilidade',
+                description:
+                  'Compare o valor cobrado com as horas reais. Descubra se sua precificação está saudável ou se precisa ajustar.',
+              },
+            ]}
+          />
+        </TabsContent>
+
+        {/* Dashboard */}
+        <TabsContent value="dashboard">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Dashboard"
+            actionPath="/app"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: LayoutDashboard,
+                title: 'Acompanhe suas métricas',
+                description:
+                  'Veja propostas enviadas, aprovadas, recusadas e o faturamento total do mês em um só lugar.',
+              },
+              {
+                stepNumber: 2,
+                icon: Target,
+                title: 'Configure sua Meta Mensal',
+                description:
+                  'Defina quanto quer faturar por mês. A barra de progresso mostra o quanto já alcançou com projetos concluídos.',
+              },
+              {
+                stepNumber: 3,
+                icon: Pencil,
+                title: 'Edite a meta a qualquer momento',
+                description:
+                  'Clique no ícone de lápis ao lado da meta para alterar o valor. A mudança é salva automaticamente.',
+              },
+              {
+                stepNumber: 4,
+                icon: TrendingUp,
+                title: 'Interprete faturamento vs meta',
+                description:
+                  'Se a barra está verde, você está no caminho certo. Se está baixa, considere ajustar preços ou prospectar mais clientes.',
+              },
+            ]}
+          />
+        </TabsContent>
+
+        {/* Propostas Salvas */}
+        <TabsContent value="salvas">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Propostas"
+            actionPath="/app/propostas"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: FileText,
+                title: 'Acesse propostas anteriores',
+                description:
+                  'Todas as propostas ficam salvas na aba Propostas. Filtre por status para encontrar rapidamente.',
+              },
+              {
+                stepNumber: 2,
+                icon: RefreshCw,
+                title: 'Reutilize uma proposta',
+                description:
+                  'Use uma proposta anterior como referência para criar novas com valores e escopos similares.',
+              },
+              {
+                stepNumber: 3,
+                icon: Users,
+                title: 'Acompanhe o status de cada cliente',
+                description:
+                  'Saiba quais propostas estão pendentes, aprovadas ou recusadas sem perder o controle.',
+              },
+            ]}
+          />
+        </TabsContent>
+
+        {/* Conta */}
+        <TabsContent value="conta">
+          <div className="space-y-3">
+            <StepCard
+              stepNumber={1}
+              icon={Settings}
+              title="Atualize seus dados"
+              description="Edite seu nome e informações de contato que aparecem nas propostas geradas."
+            />
+            <StepCard
+              stepNumber={2}
+              icon={CreditCard}
+              title="Gerencie seu plano"
+              description="Faça upgrade para desbloquear mais cálculos e propostas, ou altere seu plano atual."
+            />
+            <StepCard
+              stepNumber={3}
+              icon={DollarSign}
+              title="Cancele quando quiser"
+              description="Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal de pagamento."
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
