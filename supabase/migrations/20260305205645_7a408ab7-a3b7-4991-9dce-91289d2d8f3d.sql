@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN meta_mensal numeric NOT NULL DEFAULT 5000;
