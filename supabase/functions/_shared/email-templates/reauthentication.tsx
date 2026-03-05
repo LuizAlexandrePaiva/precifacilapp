@@ -8,26 +8,40 @@ import {
   Head,
   Heading,
   Html,
+  Img,
+  Link,
   Preview,
+  Section,
   Text,
+  Hr,
 } from 'npm:@react-email/components@0.0.22'
 
 interface ReauthenticationEmailProps {
   token: string
 }
 
+const LOGO_URL = 'https://beoprlaomytanmlwlfsi.supabase.co/storage/v1/object/public/email-assets/logo.png'
+
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Your verification code</Preview>
+    <Preview>Seu código de verificação — PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm reauthentication</Heading>
-        <Text style={text}>Use the code below to confirm your identity:</Text>
-        <Text style={codeStyle}>{token}</Text>
-        <Text style={footer}>
-          This code will expire shortly. If you didn't request this, you can
-          safely ignore this email.
+        <Section style={header}>
+          <Img src={LOGO_URL} width="44" height="44" alt="PreciFácil" style={logoImg} />
+        </Section>
+        <Section style={content}>
+          <Heading style={h1}>Código de verificação</Heading>
+          <Text style={text}>Utilize o código abaixo para confirmar sua identidade:</Text>
+          <Text style={codeStyle}>{token}</Text>
+          <Text style={smallText}>
+            Este código expira em breve. Se você não solicitou esta verificação, pode ignorar este email com segurança.
+          </Text>
+        </Section>
+        <Hr style={hr} />
+        <Text style={footerBrand}>
+          PreciFácil · <Link href="https://precifacil.app.br" style={linkStyle}>precifacil.app.br</Link>
         </Text>
       </Container>
     </Body>
@@ -36,25 +50,20 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
 
 export default ReauthenticationEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const codeStyle = {
-  fontFamily: 'Courier, monospace',
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 30px',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const PRIMARY = '#2563EB'
+const FOREGROUND = '#0A0F1E'
+const MUTED = '#6B7280'
+const BORDER = '#E2E8F0'
+
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
+const container = { maxWidth: '560px', margin: '0 auto' }
+const header = { backgroundColor: PRIMARY, padding: '24px 32px', textAlign: 'center' as const }
+const logoImg = { borderRadius: '10px' }
+const content = { padding: '32px' }
+const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: FOREGROUND, margin: '0 0 20px' }
+const text = { fontSize: '15px', color: FOREGROUND, lineHeight: '1.6', margin: '0 0 16px' }
+const codeStyle = { fontFamily: 'Courier, monospace', fontSize: '28px', fontWeight: 'bold' as const, color: PRIMARY, margin: '0 0 30px', letterSpacing: '4px' }
+const smallText = { fontSize: '13px', color: MUTED, lineHeight: '1.5', margin: '24px 0 0' }
+const linkStyle = { color: PRIMARY, textDecoration: 'none' }
+const hr = { borderColor: BORDER, margin: '0' }
+const footerBrand = { fontSize: '12px', color: MUTED, textAlign: 'center' as const, padding: '20px 32px', margin: '0' }

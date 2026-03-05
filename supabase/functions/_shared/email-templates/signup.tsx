@@ -9,9 +9,12 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
+  Section,
   Text,
+  Hr,
 } from 'npm:@react-email/components@0.0.22'
 
 interface SignupEmailProps {
@@ -21,37 +24,40 @@ interface SignupEmailProps {
   confirmationUrl: string
 }
 
+const LOGO_URL = 'https://beoprlaomytanmlwlfsi.supabase.co/storage/v1/object/public/email-assets/logo.png'
+
 export const SignupEmail = ({
   siteName,
   siteUrl,
   recipient,
   confirmationUrl,
 }: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
+    <Preview>Confirme seu email no PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
-        <Text style={text}>
-          Thanks for signing up for{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          !
-        </Text>
-        <Text style={text}>
-          Please confirm your email address (
-          <Link href={`mailto:${recipient}`} style={link}>
-            {recipient}
-          </Link>
-          ) by clicking the button below:
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Verify Email
-        </Button>
-        <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
+        <Section style={header}>
+          <Img src={LOGO_URL} width="44" height="44" alt="PreciFácil" style={logoImg} />
+        </Section>
+        <Section style={content}>
+          <Heading style={h1}>Confirme seu email</Heading>
+          <Text style={text}>
+            Obrigado por se cadastrar no <strong>PreciFácil</strong>!
+          </Text>
+          <Text style={text}>
+            Confirme seu endereço de email ({recipient}) clicando no botão abaixo:
+          </Text>
+          <Button style={button} href={confirmationUrl}>
+            Confirmar email
+          </Button>
+          <Text style={smallText}>
+            Se você não criou uma conta, pode ignorar este email com segurança.
+          </Text>
+        </Section>
+        <Hr style={hr} />
+        <Text style={footerBrand}>
+          PreciFácil · <Link href="https://precifacil.app.br" style={linkStyle}>precifacil.app.br</Link>
         </Text>
       </Container>
     </Body>
@@ -60,27 +66,20 @@ export const SignupEmail = ({
 
 export default SignupEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const PRIMARY = '#2563EB'
+const FOREGROUND = '#0A0F1E'
+const MUTED = '#6B7280'
+const BORDER = '#E2E8F0'
+
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
+const container = { maxWidth: '560px', margin: '0 auto' }
+const header = { backgroundColor: PRIMARY, padding: '24px 32px', textAlign: 'center' as const }
+const logoImg = { borderRadius: '10px' }
+const content = { padding: '32px' }
+const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: FOREGROUND, margin: '0 0 20px' }
+const text = { fontSize: '15px', color: FOREGROUND, lineHeight: '1.6', margin: '0 0 16px' }
+const smallText = { fontSize: '13px', color: MUTED, lineHeight: '1.5', margin: '24px 0 0' }
+const linkStyle = { color: PRIMARY, textDecoration: 'none' }
+const button = { backgroundColor: PRIMARY, color: '#ffffff', fontSize: '15px', fontWeight: 600 as const, borderRadius: '8px', padding: '14px 32px', textDecoration: 'none', margin: '12px 0' }
+const hr = { borderColor: BORDER, margin: '0' }
+const footerBrand = { fontSize: '12px', color: MUTED, textAlign: 'center' as const, padding: '20px 32px', margin: '0' }
