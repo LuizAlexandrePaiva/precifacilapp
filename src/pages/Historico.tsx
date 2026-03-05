@@ -115,40 +115,36 @@ export default function Historico() {
 
               <Separator />
 
-              {/* Linha 3: Valor Cotado + Horas Reais */}
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              {/* Data grid */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground text-xs">Valor Cotado</p>
-                  <p className="font-medium">{formatCurrency(Number(p.valor_cotado))}</p>
+                  <p className="text-muted-foreground text-xs mb-0.5">Valor Cotado</p>
+                  <p className="font-semibold text-foreground">{formatCurrency(Number(p.valor_cotado))}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs">Horas Reais</p>
+                  <p className="text-muted-foreground text-xs mb-0.5">Horas Reais</p>
                   {p.horas_reais !== null ? (
-                    <p className="font-medium">{p.horas_reais}h</p>
+                    <p className="font-semibold text-foreground">{p.horas_reais}h</p>
                   ) : (
                     <Button size="sm" variant="outline" className="h-7 text-xs mt-0.5" onClick={() => { setEditProject(p); setHorasReais(''); }}>
                       Informar horas
                     </Button>
                   )}
                 </div>
-              </div>
-
-              {/* Linha 4: Valor/Hora Real + Margem */}
-              <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <p className="text-muted-foreground text-xs">Valor/Hora Real</p>
-                  <p className="font-medium">
+                  <p className="text-muted-foreground text-xs mb-0.5">Valor/Hora Real</p>
+                  <p className="font-semibold text-foreground">
                     {valorHoraReal !== null
                       ? formatCurrency(valorHoraReal)
                       : '—'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs flex items-center gap-1">
+                  <p className="text-muted-foreground text-xs mb-0.5 flex items-center gap-1">
                     Margem
                     {helpIcon(margemTooltipText)}
                   </p>
-                  <div className="mt-0.5">{margemBadge(acimaMin)}</div>
+                  <div>{margemBadge(acimaMin)}</div>
                 </div>
               </div>
 
