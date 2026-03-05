@@ -282,26 +282,29 @@ export default function Propostas() {
     );
   }
 
+  const actionBtnPrimary = "h-8 text-xs flex-1 min-w-0 border border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer";
+  const actionBtnDestructive = "h-8 text-xs flex-1 min-w-0 border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer";
+
   const renderProposalActions = (p: Proposal) => (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5 w-full min-w-[180px]">
       {p.status === 'pendente' && (
         <div className="flex gap-1.5">
-          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => handleStatusChange(p, 'aprovada')}>
+          <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleStatusChange(p, 'aprovada')}>
             <Check className="h-3 w-3 mr-1" />Aprovar
           </Button>
-          <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive flex-1 min-w-0" onClick={() => handleStatusChange(p, 'recusada')}>
+          <Button size="sm" variant="ghost" className={actionBtnDestructive} onClick={() => handleStatusChange(p, 'recusada')}>
             <X className="h-3 w-3 mr-1" />Recusar
           </Button>
         </div>
       )}
       <div className="flex gap-1.5">
         {canExportPdf ? (
-          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => handleDownloadPdf(p)}>
+          <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleDownloadPdf(p)}>
             <Download className="h-3 w-3 mr-1" />PDF
           </Button>
         ) : (
           <span className="flex items-center gap-1 flex-1 min-w-0">
-            <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0 opacity-50 cursor-not-allowed" disabled>
+            <Button size="sm" variant="ghost" className={`${actionBtnPrimary} opacity-50 !cursor-not-allowed`} disabled>
               <Lock className="h-3 w-3 mr-1" />PDF
             </Button>
             <InfoModal title="Exportar PDF" content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
@@ -309,7 +312,7 @@ export default function Propostas() {
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive flex-1 min-w-0">
+            <Button size="sm" variant="ghost" className={actionBtnDestructive}>
               <Trash2 className="h-3 w-3 mr-1" />Excluir
             </Button>
           </AlertDialogTrigger>
@@ -543,7 +546,7 @@ export default function Propostas() {
                   <TableHead>Valor</TableHead>
                   <TableHead>Data</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>
+                  <TableHead className="w-[200px]">
                     <div className="flex items-center gap-1 justify-end">
                       Ações
                       <InfoModal title="Ações" content="Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas." iconSize="h-3.5 w-3.5" />
@@ -560,7 +563,7 @@ export default function Propostas() {
                     <TableCell>R$ {Number(p.valor_pacote).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell>{new Date(p.created_at).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
-                    <TableCell>
+                    <TableCell className="w-[200px]">
                       <div className="flex flex-col gap-1.5 items-end">
                         {renderProposalActions(p)}
                       </div>

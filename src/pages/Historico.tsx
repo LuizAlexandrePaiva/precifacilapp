@@ -128,7 +128,7 @@ export default function Historico() {
                     <p className="font-semibold text-foreground leading-7">{p.horas_reais}h</p>
                   ) : (
                     <button
-                      className="text-xs font-semibold text-[#3182ce] border border-[#3182ce] bg-white rounded px-2 py-0 h-auto leading-7 self-start hover:bg-blue-50 transition-colors"
+                      className="text-xs font-semibold text-primary border border-primary bg-transparent rounded px-2 py-0 h-auto leading-7 self-start hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer"
                       onClick={() => { setEditProject(p); setHorasReais(''); }}
                     >
                       Informar horas
@@ -155,7 +155,7 @@ export default function Historico() {
               <div className="flex justify-end pt-1">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-7 text-xs text-red-400 hover:text-red-600">
+                    <Button size="sm" variant="ghost" className="h-7 text-xs border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer">
                       <Trash2 className="h-3 w-3 mr-1" />Excluir
                     </Button>
                   </AlertDialogTrigger>
@@ -244,7 +244,7 @@ export default function Historico() {
                         {p.horas_reais !== null ? (
                           `${p.horas_reais}h`
                         ) : (
-                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setEditProject(p); setHorasReais(''); }}>
+                          <Button size="sm" variant="ghost" className="h-7 text-xs border border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer" onClick={() => { setEditProject(p); setHorasReais(''); }}>
                             Informar horas
                           </Button>
                         )}
@@ -260,7 +260,7 @@ export default function Historico() {
                       <TableCell className="text-right">
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive">
+                            <Button size="sm" variant="ghost" className="h-7 text-xs border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer">
                               <Trash2 className="h-3 w-3 mr-1" />Excluir
                             </Button>
                           </AlertDialogTrigger>
