@@ -6,7 +6,7 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-TRIAL-EXPIRING] ${step}${detailsStr}`);
 };
 
-// ── Email template (inlined) ──
+// ── Constantes de estilo ──
 
 const PRIMARY = '#2563EB';
 const FOREGROUND = '#0A0F1E';
@@ -31,6 +31,10 @@ function small(text: string): string {
   return `<p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:${MUTED};">${text}</p>`;
 }
 
+function signature(): string {
+  return `<p style="margin:24px 0 0;font-size:15px;line-height:1.6;color:${FOREGROUND};">Equipe PreciFácil</p>`;
+}
+
 Deno.serve(async (req) => {
   logStep('Function invoked');
 
@@ -43,7 +47,7 @@ Deno.serve(async (req) => {
 
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
-    // Calculate the date range: users created exactly 13 days ago (trial expires tomorrow)
+    // Calcular intervalo: usuários criados há exatamente 13 dias (trial expira amanhã)
     const now = new Date();
     const thirteenDaysAgo = new Date(now);
     thirteenDaysAgo.setDate(now.getDate() - 13);
@@ -59,7 +63,7 @@ Deno.serve(async (req) => {
       endOfDay: endOfDay.toISOString(),
     });
 
-    // Get users created 13 days ago (trial = 14 days, so expires tomorrow)
+    // Buscar usuários criados há 13 dias (trial = 14 dias, expira amanhã)
     const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
     if (listError) throw new Error(`Failed to list users: ${listError.message}`);
 
@@ -77,7 +81,7 @@ Deno.serve(async (req) => {
       const email = user.email;
       if (!email) continue;
 
-      // Try to get name from profiles table first, fallback to user_metadata
+      // Buscar nome do perfil, fallback para user_metadata
       let userName = user.user_metadata?.full_name || user.user_metadata?.name || '';
       if (!userName) {
         const { data: profile } = await supabase
@@ -99,6 +103,7 @@ Deno.serve(async (req) => {
         </ul>
         ${btn('Escolher meu plano', `${SITE_URL}/app`)}
         ${small('Não perca o acesso aos seus dados e projetos!')}
+        ${signature()}
       `);
 
       try {

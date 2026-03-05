@@ -33,15 +33,17 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
         </Section>
         <Section style={content}>
           <Heading style={h1}>Código de verificação</Heading>
+          <Text style={text}>Olá!</Text>
           <Text style={text}>Utilize o código abaixo para confirmar sua identidade:</Text>
           <Text style={codeStyle}>{token}</Text>
           <Text style={smallText}>
             Este código expira em breve. Se você não solicitou esta verificação, pode ignorar este email com segurança.
           </Text>
+          <Text style={signatureStyle}>Equipe PreciFácil</Text>
         </Section>
         <Hr style={hr} />
         <Text style={footerBrand}>
-          PreciFácil · <Link href="https://precifacil.app.br" style={linkStyle}>precifacil.app.br</Link>
+          PreciFácil &middot; <Link href="https://precifacil.app.br" style={linkStyle}>precifacil.app.br</Link>
         </Text>
       </Container>
     </Body>
@@ -64,6 +66,7 @@ const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: FOREGROUND, m
 const text = { fontSize: '15px', color: FOREGROUND, lineHeight: '1.6', margin: '0 0 16px' }
 const codeStyle = { fontFamily: 'Courier, monospace', fontSize: '28px', fontWeight: 'bold' as const, color: PRIMARY, margin: '0 0 30px', letterSpacing: '4px' }
 const smallText = { fontSize: '13px', color: MUTED, lineHeight: '1.5', margin: '24px 0 0' }
+const signatureStyle = { fontSize: '15px', color: FOREGROUND, lineHeight: '1.6', margin: '24px 0 0' }
 const linkStyle = { color: PRIMARY, textDecoration: 'none' }
 const hr = { borderColor: BORDER, margin: '0' }
 const footerBrand = { fontSize: '12px', color: MUTED, textAlign: 'center' as const, padding: '20px 32px', margin: '0' }
