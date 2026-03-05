@@ -310,7 +310,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(8);
   doc.setTextColor(...LIGHT_GRAY);
   doc.setFont('helvetica', 'normal');
-  doc.text('Gerado via PreciFacil · precifacil.app.br', margin, footerY);
+  doc.text('Gerado via PreciFacil \u00B7 precifacil.app.br', margin, footerY);
 
   doc.save(
     `Proposta_${proposal.cliente.replace(/\s+/g, '_')}_${proposal.projeto.replace(/\s+/g, '_')}.pdf`
