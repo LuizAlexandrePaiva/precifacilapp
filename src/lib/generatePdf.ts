@@ -139,9 +139,8 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setTextColor(...DARK_TEXT);
       items.forEach((item) => {
         checkPageBreak(7);
-        doc.text('—', margin + 4, y);
-        const lines = doc.splitTextToSize(item, contentWidth - 14);
-        doc.text(lines, margin + 12, y);
+        const lines = doc.splitTextToSize(item, contentWidth);
+        doc.text(lines, margin + 4, y);
         y += lines.length * 5 + 2;
       });
       y += 4;
@@ -160,9 +159,8 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setTextColor(...LIGHT_GRAY);
       items.forEach((item) => {
         checkPageBreak(7);
-        doc.text('—', margin + 4, y);
-        const lines = doc.splitTextToSize(item, contentWidth - 14);
-        doc.text(lines, margin + 12, y);
+        const lines = doc.splitTextToSize(item, contentWidth);
+        doc.text(lines, margin + 4, y);
         y += lines.length * 5 + 2;
       });
       y += 4;
@@ -254,9 +252,11 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
     doc.text(formatBRL(valor), col2X + 4, y + 2);
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setTextColor(...GRAY_TEXT);
-    doc.text(pkg.desc, col3X + 4, y + 2);
+    const col3Width = pageWidth - margin - col3X - 4;
+    const descLines = doc.splitTextToSize(pkg.desc, col3Width);
+    doc.text(descLines, col3X + 4, y + 2);
 
     // Prazo below value
     doc.setFontSize(8);
