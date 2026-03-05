@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
@@ -136,16 +136,14 @@ export default function Calculadora() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Semanas sem trabalhar por ano
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger type="button">
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Popover>
+                    <PopoverTrigger type="button">
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    </PopoverTrigger>
+                    <PopoverContent className="max-w-xs text-sm">
+                      Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano.
+                    </PopoverContent>
+                  </Popover>
                 </Label>
                 <Input
                   inputMode="decimal"
@@ -172,13 +170,13 @@ export default function Calculadora() {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-accent rounded-lg">
                 <p className="text-sm text-muted-foreground mb-1">Por hora</p>
-                <p className="text-3xl font-bold text-primary">
+                <p className="text-2xl sm:text-3xl font-bold text-primary whitespace-nowrap">
                   R$ {result.precoHora.toFixed(2).replace('.', ',')}
                 </p>
               </div>
               <div className="text-center p-4 bg-accent rounded-lg">
                 <p className="text-sm text-muted-foreground mb-1">Por dia (8h)</p>
-                <p className="text-3xl font-bold text-primary">
+                <p className="text-2xl sm:text-3xl font-bold text-primary whitespace-nowrap">
                   R$ {result.precoDia.toFixed(2).replace('.', ',')}
                 </p>
               </div>
@@ -198,14 +196,12 @@ export default function Calculadora() {
                     <span>{item.icon}</span>
                     <span className="text-muted-foreground">{item.label}</span>
                     {item.tooltip && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger type="button">
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">{item.tooltip}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Popover>
+                        <PopoverTrigger type="button">
+                          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                        </PopoverTrigger>
+                        <PopoverContent className="max-w-xs text-sm">{item.tooltip}</PopoverContent>
+                      </Popover>
                     )}
                   </span>
                   <span className="font-semibold">{item.value}</span>
