@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   Calculator,
   FileText,
@@ -94,8 +95,9 @@ export default function Tutorial() {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
+      else toast.error('Não foi possível abrir o portal. Verifique se você possui uma assinatura ativa.');
     } catch {
-      // silently fail
+      toast.error('Erro ao abrir o portal de assinatura. Tente novamente.');
     }
   };
 
@@ -128,7 +130,7 @@ export default function Tutorial() {
 
         {/* Mobile: horizontal scroll pills */}
         <div className="sm:hidden -mx-4 px-4 overflow-x-auto overflow-y-hidden scrollbar-hide" style={{ maxWidth: '100vw' }}>
-          <div className="flex gap-2 pb-2 w-max">
+          <div className="flex gap-2 pb-2 pr-4" style={{ width: 'max-content' }}>
             {tabs.map((tab) => {
               const isActive = activeTab === tab.value;
               return (
