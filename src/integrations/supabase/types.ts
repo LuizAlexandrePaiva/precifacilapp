@@ -66,7 +66,13 @@ export type Database = {
           cliente: string
           created_at: string
           escopo: string
+          forma_pagamento: string | null
+          freelancer_email: string | null
+          freelancer_nome: string | null
+          freelancer_whatsapp: string | null
           id: string
+          inclusos: string | null
+          nao_inclusos: string | null
           pacote: string
           prazo: number
           prazo_unidade: string
@@ -74,13 +80,20 @@ export type Database = {
           projeto: string
           status: string
           user_id: string
+          validade_dias: number | null
           valor_pacote: number
         }
         Insert: {
           cliente: string
           created_at?: string
           escopo?: string
+          forma_pagamento?: string | null
+          freelancer_email?: string | null
+          freelancer_nome?: string | null
+          freelancer_whatsapp?: string | null
           id?: string
+          inclusos?: string | null
+          nao_inclusos?: string | null
           pacote?: string
           prazo?: number
           prazo_unidade?: string
@@ -88,13 +101,20 @@ export type Database = {
           projeto: string
           status?: string
           user_id: string
+          validade_dias?: number | null
           valor_pacote?: number
         }
         Update: {
           cliente?: string
           created_at?: string
           escopo?: string
+          forma_pagamento?: string | null
+          freelancer_email?: string | null
+          freelancer_nome?: string | null
+          freelancer_whatsapp?: string | null
           id?: string
+          inclusos?: string | null
+          nao_inclusos?: string | null
           pacote?: string
           prazo?: number
           prazo_unidade?: string
@@ -102,6 +122,7 @@ export type Database = {
           projeto?: string
           status?: string
           user_id?: string
+          validade_dias?: number | null
           valor_pacote?: number
         }
         Relationships: []

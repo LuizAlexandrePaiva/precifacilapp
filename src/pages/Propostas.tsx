@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
@@ -27,6 +28,13 @@ interface Proposal {
   cliente: string;
   projeto: string;
   escopo: string;
+  inclusos: string;
+  nao_inclusos: string;
+  forma_pagamento: string;
+  validade_dias: number;
+  freelancer_nome: string;
+  freelancer_email: string;
+  freelancer_whatsapp: string;
   prazo: number;
   prazo_unidade: string;
   preco_hora: number;
@@ -44,6 +52,20 @@ const parseBR = (v: string) => {
   return parseFloat(clean);
 };
 
+const FREELANCER_STORAGE_KEY = 'precifacil_freelancer_info';
+
+function loadFreelancerDefaults() {
+  try {
+    const stored = localStorage.getItem(FREELANCER_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return { nome: '', email: '', whatsapp: '' };
+}
+
+function saveFreelancerDefaults(info: { nome: string; email: string; whatsapp: string }) {
+  localStorage.setItem(FREELANCER_STORAGE_KEY, JSON.stringify(info));
+}
+
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
@@ -56,13 +78,30 @@ export default function Propostas() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
+  // Form fields
   const [cliente, setCliente] = useState('');
   const [projeto, setProjeto] = useState('');
   const [escopo, setEscopo] = useState('');
+  const [inclusos, setInclusos] = useState('');
+  const [naoInclusos, setNaoInclusos] = useState('');
+  const [formaPagamento, setFormaPagamento] = useState('50% na assinatura · 50% na entrega final');
+  const [validadeDias, setValidadeDias] = useState(7);
   const [prazo, setPrazo] = useState('');
   const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
   const [precoHora, setPrecoHora] = useState(0);
   const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | ''>('');
+
+  // Freelancer info
+  const [freelancerNome, setFreelancerNome] = useState('');
+  const [freelancerEmail, setFreelancerEmail] = useState('');
+  const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
+
+  useEffect(() => {
+    const defaults = loadFreelancerDefaults();
+    setFreelancerNome(defaults.nome);
+    setFreelancerEmail(defaults.email);
+    setFreelancerWhatsapp(defaults.whatsapp);
+  }, []);
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
@@ -80,7 +119,7 @@ export default function Propostas() {
     if (error) {
       toast.error('Erro ao carregar propostas');
     } else {
-      setProposals(data || []);
+      setProposals((data as any) || []);
     }
     setLoading(false);
   };
@@ -101,6 +140,10 @@ export default function Propostas() {
     setCliente('');
     setProjeto('');
     setEscopo('');
+    setInclusos('');
+    setNaoInclusos('');
+    setFormaPagamento('50% na assinatura · 50% na entrega final');
+    setValidadeDias(7);
     setPrazo('');
     setPrazoUnidade('horas');
     setPacote('padrao');
@@ -112,18 +155,28 @@ export default function Propostas() {
     const valorPacote = calcValorPacote();
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
 
+    // Save freelancer defaults
+    saveFreelancerDefaults({ nome: freelancerNome, email: freelancerEmail, whatsapp: freelancerWhatsapp });
+
     const { error } = await supabase.from('proposals').insert({
       user_id: user.id,
       cliente,
       projeto,
       escopo,
+      inclusos,
+      nao_inclusos: naoInclusos,
+      forma_pagamento: formaPagamento,
+      validade_dias: validadeDias,
+      freelancer_nome: freelancerNome,
+      freelancer_email: freelancerEmail,
+      freelancer_whatsapp: freelancerWhatsapp,
       prazo: prazoHoras,
       prazo_unidade: prazoUnidade,
       preco_hora: precoHora,
       pacote: getActivePacote(),
       valor_pacote: valorPacote,
       status: 'pendente',
-    });
+    } as any);
 
     if (error) {
       toast.error('Erro ao salvar proposta');
@@ -171,6 +224,25 @@ export default function Propostas() {
       toast.success('Proposta excluída com sucesso');
       fetchProposals();
     }
+  };
+
+  const handleDownloadPdf = (p: Proposal) => {
+    generateProposalPdf({
+      cliente: p.cliente,
+      projeto: p.projeto,
+      escopo: p.escopo || '',
+      inclusos: p.inclusos || '',
+      nao_inclusos: p.nao_inclusos || '',
+      forma_pagamento: p.forma_pagamento || '50% na assinatura · 50% na entrega final',
+      validade_dias: p.validade_dias || 7,
+      prazo: p.prazo,
+      prazo_unidade: p.prazo_unidade,
+      preco_hora: p.preco_hora,
+      created_at: p.created_at,
+      freelancer_nome: p.freelancer_nome || '',
+      freelancer_email: p.freelancer_email || '',
+      freelancer_whatsapp: p.freelancer_whatsapp || '',
+    });
   };
 
   const statusBadge = (status: string) => {
@@ -235,7 +307,7 @@ export default function Propostas() {
       )}
       <div className="flex gap-1.5">
         {canExportPdf ? (
-          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => generateProposalPdf(p)}>
+          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => handleDownloadPdf(p)}>
             <Download className="h-3 w-3 mr-1" />PDF
           </Button>
         ) : (
@@ -324,11 +396,33 @@ export default function Propostas() {
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" />Nova Proposta</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Nova Proposta</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSave} className="space-y-4">
+              {/* Freelancer Info */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-muted-foreground">Seus dados (aparecem no PDF)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Seu nome</Label>
+                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="João Silva" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Email</Label>
+                    <Input value={freelancerEmail} onChange={(e) => setFreelancerEmail(e.target.value)} placeholder="joao@email.com" type="email" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">WhatsApp</Label>
+                    <Input value={freelancerWhatsapp} onChange={(e) => setFreelancerWhatsapp(e.target.value)} placeholder="(11) 99999-9999" />
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Client & Project */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nome do cliente</Label>
@@ -339,22 +433,32 @@ export default function Propostas() {
                   <Input value={projeto} onChange={(e) => setProjeto(e.target.value)} required placeholder="Ex: Site institucional" />
                 </div>
               </div>
+
+              {/* Scope - Inclusos */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
-                  Descrição do escopo
+                  Está incluído
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger type="button">
                         <HelpCircle className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        Descreva detalhadamente o que será entregue ao cliente: páginas, funcionalidades, revisões incluídas e o que não está incluído. Quanto mais claro o escopo, menos chances de conflito depois.
+                        Liste cada item incluído em uma linha separada. Exemplo: "Design de 5 páginas", "2 rodadas de revisão".
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </Label>
-                <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
+                <Textarea value={inclusos} onChange={(e) => setInclusos(e.target.value)} placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"} rows={3} />
               </div>
+
+              {/* Scope - Não inclusos */}
+              <div className="space-y-2">
+                <Label>Não está incluído</Label>
+                <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"} rows={2} />
+              </div>
+
+              {/* Price & Package */}
               <div className="grid grid-cols-2 gap-4 items-start">
                 <div className="space-y-2">
                   <div className="flex items-center gap-1 h-5">
@@ -391,6 +495,8 @@ export default function Propostas() {
                   </Select>
                 </div>
               </div>
+
+              {/* Deadline */}
               <div className="space-y-2">
                 <Label>Prazo estimado</Label>
                 <div className="flex gap-2">
@@ -411,6 +517,19 @@ export default function Propostas() {
                   </Select>
                 </div>
               </div>
+
+              {/* Payment & Validity */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Forma de pagamento</Label>
+                  <Input value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)} placeholder="50% na assinatura · 50% na entrega" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Validade (dias)</Label>
+                  <Input type="number" min={1} value={validadeDias} onChange={(e) => setValidadeDias(parseInt(e.target.value) || 7)} />
+                </div>
+              </div>
+
               {precoHora > 0 && (
                 <div className="bg-accent rounded-lg p-3 text-center">
                   <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[pacote]}</p>
