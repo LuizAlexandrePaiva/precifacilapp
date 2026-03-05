@@ -270,6 +270,10 @@ export default function Dashboard() {
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
             Meta Mensal
+            <InfoModal
+              title="Meta Mensal"
+              content="Defina quanto você deseja faturar por mês. O valor é comparado automaticamente com o faturamento real dos seus projetos concluídos no mês atual, exibindo uma barra de progresso. Clique no ícone de lápis para editar sua meta a qualquer momento."
+            />
           </CardTitle>
           {!editingMeta ? (
             <Button
