@@ -1,21 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Calculator, FileText, TrendingUp, Shield, Clock, Target, Check } from 'lucide-react';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Quote } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState } from 'react';
-
-const benefits = [
-  { icon: Calculator, title: 'Cálculo Preciso', desc: 'Fórmula que considera impostos, férias e horas não faturáveis' },
-  { icon: FileText, title: 'Propostas Profissionais', desc: 'Gere propostas com 3 pacotes automaticamente' },
-  { icon: TrendingUp, title: 'Acompanhe Resultados', desc: 'Dashboard com faturamento, metas e taxa de aprovação' },
-  { icon: Shield, title: 'Nunca Cobre Menos', desc: 'Alertas visuais quando um projeto fica abaixo do mínimo' },
-  { icon: Clock, title: 'Economize Tempo', desc: 'Pare de usar planilhas e calculadora de celular' },
-  { icon: Target, title: 'Metas Claras', desc: 'Saiba exatamente quanto precisa faturar por mês' },
-];
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 const plans = [
   {
@@ -47,17 +44,92 @@ const plans = [
   },
 ];
 
+const painPoints = [
+  {
+    icon: DollarSign,
+    text: 'Trabalho o mês inteiro mas no final não sobra nada',
+  },
+  {
+    icon: AlertTriangle,
+    text: 'Tenho medo de cobrar caro e perder o cliente',
+  },
+  {
+    icon: HelpCircle,
+    text: 'Não sei se meu preço cobre todos os meus custos',
+  },
+];
+
+const steps = [
+  {
+    icon: Calculator,
+    title: 'Informe sua meta e seus custos',
+    desc: 'Quanto você quer ganhar por mês? Quantas horas trabalha? O PreciFácil faz o resto.',
+    step: '01',
+  },
+  {
+    icon: FileText,
+    title: 'Receba seu preço mínimo real',
+    desc: 'Veja exatamente quanto precisa cobrar por hora e por projeto — com a explicação completa do cálculo.',
+    step: '02',
+  },
+  {
+    icon: Send,
+    title: 'Gere uma proposta profissional',
+    desc: 'Monte e envie uma proposta com 3 opções de pacote para o cliente em menos de 1 minuto.',
+    step: '03',
+  },
+];
+
+const testimonials = [
+  {
+    name: 'Ana Lima',
+    role: 'Designer Freelancer',
+    quote: 'Descobri que estava cobrando R$35/hora quando precisava cobrar R$67. Em 1 mês reajustei todos os clientes.',
+  },
+  {
+    name: 'Carlos Mendes',
+    role: 'Desenvolvedor MEI',
+    quote: 'Nunca soube explicar meu preço pro cliente. Agora mando a proposta com o cálculo e eles entendem na hora.',
+  },
+  {
+    name: 'Juliana Costa',
+    role: 'Consultora de Marketing',
+    quote: 'Parei de aceitar projeto abaixo do mínimo. Trabalho menos e ganho mais.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'O PreciFácil funciona para qualquer tipo de freelancer?',
+    a: 'Sim. Funciona para designers, desenvolvedores, consultores, redatores, fotógrafos, coaches e qualquer profissional que presta serviços. A calculadora se adapta ao seu regime tributário e tipo de trabalho.',
+  },
+  {
+    q: 'Preciso saber contabilidade para usar?',
+    a: 'Não. O PreciFácil foi feito para quem não entende de contabilidade. Você responde perguntas simples em português e o sistema faz todos os cálculos automaticamente.',
+  },
+  {
+    q: 'Meus dados ficam salvos?',
+    a: 'Sim. Todos os seus cálculos, propostas e histórico ficam salvos na sua conta e acessíveis de qualquer dispositivo.',
+  },
+  {
+    q: 'Posso cancelar quando quiser?',
+    a: 'Sim. Não há fidelidade nem multa. Você cancela com um clique quando quiser.',
+  },
+  {
+    q: 'A proposta gerada é profissional o suficiente para enviar ao cliente?',
+    a: 'Sim. A proposta é gerada em formato limpo e profissional, com as 3 opções de pacote, escopo e prazo — pronta para enviar por email ou WhatsApp.',
+  },
+];
+
 export default function Index() {
   const { user } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const handleCheckout = async (planKey: 'essencial' | 'pro') => {
     if (!user) {
-      // Redirect to signup
       window.location.href = '/cadastro';
       return;
     }
-    
     setCheckoutLoading(planKey);
     try {
       const priceId = PLANS_CONFIG[planKey].price_id;
@@ -76,11 +148,11 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-secondary/95 backdrop-blur-md sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">
-          <span className="text-xl font-bold tracking-tight">
+          <span className="text-xl font-bold tracking-tight text-secondary-foreground">
             Preci<span className="text-primary">Fácil</span>
           </span>
           <div className="flex gap-2">
@@ -90,7 +162,7 @@ export default function Index() {
               </Button>
             ) : (
               <>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" className="text-secondary-foreground hover:text-primary" asChild>
                   <Link to="/login">Entrar</Link>
                 </Button>
                 <Button asChild>
@@ -102,35 +174,92 @@ export default function Index() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="py-20 md:py-32">
-        <div className="container text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in">
-            Descubra quanto você{' '}
-            <span className="text-primary">realmente</span> precisa cobrar
+      {/* 1. Hero */}
+      <section className="relative overflow-hidden py-24 md:py-36" style={{
+        background: 'linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(213 74% 25%) 50%, hsl(213 74% 49%) 100%)',
+      }}>
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(213 74% 49% / 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 20%, hsl(213 74% 60% / 0.3) 0%, transparent 40%)',
+        }} />
+        <div className="container text-center max-w-3xl mx-auto relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
+            Você trabalha muito e o dinheiro some.{' '}
+            <span className="bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
+              Descubra por quê.
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            Chega de achômetro. Calcule seu preço real considerando impostos, férias, custos fixos e horas não faturáveis.
+          <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
+            O PreciFácil calcula o preço real que você precisa cobrar — considerando impostos, férias e horas perdidas que você nem lembra de contar. Em 2 minutos você descobre se está trabalhando no prejuízo.
           </p>
-          <Button size="lg" className="text-lg px-8 py-6 animate-fade-in" style={{ animationDelay: '0.2s' }} asChild>
-            <Link to="/cadastro">Calcular meu preço grátis</Link>
+          <Button size="lg" className="text-lg px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all" asChild>
+            <Link to="/cadastro">Calcular meu preço grátis agora</Link>
           </Button>
+          <p className="text-sm text-blue-200/60 mt-4">Sem cartão de crédito. Resultado em 2 minutos.</p>
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-16 bg-muted/50">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">Por que usar o PreciFácil?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((b) => (
-              <Card key={b.title} className="border-0 shadow-sm bg-card">
-                <CardContent className="pt-6">
-                  <div className="rounded-lg bg-accent w-12 h-12 flex items-center justify-center mb-4">
-                    <b.icon className="h-6 w-6 text-primary" />
+      {/* 2. Pain Points */}
+      <section className="py-20 bg-muted/50">
+        <div className="container max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Você se identifica com isso?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {painPoints.map((p, i) => (
+              <Card key={i} className="border-0 shadow-md bg-card text-center">
+                <CardContent className="pt-8 pb-6 px-6">
+                  <div className="rounded-full bg-destructive/10 w-14 h-14 flex items-center justify-center mx-auto mb-5">
+                    <p.icon className="h-7 w-7 text-destructive" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">{b.title}</h3>
-                  <p className="text-muted-foreground text-sm">{b.desc}</p>
+                  <p className="font-medium text-foreground leading-snug">"{p.text}"</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <p className="text-center text-lg md:text-xl font-semibold text-primary max-w-2xl mx-auto">
+            Se você respondeu sim para qualquer um desses, está cobrando errado — e perdendo dinheiro todo mês sem saber.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. How It Works */}
+      <section className="py-20">
+        <div className="container max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Como o PreciFácil funciona</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Três passos simples. Resultado imediato.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((s, i) => (
+              <div key={i} className="relative text-center">
+                <span className="text-6xl font-black text-primary/10 absolute -top-4 left-1/2 -translate-x-1/2 select-none">{s.step}</span>
+                <div className="relative z-10 pt-8">
+                  <div className="rounded-xl w-16 h-16 flex items-center justify-center mx-auto mb-5" style={{
+                    background: 'linear-gradient(135deg, hsl(213 74% 49%) 0%, hsl(213 74% 35%) 100%)',
+                  }}>
+                    <s.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2 text-foreground">{s.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Social Proof */}
+      <section className="py-20 bg-muted/50">
+        <div className="container max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">O que nossos usuários dizem</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <Card key={i} className="border-0 shadow-md bg-card">
+                <CardContent className="pt-8 pb-6 px-6">
+                  <Quote className="h-8 w-8 text-primary/30 mb-4" />
+                  <p className="text-foreground mb-6 leading-relaxed italic">"{t.quote}"</p>
+                  <div className="border-t border-border pt-4">
+                    <p className="font-semibold text-foreground text-sm">{t.name}</p>
+                    <p className="text-muted-foreground text-xs">{t.role}</p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -138,19 +267,40 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-16">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-4">Planos</h2>
-          <p className="text-center text-muted-foreground mb-12">Escolha o plano ideal para o seu momento</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      {/* 5. Urgency */}
+      <section className="py-20 relative overflow-hidden" style={{
+        background: 'linear-gradient(160deg, hsl(222 47% 11%) 0%, hsl(222 47% 16%) 40%, hsl(213 74% 30%) 100%)',
+      }}>
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: 'radial-gradient(ellipse at 70% 0%, hsl(213 74% 49% / 0.5) 0%, transparent 60%)',
+        }} />
+        <div className="container text-center max-w-3xl mx-auto relative z-10">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
+            Cada mês que passa cobrando errado é dinheiro que você{' '}
+            <span className="text-blue-300">nunca vai recuperar.</span>
+          </h2>
+          <p className="text-lg text-blue-100/70 mb-10 max-w-xl mx-auto">
+            Freelancers que usam o PreciFácil descobrem em média que estavam cobrando 35% abaixo do necessário. Quanto você já perdeu?
+          </p>
+          <Button size="lg" className="text-lg px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30" asChild>
+            <Link to="/cadastro">Descobrir meu preço real agora — é grátis</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* 6. Pricing */}
+      <section className="py-20">
+        <div className="container max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Comece grátis. Evolua quando quiser.</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Cancele quando quiser. Sem taxas escondidas. Sem fidelidade.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan) => (
               <Card
                 key={plan.name}
-                className={`relative flex flex-col ${plan.highlighted ? 'border-primary shadow-lg scale-105' : 'border shadow-sm'}`}
+                className={`relative flex flex-col ${plan.highlighted ? 'border-primary shadow-lg shadow-primary/10 scale-105' : 'border shadow-sm'}`}
               >
                 {plan.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
                     Mais popular
                   </div>
                 )}
@@ -191,10 +341,31 @@ export default function Index() {
         </div>
       </section>
 
+      {/* 7. FAQ */}
+      <section className="py-20 bg-muted/50">
+        <div className="container max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Dúvidas frequentes</h2>
+          <Accordion type="single" collapsible className="space-y-3">
+            {faqs.map((faq, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="bg-card border border-border rounded-xl px-6 shadow-sm">
+                <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-5">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container text-center text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Preci<span className="text-primary">Fácil</span></span>{' '}
+      <footer className="border-t border-border py-10" style={{
+        background: 'linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(222 47% 8%) 100%)',
+      }}>
+        <div className="container text-center text-sm text-blue-200/50">
+          <span className="font-semibold text-white">Preci<span className="text-primary">Fácil</span></span>{' '}
           &copy; {new Date().getFullYear()}. Feito para freelancers e MEIs brasileiros.
         </div>
       </footer>
