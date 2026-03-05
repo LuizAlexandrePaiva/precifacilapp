@@ -308,7 +308,7 @@ export default function Propostas() {
                   <Lock className="h-3 w-3 mr-1" />PDF
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
+              <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                 Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
               </TooltipContent>
             </Tooltip>
@@ -492,10 +492,12 @@ export default function Propostas() {
                     <Label>Nível da proposta</Label>
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger type="button">
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        <TooltipTrigger asChild>
+                          <button type="button" className="inline-flex">
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </button>
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
+                        <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                           O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade.
                         </TooltipContent>
                       </Tooltip>
@@ -587,9 +589,11 @@ export default function Propostas() {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                            <button type="button" className="inline-flex">
+                              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                            </button>
                           </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
+                          <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                             Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas.
                           </TooltipContent>
                         </Tooltip>
