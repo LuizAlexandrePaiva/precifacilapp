@@ -133,6 +133,7 @@ Deno.serve(async (req) => {
 
         const amountFormatted = (paymentIntent.amount / 100).toFixed(2).replace('.', ',');
         const date = new Date().toLocaleDateString('pt-BR');
+        const planName = paymentIntent.metadata?.plan_name || 'Essencial';
         const userName = paymentIntent.metadata?.user_name || await getUserName(email);
 
         const html = layout(`
@@ -171,7 +172,7 @@ Deno.serve(async (req) => {
         const productId = subscription.items.data[0]?.price?.product as string;
         const product = await stripe.products.retrieve(productId);
         const newPlan = product.name || 'Pro';
-        const userName = customer.name || 'Usuário';
+        const userName = customer.name || await getUserName(email);
 
         const features = newPlan.toLowerCase().includes('pro')
           ? `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};"><li>Exportação de propostas em PDF</li><li>Gráficos detalhados de desempenho</li><li>Cálculos e propostas ilimitados</li><li>Acesso a todos os recursos da plataforma</li></ul>`
@@ -198,7 +199,7 @@ Deno.serve(async (req) => {
         const email = customer.email;
         if (!email) break;
 
-        const userName = customer.name || 'Usuário';
+        const userName = customer.name || await getUserName(email);
         const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR');
 
         const html = layout(`
