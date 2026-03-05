@@ -21,7 +21,7 @@ const menuItems = [
   { title: 'Calculadora', url: '/app/calculadora', icon: Calculator },
   { title: 'Propostas', url: '/app/propostas', icon: FileText },
   { title: 'Histórico de Projetos', url: '/app/historico', icon: History },
-  { title: 'Como usar', url: '/app/tutorial', icon: BookOpen },
+  { title: 'Como Usar?', url: '/app/tutorial', icon: BookOpen },
 ];
 
 export function AppSidebar() {
