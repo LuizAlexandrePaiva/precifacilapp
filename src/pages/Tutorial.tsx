@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
   Calculator,
   FileText,
@@ -89,13 +91,35 @@ const tabs = [
 export default function Tutorial() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('calculadora');
+  const [showNoSubModal, setShowNoSubModal] = useState(false);
+  const [isClosingModal, setIsClosingModal] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
+  const { subscribed } = useSubscription();
+
+  const closeModal = useCallback(() => {
+    setIsClosingModal(true);
+    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(() => {
+      setShowNoSubModal(false);
+      setIsClosingModal(false);
+      closeTimerRef.current = null;
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current); };
+  }, []);
 
   const handleManageSubscription = async () => {
+    if (!subscribed) {
+      setShowNoSubModal(true);
+      return;
+    }
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
-      else toast.error('Não foi possível abrir o portal. Verifique se você possui uma assinatura ativa.');
+      else toast.error('Não foi possível abrir o portal.');
     } catch {
       toast.error('Erro ao abrir o portal de assinatura. Tente novamente.');
     }
@@ -332,6 +356,52 @@ export default function Tutorial() {
           />
         </TabsContent>
       </Tabs>
+
+      {showNoSubModal && createPortal(
+        <>
+          <div
+            style={{
+              position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+              zIndex: 9999, background: 'rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+              pointerEvents: isClosingModal ? 'none' : 'auto',
+            }}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); closeModal(); }}
+          />
+          <div
+            style={{
+              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+              zIndex: 10000, width: '90%', maxWidth: 360, padding: 24,
+              borderRadius: 12, background: '#ffffff', border: '1px solid #e2e8f0',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            }}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>
+              Nenhuma assinatura ativa
+            </h3>
+            <p style={{ fontSize: 14, lineHeight: 1.6, color: '#4a5568', marginBottom: 20 }}>
+              Você ainda não possui uma assinatura. Para gerenciar seu plano, primeiro faça upgrade para o plano Essencial ou Pro.
+            </p>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault(); e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                closeModal();
+                navigate('/app');
+              }}
+              style={{
+                width: '100%', padding: '10px 0', background: '#3182ce', color: '#fff',
+                border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer',
+              }}
+            >
+              Ver planos
+            </button>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   );
 }
