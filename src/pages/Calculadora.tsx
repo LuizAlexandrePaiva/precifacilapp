@@ -8,13 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
-import { Calculator, ArrowRight, HelpCircle } from 'lucide-react';
+import { Calculator, ArrowRight, HelpCircle, Lock } from 'lucide-react';
+import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function Calculadora() {
   const navigate = useNavigate();
+  const { plan, canCalculate, incrementCalcCount, monthlyCalcCount } = useSubscription();
 
   const [metaLiquida, setMetaLiquida] = useState(0);
   const [horasPorSemana, setHorasPorSemana] = useState('');
@@ -22,9 +26,14 @@ export default function Calculadora() {
   const [custosFixos, setCustosFixos] = useState(0);
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canCalculate) {
+      toast.error('Você atingiu o limite de 1 cálculo por mês no plano Grátis. Faça upgrade para continuar.');
+      return;
+    }
     const input: CalculationInput = {
       metaLiquida,
       horasPorSemana: parseFloat(horasPorSemana) || 0,
@@ -33,11 +42,27 @@ export default function Calculadora() {
       semanasFerias: parseFloat(semanasFerias) || 0,
     };
     setResult(calcularPreco(input));
+    if (plan === 'free') incrementCalcCount();
   };
 
   const handleGoToProposal = () => {
     if (result) {
       navigate('/app/propostas', { state: { precoHora: result.precoHora } });
+    }
+  };
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: PLANS_CONFIG.essencial.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch (err: any) {
+      toast.error('Erro ao iniciar checkout');
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -50,6 +75,20 @@ export default function Calculadora() {
         </h1>
         <p className="text-muted-foreground mt-1">Descubra seu preço mínimo por hora e por dia</p>
       </div>
+
+      {plan === 'free' && (
+        <Card className="border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
+          <CardContent className="py-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Lock className="h-4 w-4 text-amber-600" />
+              <span>Plano Grátis: {canCalculate ? '1 cálculo restante' : '0 cálculos restantes'} este mês.</span>
+            </div>
+            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={checkoutLoading}>
+              {checkoutLoading ? 'Aguarde...' : 'Fazer upgrade'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardContent className="pt-6">
@@ -115,7 +154,9 @@ export default function Calculadora() {
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full" size="lg">Calcular</Button>
+            <Button type="submit" className="w-full" size="lg" disabled={!canCalculate && plan === 'free'}>
+              {!canCalculate && plan === 'free' ? 'Limite atingido — Faça upgrade' : 'Calcular'}
+            </Button>
           </form>
         </CardContent>
       </Card>

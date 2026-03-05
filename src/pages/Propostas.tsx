@@ -12,9 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CurrencyInput } from '@/components/CurrencyInput';
-import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2 } from 'lucide-react';
+import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 
 type PrazoUnidade = 'horas' | 'dias';
@@ -44,7 +45,9 @@ const parseBR = (v: string) => {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
+  const { canAccessProposals } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,6 +179,45 @@ export default function Propostas() {
       default: return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: PLANS_CONFIG.essencial.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch (err: any) {
+      toast.error('Erro ao iniciar checkout');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  if (!canAccessProposals) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <FileText className="h-6 w-6 text-primary" />
+            Propostas
+          </h1>
+          <p className="text-muted-foreground mt-1">Gerencie suas propostas enviadas a clientes</p>
+        </div>
+        <Card className="border-amber-500/50">
+          <CardContent className="py-12 text-center space-y-4">
+            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
+            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
+            <p className="text-muted-foreground">O gerador de propostas está disponível a partir do plano Essencial (R$ 29/mês).</p>
+            <Button onClick={handleUpgrade} disabled={checkoutLoading}>
+              {checkoutLoading ? 'Redirecionando...' : 'Assinar Essencial'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
