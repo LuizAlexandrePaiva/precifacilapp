@@ -53,18 +53,12 @@ const parseBR = (v: string) => {
   return parseFloat(clean);
 };
 
-const FREELANCER_STORAGE_KEY = 'precifacil_freelancer_info';
-
-function loadFreelancerDefaults() {
-  try {
-    const stored = localStorage.getItem(FREELANCER_STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return { nome: '', email: '', whatsapp: '' };
-}
-
-function saveFreelancerDefaults(info: { nome: string; email: string; whatsapp: string }) {
-  localStorage.setItem(FREELANCER_STORAGE_KEY, JSON.stringify(info));
+function maskPhone(value: string) {
+  return value
+    .replace(/\D/g, '')
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
+    .slice(0, 15);
 }
 
 export default function Propostas() {
@@ -97,12 +91,6 @@ export default function Propostas() {
   const [freelancerEmail, setFreelancerEmail] = useState('');
   const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
 
-  useEffect(() => {
-    const defaults = loadFreelancerDefaults();
-    setFreelancerNome(defaults.nome);
-    setFreelancerEmail(defaults.email);
-    setFreelancerWhatsapp(defaults.whatsapp);
-  }, []);
 
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
@@ -148,6 +136,9 @@ export default function Propostas() {
     setPrazo('');
     setPrazoUnidade('horas');
     setPacote('selecione');
+    setFreelancerNome('');
+    setFreelancerEmail('');
+    setFreelancerWhatsapp('');
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -156,8 +147,6 @@ export default function Propostas() {
     const valorPacote = calcValorPacote();
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
 
-    // Save freelancer defaults
-    saveFreelancerDefaults({ nome: freelancerNome, email: freelancerEmail, whatsapp: freelancerWhatsapp });
 
     const { error } = await supabase.from('proposals').insert({
       user_id: user.id,
@@ -408,27 +397,24 @@ export default function Propostas() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1.5">
                     <Label className="text-xs">Seu nome</Label>
-                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="João Silva" />
+                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="Seu nome completo" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">Email</Label>
-                    <Input value={freelancerEmail} onChange={(e) => setFreelancerEmail(e.target.value)} placeholder="joao@email.com" type="email" />
+                    <Input value={freelancerEmail} onChange={(e) => setFreelancerEmail(e.target.value)} placeholder="seu@email.com" type="email" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">WhatsApp</Label>
                     <Input
                       value={freelancerWhatsapp}
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-                        let masked = '';
-                        if (digits.length > 0) masked += '(' + digits.slice(0, 2);
-                        if (digits.length >= 2) masked += ')';
-                        if (digits.length > 2) masked += digits.slice(2, 7);
-                        if (digits.length > 7) masked += '-' + digits.slice(7, 11);
+                      onInput={(e) => {
+                        const input = e.target as HTMLInputElement;
+                        const masked = maskPhone(input.value);
                         setFreelancerWhatsapp(masked);
+                        input.value = masked;
                       }}
-                      placeholder="(34)99999-9999"
-                      maxLength={14}
+                      placeholder="(11) 99999-9999"
+                      maxLength={15}
                     />
                   </div>
                 </div>
