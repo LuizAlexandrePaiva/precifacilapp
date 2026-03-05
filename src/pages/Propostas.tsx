@@ -10,11 +10,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TouchTooltip } from '@/components/TouchTooltip';
 import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
-import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
+import { FileText, Plus, Check, X, Clock, Trash2, Lock, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -302,18 +301,12 @@ export default function Propostas() {
             <Download className="h-3 w-3 mr-1" />PDF
           </Button>
         ) : (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0 opacity-50 cursor-not-allowed" disabled>
-                  <Lock className="h-3 w-3 mr-1" />PDF
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <span className="flex items-center gap-1 flex-1 min-w-0">
+            <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0 opacity-50 cursor-not-allowed" disabled>
+              <Lock className="h-3 w-3 mr-1" />PDF
+            </Button>
+            <TouchTooltip content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
+          </span>
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
