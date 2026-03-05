@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
-import InputMask from 'react-input-mask';
+
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
