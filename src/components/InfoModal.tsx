@@ -56,8 +56,9 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               maxWidth: 360,
               padding: 24,
               borderRadius: 12,
-              background: "var(--background, #fff)",
-              border: "1px solid var(--border, #e2e8f0)",
+              background: "#ffffff",
+              border: "1px solid #e2e8f0",
+              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
