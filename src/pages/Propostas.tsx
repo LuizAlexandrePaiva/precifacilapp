@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type PrazoUnidade = 'horas' | 'dias';
 
@@ -49,6 +50,7 @@ export default function Propostas() {
   const { canAccessProposals, canExportPdf } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +104,6 @@ export default function Propostas() {
     setPrazo('');
     setPrazoUnidade('horas');
     setPacote('padrao');
-    // keep precoHora
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -220,6 +221,95 @@ export default function Propostas() {
     );
   }
 
+  const renderProposalActions = (p: Proposal) => (
+    <div className="flex flex-col gap-1.5">
+      {p.status === 'pendente' && (
+        <div className="flex gap-1.5">
+          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => handleStatusChange(p, 'aprovada')}>
+            <Check className="h-3 w-3 mr-1" />Aprovar
+          </Button>
+          <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive flex-1 min-w-0" onClick={() => handleStatusChange(p, 'recusada')}>
+            <X className="h-3 w-3 mr-1" />Recusar
+          </Button>
+        </div>
+      )}
+      <div className="flex gap-1.5">
+        {canExportPdf ? (
+          <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0" onClick={() => generateProposalPdf(p)}>
+            <Download className="h-3 w-3 mr-1" />PDF
+          </Button>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0 opacity-50 cursor-not-allowed" disabled>
+                  <Lock className="h-3 w-3 mr-1" />PDF
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive flex-1 min-w-0">
+              <Trash2 className="h-3 w-3 mr-1" />Excluir
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+
+  const renderMobileCards = () => (
+    <div className="space-y-4">
+      {proposals.map((p) => (
+        <Card key={p.id}>
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="font-semibold text-foreground">{p.cliente}</p>
+                <p className="text-sm text-muted-foreground">{p.projeto}</p>
+              </div>
+              {statusBadge(p.status)}
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p className="text-muted-foreground">Nível</p>
+                <p className="font-medium">{pacoteLabel[p.pacote] || p.pacote}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Valor</p>
+                <p className="font-medium">R$ {Number(p.valor_pacote).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Data</p>
+                <p className="font-medium">{new Date(p.created_at).toLocaleDateString('pt-BR')}</p>
+              </div>
+            </div>
+            {renderProposalActions(p)}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -250,7 +340,19 @@ export default function Propostas() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Descrição do escopo</Label>
+                <Label className="flex items-center gap-1">
+                  Descrição do escopo
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger type="button">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        Descreva detalhadamente o que será entregue ao cliente: páginas, funcionalidades, revisões incluídas e o que não está incluído. Quanto mais claro o escopo, menos chances de conflito depois.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Label>
                 <Textarea value={escopo} onChange={(e) => setEscopo(e.target.value)} placeholder="Descreva o que será entregue..." rows={3} />
               </div>
               <div className="grid grid-cols-2 gap-4 items-start">
@@ -327,6 +429,8 @@ export default function Propostas() {
         <Card><CardContent className="py-12 text-center text-muted-foreground">Carregando...</CardContent></Card>
       ) : proposals.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">Nenhuma proposta ainda. Clique em "Nova Proposta" para começar.</CardContent></Card>
+      ) : isMobile ? (
+        renderMobileCards()
       ) : (
         <Card>
           <CardContent className="pt-6 overflow-auto">
@@ -367,57 +471,7 @@ export default function Propostas() {
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1.5 items-end">
-                        {p.status === 'pendente' && (
-                          <div className="flex gap-1.5">
-                            <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem]" onClick={() => handleStatusChange(p, 'aprovada')}>
-                              <Check className="h-3 w-3 mr-1" />Aprovar
-                            </Button>
-                            <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive w-[5.5rem]" onClick={() => handleStatusChange(p, 'recusada')}>
-                              <X className="h-3 w-3 mr-1" />Recusar
-                            </Button>
-                          </div>
-                        )}
-                        <div className="flex gap-1.5">
-                          {canExportPdf ? (
-                            <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem]" onClick={() => generateProposalPdf(p)}>
-                              <Download className="h-3 w-3 mr-1" />PDF
-                            </Button>
-                          ) : (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem] opacity-50 cursor-not-allowed" disabled>
-                                    <Lock className="h-3 w-3 mr-1" />PDF
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-xs">
-                                  Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          )}
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive w-[5.5rem]">
-                                <Trash2 className="h-3 w-3 mr-1" />Excluir
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                  Excluir
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
+                        {renderProposalActions(p)}
                       </div>
                     </TableCell>
                   </TableRow>

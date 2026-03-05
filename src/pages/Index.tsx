@@ -191,7 +191,7 @@ export default function Index() {
           <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
             O PreciFácil calcula o preço real que você precisa cobrar — considerando impostos, férias e horas perdidas que você nem lembra de contar. Em 2 minutos você descobre se está trabalhando no prejuízo.
           </p>
-          <Button size="lg" className="text-lg px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all" asChild>
+          <Button size="lg" className="text-lg px-6 sm:px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-auto max-w-full" asChild>
             <Link to="/cadastro">Calcular meu preço grátis agora</Link>
           </Button>
           <p className="text-sm text-blue-200/60 mt-4">Sem cartão de crédito. Resultado em 2 minutos.</p>
@@ -282,8 +282,8 @@ export default function Index() {
           <p className="text-lg text-blue-100/70 mb-10 max-w-xl mx-auto">
             Freelancers que usam o PreciFácil descobrem em média que estavam cobrando 35% abaixo do necessário. Quanto você já perdeu?
           </p>
-          <Button size="lg" className="text-lg px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30" asChild>
-            <Link to="/cadastro">Descobrir meu preço real agora — é grátis</Link>
+          <Button size="lg" className="text-lg px-6 sm:px-10 py-7 rounded-xl font-bold shadow-xl shadow-primary/30 w-auto max-w-full" asChild>
+            <Link to="/cadastro" className="text-center">Descobrir meu preço real agora — é grátis</Link>
           </Button>
         </div>
       </section>

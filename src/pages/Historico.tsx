@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Project {
   id: string;
@@ -26,6 +27,7 @@ interface Project {
 
 export default function Historico() {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editProject, setEditProject] = useState<Project | null>(null);
@@ -77,6 +79,95 @@ export default function Historico() {
     }
   };
 
+  const getProjectData = (p: Project) => {
+    const valorHoraReal = p.horas_reais && p.horas_reais > 0 ? Number(p.valor_cotado) / p.horas_reais : null;
+    const acimaMin = valorHoraReal !== null ? valorHoraReal >= Number(p.preco_min_hora) : null;
+    return { valorHoraReal, acimaMin };
+  };
+
+  const renderMobileCards = () => (
+    <div className="space-y-4">
+      {projects.map((p) => {
+        const { valorHoraReal, acimaMin } = getProjectData(p);
+        return (
+          <Card key={p.id}>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-semibold text-foreground">{p.cliente}</p>
+                  <p className="text-sm text-muted-foreground">{p.projeto}</p>
+                </div>
+                {acimaMin !== null ? (
+                  <Badge className={acimaMin ? 'bg-emerald-600 text-white' : 'bg-destructive text-destructive-foreground'}>
+                    {acimaMin ? '✓ Acima' : '✗ Abaixo'}
+                  </Badge>
+                ) : null}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-muted-foreground">Valor Cotado</p>
+                  <p className="font-medium">R$ {Number(p.valor_cotado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Horas Reais</p>
+                  {p.horas_reais !== null ? (
+                    <p className="font-medium">{p.horas_reais}h</p>
+                  ) : (
+                    <Button size="sm" variant="outline" className="h-7 text-xs mt-0.5" onClick={() => { setEditProject(p); setHorasReais(''); }}>
+                      Informar horas
+                    </Button>
+                  )}
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Valor/Hora Real</p>
+                  <p className="font-medium">
+                    {valorHoraReal !== null
+                      ? `R$ ${valorHoraReal.toFixed(2).replace('.', ',')}`
+                      : '—'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive">
+                      <Trash2 className="h-3 w-3 mr-1" />Excluir
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Excluir projeto</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+
+  const helpIcon = (text: string) => (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs">{text}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
@@ -95,6 +186,8 @@ export default function Historico() {
             Nenhum projeto registrado ainda. Projetos aparecem aqui automaticamente ao aprovar uma proposta.
           </CardContent>
         </Card>
+      ) : isMobile ? (
+        renderMobileCards()
       ) : (
         <Card>
           <CardContent className="pt-6 overflow-auto">
@@ -107,27 +200,27 @@ export default function Historico() {
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Horas Reais
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
-                            Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {helpIcon('Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.')}
                     </div>
                   </TableHead>
-                  <TableHead>Valor/Hora Real</TableHead>
-                  <TableHead>Margem</TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-1">
+                      Valor/Hora Real
+                      {helpIcon('Calculamos dividindo o valor total do projeto pelas horas que você realmente trabalhou. Se estiver abaixo do seu preço mínimo, o projeto foi menos rentável do que o esperado.')}
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-1">
+                      Margem
+                      {helpIcon('Mostra se o projeto ficou acima ou abaixo do seu preço mínimo por hora. Verde significa que foi rentável. Vermelho significa que você cobrou menos do que o necessário.')}
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {projects.map((p) => {
-                  const valorHoraReal = p.horas_reais && p.horas_reais > 0 ? Number(p.valor_cotado) / p.horas_reais : null;
-                  const acimaMin = valorHoraReal !== null ? valorHoraReal >= Number(p.preco_min_hora) : null;
+                  const { valorHoraReal, acimaMin } = getProjectData(p);
                   return (
                     <TableRow key={p.id}>
                       <TableCell className="font-medium">{p.cliente}</TableCell>
