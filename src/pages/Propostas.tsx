@@ -366,56 +366,58 @@ export default function Propostas() {
                     <TableCell>{new Date(p.created_at).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell>
-                      <div className="flex flex-col gap-1 items-end">
+                      <div className="flex flex-col gap-1.5 items-end">
                         {p.status === 'pendente' && (
-                          <>
-                            <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => handleStatusChange(p, 'aprovada')}>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem]" onClick={() => handleStatusChange(p, 'aprovada')}>
                               <Check className="h-3 w-3 mr-1" />Aprovar
                             </Button>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24" onClick={() => handleStatusChange(p, 'recusada')}>
+                            <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive w-[5.5rem]" onClick={() => handleStatusChange(p, 'recusada')}>
                               <X className="h-3 w-3 mr-1" />Recusar
                             </Button>
-                          </>
+                          </div>
                         )}
-                        {canExportPdf ? (
-                          <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => generateProposalPdf(p)}>
-                            <Download className="h-3 w-3 mr-1" />PDF
-                          </Button>
-                        ) : (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button size="sm" variant="outline" className="h-7 text-xs w-24 opacity-50 cursor-not-allowed" disabled>
-                                  <Lock className="h-3 w-3 mr-1" />PDF
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-xs">
-                                Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24">
-                              <Trash2 className="h-3 w-3 mr-1" />Excluir
+                        <div className="flex gap-1.5">
+                          {canExportPdf ? (
+                            <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem]" onClick={() => generateProposalPdf(p)}>
+                              <Download className="h-3 w-3 mr-1" />PDF
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                Excluir
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                          ) : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button size="sm" variant="outline" className="h-8 text-xs w-[5.5rem] opacity-50 cursor-not-allowed" disabled>
+                                    <Lock className="h-3 w-3 mr-1" />PDF
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                  Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="ghost" className="h-8 text-xs text-destructive w-[5.5rem]">
+                                <Trash2 className="h-3 w-3 mr-1" />Excluir
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                  Excluir
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </div>
                     </TableCell>
                   </TableRow>
