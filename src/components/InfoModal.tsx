@@ -26,19 +26,33 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
       </button>
 
       {open && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
-          onClick={() => setOpen(false)}
-        >
+        <>
           {/* Overlay */}
-          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.4)" }} />
+          <div
+            className="fixed z-[9999]"
+            style={{
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(0, 0, 0, 0.5)",
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+            }}
+            onClick={() => setOpen(false)}
+          />
 
           {/* Modal */}
           <div
-            className="relative bg-background border"
+            className="fixed z-[10000] bg-background border"
             style={{
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
               maxWidth: 360,
-              width: "calc(100% - 32px)",
               padding: 24,
               borderRadius: 12,
             }}
@@ -82,7 +96,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               Entendi
             </button>
           </div>
-        </div>
+        </>
       )}
     </>
   );
