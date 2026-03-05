@@ -281,60 +281,29 @@ export default function Tutorial() {
           />
         </TabsContent>
 
-        {/* Propostas Salvas */}
-        <TabsContent value="salvas">
+        {/* Conta */}
+        <TabsContent value="conta">
           <Section
             navigate={navigate}
-            actionLabel="Ir para Propostas"
-            actionPath="/app/propostas"
+            actionLabel="Gerenciar assinatura"
+            actionOnClick={handleManageSubscription}
             steps={[
               {
                 stepNumber: 1,
-                icon: FileText,
-                title: 'Acesse propostas anteriores',
+                icon: CreditCard,
+                title: 'Gerencie seu plano pelo portal Stripe',
                 description:
-                  'Todas as propostas ficam salvas na aba Propostas. Filtre por status para encontrar rapidamente.',
+                  'Faça upgrade, downgrade ou altere sua forma de pagamento diretamente pelo portal seguro da Stripe. Clique em "Gerenciar assinatura" abaixo.',
               },
               {
                 stepNumber: 2,
-                icon: RefreshCw,
-                title: 'Reutilize uma proposta',
+                icon: DollarSign,
+                title: 'Cancele quando quiser pela Stripe',
                 description:
-                  'Use uma proposta anterior como referência para criar novas com valores e escopos similares.',
-              },
-              {
-                stepNumber: 3,
-                icon: Users,
-                title: 'Acompanhe o status de cada cliente',
-                description:
-                  'Saiba quais propostas estão pendentes, aprovadas ou recusadas sem perder o controle.',
+                  'Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal da Stripe. Seu acesso continua até o fim do período pago.',
               },
             ]}
           />
-        </TabsContent>
-
-        {/* Conta */}
-        <TabsContent value="conta">
-          <div className="space-y-3">
-            <StepCard
-              stepNumber={1}
-              icon={Settings}
-              title="Atualize seus dados"
-              description="Edite seu nome e informações de contato que aparecem nas propostas geradas."
-            />
-            <StepCard
-              stepNumber={2}
-              icon={CreditCard}
-              title="Gerencie seu plano"
-              description="Faça upgrade para desbloquear mais cálculos e propostas, ou altere seu plano atual."
-            />
-            <StepCard
-              stepNumber={3}
-              icon={DollarSign}
-              title="Cancele quando quiser"
-              description="Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal de pagamento."
-            />
-          </div>
         </TabsContent>
       </Tabs>
     </div>
