@@ -397,7 +397,7 @@ export default function Propostas() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1.5">
                     <Label className="text-xs">Seu nome</Label>
-                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="Seu nome completo" />
+                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="Seu nome" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">Email</Label>
