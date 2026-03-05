@@ -1,10 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { WhatsAppSupport } from '@/components/WhatsAppSupport';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 export function AppLayout() {
   const { user } = useAuth();
+  const { plan } = useSubscription();
 
   return (
     <SidebarProvider>
@@ -19,6 +22,7 @@ export function AppLayout() {
             <Outlet />
           </main>
         </div>
+        {plan === 'pro' && <WhatsAppSupport />}
       </div>
     </SidebarProvider>
   );

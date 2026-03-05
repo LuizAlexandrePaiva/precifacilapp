@@ -203,7 +203,7 @@ export default function Dashboard() {
             <Lock className="h-10 w-10 text-muted-foreground mx-auto" />
             <h3 className="font-semibold text-lg">Gráfico de evolução disponível no plano Pro</h3>
             <p className="text-sm text-muted-foreground">Acompanhe a evolução do seu faturamento mês a mês com o plano Pro (R$ 59/mês).</p>
-            <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade</Button>
+            <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade para o Pro</Button>
           </CardContent>
         </Card>
       )}
