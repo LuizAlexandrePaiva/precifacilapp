@@ -2,9 +2,10 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
-export type Plan = 'free' | 'essencial' | 'pro';
+export type Plan = 'free' | 'trial' | 'essencial' | 'pro';
 
 const ADMIN_EMAILS = ['lapsantis@protonmail.com'];
+const TRIAL_DAYS = 14;
 
 interface SubscriptionContextType {
   plan: Plan;
@@ -19,6 +20,8 @@ interface SubscriptionContextType {
   canExportPdf: boolean;
   canViewChart: boolean;
   isAdmin: boolean;
+  trialDaysLeft: number | null;
+  isTrialExpired: boolean;
 }
 
 const PLANS_CONFIG = {
@@ -41,6 +44,16 @@ function getCalcCountKey(userId: string) {
   return `precifacil_calc_${userId}_${now.getFullYear()}_${now.getMonth()}`;
 }
 
+function calculateTrialDaysLeft(userCreatedAt: string | undefined): number | null {
+  if (!userCreatedAt) return null;
+  const created = new Date(userCreatedAt);
+  const now = new Date();
+  const diffMs = now.getTime() - created.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const daysLeft = TRIAL_DAYS - diffDays;
+  return daysLeft;
+}
+
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user, session } = useAuth();
   const [plan, setPlan] = useState<Plan>('free');
@@ -48,8 +61,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [monthlyCalcCount, setMonthlyCalcCount] = useState(0);
+  const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
 
   const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  const isTrialExpired = trialDaysLeft !== null && trialDaysLeft <= 0;
 
   useEffect(() => {
     if (user) {
@@ -71,6 +86,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     if (isAdmin) {
       setPlan('pro');
       setSubscribed(true);
+      setTrialDaysLeft(null);
       setLoading(false);
       return;
     }
@@ -78,6 +94,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     if (!session?.access_token) {
       setPlan('free');
       setSubscribed(false);
+      setTrialDaysLeft(null);
       setLoading(false);
       return;
     }
@@ -86,22 +103,54 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.functions.invoke('check-subscription');
       if (error) throw error;
       
-      setPlan(data.plan || 'free');
-      setSubscribed(data.subscribed || false);
-      setSubscriptionEnd(data.subscription_end || null);
+      const stripePlan = data.plan || 'free';
+      const stripeSubscribed = data.subscribed || false;
+      
+      if (stripeSubscribed && (stripePlan === 'essencial' || stripePlan === 'pro')) {
+        // Active Stripe subscription — no trial needed
+        setPlan(stripePlan);
+        setSubscribed(true);
+        setSubscriptionEnd(data.subscription_end || null);
+        setTrialDaysLeft(null);
+      } else {
+        // No active subscription — check trial
+        const daysLeft = calculateTrialDaysLeft(user?.created_at);
+        if (daysLeft !== null && daysLeft > 0) {
+          // Within trial period — grant essencial-level access
+          setPlan('trial');
+          setSubscribed(false);
+          setSubscriptionEnd(null);
+          setTrialDaysLeft(daysLeft);
+        } else {
+          // Trial expired, no subscription
+          setPlan('free');
+          setSubscribed(false);
+          setSubscriptionEnd(null);
+          setTrialDaysLeft(daysLeft);
+        }
+      }
     } catch (err) {
       console.error('Error checking subscription:', err);
-      setPlan('free');
+      // On error, still check trial
+      const daysLeft = calculateTrialDaysLeft(user?.created_at);
+      if (daysLeft !== null && daysLeft > 0) {
+        setPlan('trial');
+        setTrialDaysLeft(daysLeft);
+      } else {
+        setPlan('free');
+        setTrialDaysLeft(daysLeft);
+      }
       setSubscribed(false);
     } finally {
       setLoading(false);
     }
-  }, [session?.access_token, isAdmin]);
+  }, [session?.access_token, isAdmin, user?.created_at]);
 
   useEffect(() => {
     if (isAdmin) {
       setPlan('pro');
       setSubscribed(true);
+      setTrialDaysLeft(null);
       setLoading(false);
       return;
     }
@@ -110,6 +159,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     } else {
       setPlan('free');
       setSubscribed(false);
+      setTrialDaysLeft(null);
       setLoading(false);
     }
   }, [session, refreshSubscription, isAdmin]);
@@ -121,8 +171,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [session, refreshSubscription, isAdmin]);
 
   const effectivePlan = isAdmin ? 'pro' : plan;
-  const canCalculate = isAdmin || effectivePlan !== 'free' || monthlyCalcCount < 1;
-  const canAccessProposals = isAdmin || effectivePlan !== 'free';
+  // Trial gives essencial-level access
+  const hasTrialOrPaid = effectivePlan === 'trial' || effectivePlan === 'essencial' || effectivePlan === 'pro';
+  const canCalculate = isAdmin || hasTrialOrPaid || monthlyCalcCount < 1;
+  const canAccessProposals = isAdmin || hasTrialOrPaid;
   const canExportPdf = isAdmin || effectivePlan === 'pro';
   const canViewChart = isAdmin || effectivePlan === 'pro';
 
@@ -140,6 +192,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       canExportPdf,
       canViewChart,
       isAdmin,
+      trialDaysLeft,
+      isTrialExpired,
     }}>
       {children}
     </SubscriptionContext.Provider>
