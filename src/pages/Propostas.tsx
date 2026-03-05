@@ -491,9 +491,12 @@ export default function Propostas() {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <Select value={pacote || undefined} onValueChange={(v) => setPacote(v as any)}>
-                    <SelectTrigger className={!pacote ? 'text-muted-foreground' : ''}><SelectValue placeholder="Selecione o nível..." /></SelectTrigger>
+                  <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
+                    <SelectTrigger className={pacote === 'selecione' ? 'text-muted-foreground' : ''}>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="selecione" disabled>Selecione o nível...</SelectItem>
                       <SelectItem value="basico">Preço mínimo (×1)</SelectItem>
                       <SelectItem value="padrao">Preço justo (×1,4) — Recomendado</SelectItem>
                       <SelectItem value="premium">Preço premium (×2)</SelectItem>
@@ -538,7 +541,7 @@ export default function Propostas() {
 
               {precoHora > 0 && (
                 <div className="bg-accent rounded-lg p-3 text-center">
-                  <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[pacote]}</p>
+                  <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[getActivePacote()]}</p>
                   <p className="text-xl font-bold text-primary">
                     R$ {calcValorPacote().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
