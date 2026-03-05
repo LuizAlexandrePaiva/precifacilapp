@@ -445,7 +445,7 @@ export default function Propostas() {
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
+                      <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                         Tudo que será entregue ao cliente conforme combinado.
                       </TooltipContent>
                     </Tooltip>
@@ -465,7 +465,7 @@ export default function Propostas() {
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
+                      <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                         Tudo que está fora do escopo para evitar mal-entendidos.
                       </TooltipContent>
                     </Tooltip>
