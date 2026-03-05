@@ -91,13 +91,35 @@ const tabs = [
 export default function Tutorial() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('calculadora');
+  const [showNoSubModal, setShowNoSubModal] = useState(false);
+  const [isClosingModal, setIsClosingModal] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
+  const { subscribed } = useSubscription();
+
+  const closeModal = useCallback(() => {
+    setIsClosingModal(true);
+    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(() => {
+      setShowNoSubModal(false);
+      setIsClosingModal(false);
+      closeTimerRef.current = null;
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current); };
+  }, []);
 
   const handleManageSubscription = async () => {
+    if (!subscribed) {
+      setShowNoSubModal(true);
+      return;
+    }
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
-      else toast.error('Não foi possível abrir o portal. Verifique se você possui uma assinatura ativa.');
+      else toast.error('Não foi possível abrir o portal.');
     } catch {
       toast.error('Erro ao abrir o portal de assinatura. Tente novamente.');
     }
