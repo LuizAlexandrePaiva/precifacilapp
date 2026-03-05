@@ -377,6 +377,24 @@ export default function Propostas() {
                             </Button>
                           </>
                         )}
+                        {canExportPdf ? (
+                          <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => generateProposalPdf(p)}>
+                            <Download className="h-3 w-3 mr-1" />PDF
+                          </Button>
+                        ) : (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button size="sm" variant="outline" className="h-7 text-xs w-24 opacity-50 cursor-not-allowed" disabled>
+                                  <Lock className="h-3 w-3 mr-1" />PDF
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button size="sm" variant="ghost" className="h-7 text-xs text-destructive w-24">
