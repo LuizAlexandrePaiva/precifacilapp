@@ -12,10 +12,9 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
-// ── Email templates (inlined to avoid cross-function imports) ──
+// ── Constantes de estilo ──
 
 const PRIMARY = '#2563EB';
-const PRIMARY_DARK = '#1E40AF';
 const FOREGROUND = '#0A0F1E';
 const MUTED = '#6B7280';
 const BG_LIGHT = '#F8FAFC';
@@ -38,7 +37,11 @@ function small(text: string): string {
   return `<p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:${MUTED};">${text}</p>`;
 }
 
-// ── Send email helper ──
+function signature(): string {
+  return `<p style="margin:24px 0 0;font-size:15px;line-height:1.6;color:${FOREGROUND};">Equipe PreciFácil</p>`;
+}
+
+// ── Enviar email ──
 
 async function sendEmail(resend: InstanceType<typeof Resend>, to: string, subject: string, html: string) {
   const { data, error } = await resend.emails.send({
@@ -52,16 +55,6 @@ async function sendEmail(resend: InstanceType<typeof Resend>, to: string, subjec
     throw new Error(`Failed to send email: ${JSON.stringify(error)}`);
   }
   logStep('Email sent successfully', { to, subject, id: data?.id });
-}
-
-// ── Plan mapping ──
-
-function getPlanName(priceId: string): string {
-  // Map your Stripe price IDs here
-  const plans: Record<string, string> = {
-    // Add your price IDs
-  };
-  return plans[priceId] || 'Essencial';
 }
 
 Deno.serve(async (req) => {
@@ -97,20 +90,18 @@ Deno.serve(async (req) => {
     { auth: { persistSession: false } }
   );
 
-  // Helper to get user name from profiles table
+  // Buscar nome do usuário no perfil
   async function getUserName(email: string): Promise<string> {
     try {
       const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
       const user = usersData?.users?.find(u => u.email === email);
       if (user) {
-        // Check profiles table first
         const { data: profile } = await supabaseAdmin
           .from('profiles')
           .select('full_name')
           .eq('id', user.id)
           .single();
         if (profile?.full_name) return profile.full_name;
-        // Fallback to user_metadata
         if (user.user_metadata?.full_name) return user.user_metadata.full_name;
         if (user.user_metadata?.name) return user.user_metadata.name;
       }
@@ -122,7 +113,7 @@ Deno.serve(async (req) => {
 
   try {
     switch (event.type) {
-      // ── PAYMENT CONFIRMED ──
+      // ── PAGAMENTO CONFIRMADO ──
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const email = paymentIntent.receipt_email || paymentIntent.metadata?.email;
@@ -146,18 +137,18 @@ Deno.serve(async (req) => {
           </table>
           ${btn('Acessar minha conta', SITE_URL)}
           ${small('Obrigado por confiar no PreciFácil!')}
+          ${signature()}
         `);
 
         await sendEmail(resend, email, 'Pagamento confirmado — PreciFácil', html);
         break;
       }
 
-      // ── SUBSCRIPTION UPDATED (UPGRADE) ──
+      // ── UPGRADE DE PLANO ──
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
         const previousAttributes = (event.data as any).previous_attributes;
 
-        // Only trigger on plan change (not every update)
         if (!previousAttributes?.items) {
           logStep('Subscription updated but no plan change detected, skipping');
           break;
@@ -168,14 +159,13 @@ Deno.serve(async (req) => {
         const email = customer.email;
         if (!email) break;
 
-        const priceId = subscription.items.data[0]?.price?.id || '';
         const productId = subscription.items.data[0]?.price?.product as string;
         const product = await stripe.products.retrieve(productId);
         const newPlan = product.name || 'Pro';
         const userName = customer.name || await getUserName(email);
 
         const features = newPlan.toLowerCase().includes('pro')
-          ? `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};"><li>Exportação de propostas em PDF</li><li>Gráficos detalhados de desempenho</li><li>Cálculos e propostas ilimitados</li><li>Acesso a todos os recursos da plataforma</li></ul>`
+          ? `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};"><li>Exportação de propostas em PDF</li><li>Dashboard completo com gráficos</li><li>Cálculos e propostas ilimitados</li><li>Suporte via WhatsApp</li></ul>`
           : `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};"><li>Cálculos e propostas ilimitados</li><li>Histórico completo de projetos</li><li>Geração de propostas profissionais</li></ul>`;
 
         const html = layout(`
@@ -185,13 +175,14 @@ Deno.serve(async (req) => {
           ${features}
           ${btn('Explorar novos recursos', SITE_URL)}
           ${small('Aproveite tudo o que o PreciFácil tem a oferecer!')}
+          ${signature()}
         `);
 
         await sendEmail(resend, email, 'Seu plano foi atualizado — PreciFácil', html);
         break;
       }
 
-      // ── SUBSCRIPTION CANCELLED ──
+      // ── CANCELAMENTO ──
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
@@ -209,6 +200,7 @@ Deno.serve(async (req) => {
           ${p('Caso mude de ideia, você pode reativar sua assinatura a qualquer momento:')}
           ${btn('Reativar assinatura', `${SITE_URL}/app`)}
           ${small('Sentiremos sua falta! Estaremos aqui quando precisar.')}
+          ${signature()}
         `);
 
         await sendEmail(resend, email, 'Assinatura cancelada — PreciFácil', html);

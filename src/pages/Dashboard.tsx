@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock } from 'lucide-react';
+import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +12,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 
 const planLabels: Record<string, string> = {
   free: 'Grátis',
+  trial: 'Teste Gratuito',
   essencial: 'Essencial',
   pro: 'Pro',
 };
@@ -19,7 +20,7 @@ const planLabels: Record<string, string> = {
 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export default function Dashboard() {
-  const { plan, subscriptionEnd, refreshSubscription, canViewChart } = useSubscription();
+  const { plan, subscriptionEnd, refreshSubscription, canViewChart, trialDaysLeft, isTrialExpired } = useSubscription();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [portalLoading, setPortalLoading] = useState(false);
@@ -121,6 +122,50 @@ export default function Dashboard() {
         <p className="text-muted-foreground mt-1">Visão geral do seu negócio</p>
       </div>
 
+      {/* Trial Banner */}
+      {plan === 'trial' && trialDaysLeft !== null && trialDaysLeft > 0 && (
+        <Card className="border-primary/50 bg-accent">
+          <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+              <div>
+                <p className="font-semibold text-sm">
+                  Período gratuito: <span className="text-primary">{trialDaysLeft} {trialDaysLeft === 1 ? 'dia restante' : 'dias restantes'}</span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Aproveite todos os recursos do PreciFácil durante o seu teste gratuito de 14 dias.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
+              <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Assinar Pro</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Trial Expired Banner */}
+      {isTrialExpired && plan === 'free' && (
+        <Card className="border-destructive/50 bg-destructive/5">
+          <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+              <div>
+                <p className="font-semibold text-sm">Seu período gratuito de 14 dias expirou</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Escolha um plano para continuar utilizando todos os recursos sem interrupção.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={() => handleUpgrade('essencial')}>Essencial — R$ 29/mês</Button>
+              <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Pro — R$ 59/mês</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Subscription Card */}
       <Card className="border-primary/30">
         <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -129,7 +174,9 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Plano atual:</span>
-                <Badge variant={plan === 'free' ? 'outline' : 'default'}>{planLabels[plan]}</Badge>
+                <Badge variant={plan === 'free' || plan === 'trial' ? 'outline' : 'default'}>
+                  {planLabels[plan]}
+                </Badge>
               </div>
               {subscriptionEnd && (
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -139,7 +186,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex gap-2">
-            {plan === 'free' && (
+            {(plan === 'free' || plan === 'trial') && (
               <Button size="sm" onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
             )}
             {plan === 'essencial' && (
