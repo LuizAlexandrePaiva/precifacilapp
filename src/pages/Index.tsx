@@ -252,11 +252,11 @@ export default function Index() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">O que nossos usuários dizem</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
-              <Card key={i} className="border-0 shadow-md bg-card">
-                <CardContent className="pt-8 pb-6 px-6">
-                  <Quote className="h-8 w-8 text-primary/30 mb-4" />
-                  <p className="text-foreground mb-6 leading-relaxed italic">"{t.quote}"</p>
-                  <div className="border-t border-border pt-4">
+              <Card key={i} className="border-0 shadow-md bg-card h-full">
+                <CardContent className="pt-8 pb-6 px-6 h-full flex flex-col">
+                  <Quote className="h-8 w-8 text-primary/30 mb-4 flex-shrink-0" />
+                  <p className="text-foreground leading-relaxed italic flex-1">"{t.quote}"</p>
+                  <div className="border-t border-border pt-4 mt-6">
                     <p className="font-semibold text-foreground text-sm">{t.name}</p>
                     <p className="text-muted-foreground text-xs">{t.role}</p>
                   </div>
