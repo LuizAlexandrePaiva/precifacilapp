@@ -121,12 +121,12 @@ export default function Historico() {
                   <p className="text-muted-foreground text-xs mb-0.5">Valor Cotado</p>
                   <p className="font-semibold text-foreground">{formatCurrency(Number(p.valor_cotado))}</p>
                 </div>
-                <div>
+                <div className="min-h-[2.5rem] flex flex-col">
                   <p className="text-muted-foreground text-xs mb-0.5">Horas Reais</p>
                   {p.horas_reais !== null ? (
-                    <p className="font-semibold text-foreground">{p.horas_reais}h</p>
+                    <p className="font-semibold text-foreground leading-7">{p.horas_reais}h</p>
                   ) : (
-                    <Button size="sm" variant="outline" className="h-7 text-xs mt-0.5" onClick={() => { setEditProject(p); setHorasReais(''); }}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs mt-0.5 self-start" onClick={() => { setEditProject(p); setHorasReais(''); }}>
                       Informar horas
                     </Button>
                   )}
