@@ -133,8 +133,7 @@ Deno.serve(async (req) => {
 
         const amountFormatted = (paymentIntent.amount / 100).toFixed(2).replace('.', ',');
         const date = new Date().toLocaleDateString('pt-BR');
-        const planName = paymentIntent.metadata?.plan_name || 'Essencial';
-        const userName = paymentIntent.metadata?.user_name || 'Usuário';
+        const userName = paymentIntent.metadata?.user_name || await getUserName(email);
 
         const html = layout(`
           ${p(`Olá, ${userName.split(' ')[0]}!`)}
