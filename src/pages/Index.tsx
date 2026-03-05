@@ -2,6 +2,11 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calculator, FileText, TrendingUp, Shield, Clock, Target, Check } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 const benefits = [
   { icon: Calculator, title: 'Cálculo Preciso', desc: 'Fórmula que considera impostos, férias e horas não faturáveis' },
@@ -20,6 +25,7 @@ const plans = [
     features: ['1 cálculo por mês', 'Resultado básico', 'Sem propostas'],
     cta: 'Começar Grátis',
     highlighted: false,
+    planKey: 'free' as const,
   },
   {
     name: 'Essencial',
@@ -28,6 +34,7 @@ const plans = [
     features: ['Cálculos ilimitados', 'Gerador de propostas', 'Histórico de projetos', 'Dashboard básico'],
     cta: 'Assinar Essencial',
     highlighted: true,
+    planKey: 'essencial' as const,
   },
   {
     name: 'Pro',
@@ -36,10 +43,38 @@ const plans = [
     features: ['Tudo do Essencial', 'Exportar propostas em PDF', 'Dashboard completo', 'Suporte prioritário'],
     cta: 'Assinar Pro',
     highlighted: false,
+    planKey: 'pro' as const,
   },
 ];
 
 export default function Index() {
+  const { user } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (planKey: 'essencial' | 'pro') => {
+    if (!user) {
+      // Redirect to signup
+      window.location.href = '/cadastro';
+      return;
+    }
+    
+    setCheckoutLoading(planKey);
+    try {
+      const priceId = PLANS_CONFIG[planKey].price_id;
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (err: any) {
+      toast.error('Erro ao iniciar checkout: ' + (err.message || 'Tente novamente'));
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -49,12 +84,20 @@ export default function Index() {
             Preci<span className="text-primary">Fácil</span>
           </span>
           <div className="flex gap-2">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Entrar</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/cadastro">Criar conta</Link>
-            </Button>
+            {user ? (
+              <Button asChild>
+                <Link to="/app">Ir para o App</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/cadastro">Criar conta</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -127,9 +170,20 @@ export default function Index() {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'} asChild>
-                    <Link to="/cadastro">{plan.cta}</Link>
-                  </Button>
+                  {plan.planKey === 'free' ? (
+                    <Button className="w-full" variant="outline" asChild>
+                      <Link to="/cadastro">{plan.cta}</Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      className="w-full"
+                      variant={plan.highlighted ? 'default' : 'outline'}
+                      onClick={() => handleCheckout(plan.planKey)}
+                      disabled={checkoutLoading === plan.planKey}
+                    >
+                      {checkoutLoading === plan.planKey ? 'Redirecionando...' : plan.cta}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
