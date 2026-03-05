@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, HelpCircle, Lock } from 'lucide-react';
@@ -27,11 +28,12 @@ export default function Calculadora() {
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canCalculate) {
-      toast.error('Você atingiu o limite de 1 cálculo por mês no plano Grátis. Faça upgrade para continuar.');
+      setShowLimitModal(true);
       return;
     }
     const input: CalculationInput = {
@@ -59,7 +61,7 @@ export default function Calculadora() {
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, '_blank');
-    } catch (err: any) {
+    } catch {
       toast.error('Erro ao iniciar checkout');
     } finally {
       setCheckoutLoading(false);
@@ -221,6 +223,24 @@ export default function Calculadora() {
           </CardContent>
         </Card>
       )}
+
+      {/* Modal de limite atingido — Plano Grátis */}
+      <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
+        <DialogContent className="max-w-sm text-center">
+          <DialogHeader>
+            <DialogTitle className="flex flex-col items-center gap-3">
+              <Lock className="h-10 w-10 text-amber-500" />
+              Limite atingido
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-muted-foreground text-sm">
+            No plano Grátis você pode fazer apenas 1 cálculo por mês. Faça upgrade para o plano Essencial e tenha cálculos ilimitados, gerador de propostas e muito mais.
+          </p>
+          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={checkoutLoading} className="w-full">
+            {checkoutLoading ? 'Redirecionando...' : 'Fazer upgrade — R$ 29/mês'}
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

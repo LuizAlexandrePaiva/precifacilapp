@@ -37,7 +37,7 @@ const plans = [
     name: 'Pro',
     price: 'R$ 59',
     period: '/mês',
-    features: ['Tudo do Essencial', 'Exportar propostas em PDF', 'Dashboard completo', 'Suporte prioritário'],
+    features: ['Tudo do Essencial', 'Exportar propostas em PDF', 'Dashboard completo', 'Suporte via WhatsApp'],
     cta: 'Assinar Pro',
     highlighted: false,
     planKey: 'pro' as const,
