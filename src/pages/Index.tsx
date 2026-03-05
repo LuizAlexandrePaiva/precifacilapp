@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Quote } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -119,7 +119,12 @@ const faqs = [
 
 export default function Index() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) navigate('/app', { replace: true });
+  }, [user, navigate]);
 
   const handleCheckout = async (planKey: 'essencial' | 'pro') => {
     if (!user) {
