@@ -125,7 +125,7 @@ export default function Historico() {
                 <div className="min-h-[2.5rem] flex flex-col">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Horas Reais</p>
                   {p.horas_reais !== null ? (
-                    <p className="text-[15px] font-semibold text-foreground leading-7">{p.horas_reais}h</p>
+                    <p className="text-[15px] font-semibold text-foreground">{p.horas_reais}h</p>
                   ) : (
                     <button
                       className="text-xs font-semibold text-primary border border-primary bg-transparent rounded px-3 py-1.5 h-auto self-start hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer"
