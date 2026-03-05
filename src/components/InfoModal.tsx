@@ -27,30 +27,27 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
       </button>
 
       {open && createPortal(
-        <>
-          {/* Overlay */}
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              zIndex: 9999,
-              background: "rgba(0, 0, 0, 0.5)",
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
-            }}
-            onClick={() => setOpen(false)}
-          />
-
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 9999,
+            background: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onMouseDown={() => setOpen(false)}
+        >
           {/* Modal */}
           <div
             style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              position: "relative",
               zIndex: 10000,
               width: "90%",
               maxWidth: 360,
@@ -60,7 +57,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               border: "1px solid #e2e8f0",
               boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
             }}
-            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             <h3
               style={{
@@ -84,6 +81,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
             </p>
             <button
               type="button"
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={() => setOpen(false)}
               style={{
                 width: "100%",
@@ -100,7 +98,7 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               Entendi
             </button>
           </div>
-        </>,
+        </div>,
         document.body
       )}
     </>
