@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 
 export function AppLayout() {
-  const { user } = useAuth();
+  const { displayName } = useAuth();
   const { plan } = useSubscription();
 
   return (
@@ -16,7 +16,7 @@ export function AppLayout() {
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center justify-between border-b px-4">
             <SidebarTrigger className="ml-1" />
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
+            <span className="text-sm text-muted-foreground">{displayName}</span>
           </header>
           <main className="flex-1 p-4 md:p-6 overflow-auto">
             <Outlet />
