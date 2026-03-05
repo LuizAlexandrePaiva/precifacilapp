@@ -26,18 +26,17 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
         <HelpCircle className={`${iconSize} text-muted-foreground`} />
       </button>
 
-      {open && (
+      {open && createPortal(
         <>
           {/* Overlay */}
           <div
-            className="fixed z-[9999]"
             style={{
+              position: "fixed",
               top: 0,
               left: 0,
-              right: 0,
-              bottom: 0,
               width: "100vw",
               height: "100vh",
+              zIndex: 9999,
               background: "rgba(0, 0, 0, 0.5)",
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
@@ -47,15 +46,18 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
 
           {/* Modal */}
           <div
-            className="fixed z-[10000] bg-background border"
             style={{
+              position: "fixed",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
+              zIndex: 10000,
               width: "90%",
               maxWidth: 360,
               padding: 24,
               borderRadius: 12,
+              background: "var(--background, #fff)",
+              border: "1px solid var(--border, #e2e8f0)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -97,8 +99,6 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
               Entendi
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
-    </>
-  );
-}
