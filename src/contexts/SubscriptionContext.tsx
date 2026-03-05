@@ -4,17 +4,21 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type Plan = 'free' | 'essencial' | 'pro';
 
+const ADMIN_EMAILS = ['lapsantis@protonmail.com'];
+
 interface SubscriptionContextType {
   plan: Plan;
   subscribed: boolean;
   subscriptionEnd: string | null;
   loading: boolean;
   refreshSubscription: () => Promise<void>;
-  /** Monthly calculation count for free users */
   monthlyCalcCount: number;
   incrementCalcCount: () => void;
   canCalculate: boolean;
   canAccessProposals: boolean;
+  canExportPdf: boolean;
+  canViewChart: boolean;
+  isAdmin: boolean;
 }
 
 const PLANS_CONFIG = {
@@ -45,7 +49,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [monthlyCalcCount, setMonthlyCalcCount] = useState(0);
 
-  // Load calc count from localStorage for free users
+  const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+
   useEffect(() => {
     if (user) {
       const key = getCalcCountKey(user.id);
@@ -63,6 +68,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [user, monthlyCalcCount]);
 
   const refreshSubscription = useCallback(async () => {
+    if (isAdmin) {
+      setPlan('pro');
+      setSubscribed(true);
+      setLoading(false);
+      return;
+    }
+
     if (!session?.access_token) {
       setPlan('free');
       setSubscribed(false);
@@ -84,9 +96,15 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [session?.access_token]);
+  }, [session?.access_token, isAdmin]);
 
   useEffect(() => {
+    if (isAdmin) {
+      setPlan('pro');
+      setSubscribed(true);
+      setLoading(false);
+      return;
+    }
     if (session) {
       refreshSubscription();
     } else {
@@ -94,22 +112,24 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       setSubscribed(false);
       setLoading(false);
     }
-  }, [session, refreshSubscription]);
+  }, [session, refreshSubscription, isAdmin]);
 
-  // Auto-refresh every 60 seconds
   useEffect(() => {
-    if (!session) return;
+    if (!session || isAdmin) return;
     const interval = setInterval(refreshSubscription, 60000);
     return () => clearInterval(interval);
-  }, [session, refreshSubscription]);
+  }, [session, refreshSubscription, isAdmin]);
 
-  const canCalculate = plan !== 'free' || monthlyCalcCount < 1;
-  const canAccessProposals = plan !== 'free';
+  const effectivePlan = isAdmin ? 'pro' : plan;
+  const canCalculate = isAdmin || effectivePlan !== 'free' || monthlyCalcCount < 1;
+  const canAccessProposals = isAdmin || effectivePlan !== 'free';
+  const canExportPdf = isAdmin || effectivePlan === 'pro';
+  const canViewChart = isAdmin || effectivePlan === 'pro';
 
   return (
     <SubscriptionContext.Provider value={{
-      plan,
-      subscribed,
+      plan: effectivePlan,
+      subscribed: isAdmin || subscribed,
       subscriptionEnd,
       loading,
       refreshSubscription,
@@ -117,6 +137,9 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       incrementCalcCount,
       canCalculate,
       canAccessProposals,
+      canExportPdf,
+      canViewChart,
+      isAdmin,
     }}>
       {children}
     </SubscriptionContext.Provider>
