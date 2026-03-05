@@ -90,7 +90,7 @@ export default function Propostas() {
   const [prazo, setPrazo] = useState('');
   const [prazoUnidade, setPrazoUnidade] = useState<PrazoUnidade>('horas');
   const [precoHora, setPrecoHora] = useState(0);
-  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | ''>('');
+  const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | 'selecione'>('selecione');
 
   // Freelancer info
   const [freelancerNome, setFreelancerNome] = useState('');
@@ -131,7 +131,7 @@ export default function Propostas() {
 
   const getPrazoNum = () => parseBR(prazo) || 0;
 
-  const getActivePacote = () => pacote || 'padrao';
+  const getActivePacote = () => (pacote === 'selecione' ? 'padrao' : pacote);
   const calcValorPacote = () => {
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
     return precoHora * prazoHoras * pacoteMultiplier[getActivePacote()];
@@ -147,7 +147,7 @@ export default function Propostas() {
     setValidadeDias(7);
     setPrazo('');
     setPrazoUnidade('horas');
-    setPacote('padrao');
+    setPacote('selecione');
   };
 
   const handleSave = async (e: React.FormEvent) => {
