@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { sendEmail } from '@/lib/sendEmail';
+import { welcomeEmail } from '@/lib/emailTemplates';
 
 interface AuthContextType {
   user: User | null;
@@ -19,12 +21,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const welcomeSentRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // Send welcome email only on first confirmed sign-in
+      if (event === 'SIGNED_IN' && session?.user) {
+        const u = session.user;
+        const isNewUser = u.confirmed_at && 
+          new Date(u.confirmed_at).getTime() > Date.now() - 60_000; // confirmed within last 60s
+        const alreadySent = welcomeSentRef.current.has(u.id);
+
+        if (isNewUser && !alreadySent) {
+          welcomeSentRef.current.add(u.id);
+          const userName = u.email?.split('@')[0] || 'Usuário';
+          const { subject, html } = welcomeEmail(userName);
+          sendEmail({ to: u.email!, subject, html }).catch(console.error);
+        }
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {

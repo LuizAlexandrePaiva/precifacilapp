@@ -6,8 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { sendEmail } from '@/lib/sendEmail';
-import { welcomeEmail } from '@/lib/emailTemplates';
 
 export default function Cadastro() {
   const [email, setEmail] = useState('');
@@ -28,11 +26,6 @@ export default function Cadastro() {
     if (error) {
       toast.error('Erro ao criar conta: ' + error.message);
     } else {
-      // Enviar email de boas-vindas (fire-and-forget)
-      const userName = email.split('@')[0];
-      const { subject, html } = welcomeEmail(userName);
-      sendEmail({ to: email, subject, html }).catch(console.error);
-
       toast.success('Conta criada! Verifique seu email para confirmar.');
       navigate('/login');
     }
