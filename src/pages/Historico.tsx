@@ -305,18 +305,7 @@ export default function Historico() {
           <div className="space-y-2">
             <Label className="flex items-center gap-1">
               Horas reais gastas
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button type="button" className="inline-flex">
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                    Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <TouchTooltip content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
             </Label>
             <Input
               inputMode="decimal"
