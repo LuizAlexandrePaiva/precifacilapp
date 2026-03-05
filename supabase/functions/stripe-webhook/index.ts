@@ -91,6 +91,35 @@ Deno.serve(async (req) => {
 
   logStep('Event received', { type: event.type, id: event.id });
 
+  const supabaseAdmin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    { auth: { persistSession: false } }
+  );
+
+  // Helper to get user name from profiles table
+  async function getUserName(email: string): Promise<string> {
+    try {
+      const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
+      const user = usersData?.users?.find(u => u.email === email);
+      if (user) {
+        // Check profiles table first
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        if (profile?.full_name) return profile.full_name;
+        // Fallback to user_metadata
+        if (user.user_metadata?.full_name) return user.user_metadata.full_name;
+        if (user.user_metadata?.name) return user.user_metadata.name;
+      }
+    } catch (err) {
+      logStep('Error fetching user name', { error: err.message });
+    }
+    return 'Usuário';
+  }
+
   try {
     switch (event.type) {
       // ── PAYMENT CONFIRMED ──
@@ -105,7 +134,7 @@ Deno.serve(async (req) => {
         const amountFormatted = (paymentIntent.amount / 100).toFixed(2).replace('.', ',');
         const date = new Date().toLocaleDateString('pt-BR');
         const planName = paymentIntent.metadata?.plan_name || 'Essencial';
-        const userName = paymentIntent.metadata?.user_name || 'Usuário';
+        const userName = paymentIntent.metadata?.user_name || await getUserName(email);
 
         const html = layout(`
           ${p(`Olá, ${userName.split(' ')[0]}!`)}
@@ -143,7 +172,7 @@ Deno.serve(async (req) => {
         const productId = subscription.items.data[0]?.price?.product as string;
         const product = await stripe.products.retrieve(productId);
         const newPlan = product.name || 'Pro';
-        const userName = customer.name || 'Usuário';
+        const userName = customer.name || await getUserName(email);
 
         const features = newPlan.toLowerCase().includes('pro')
           ? `<ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};"><li>Exportação de propostas em PDF</li><li>Gráficos detalhados de desempenho</li><li>Cálculos e propostas ilimitados</li><li>Acesso a todos os recursos da plataforma</li></ul>`
@@ -170,7 +199,7 @@ Deno.serve(async (req) => {
         const email = customer.email;
         if (!email) break;
 
-        const userName = customer.name || 'Usuário';
+        const userName = customer.name || await getUserName(email);
         const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR');
 
         const html = layout(`

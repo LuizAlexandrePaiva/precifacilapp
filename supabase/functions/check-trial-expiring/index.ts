@@ -77,7 +77,16 @@ Deno.serve(async (req) => {
       const email = user.email;
       if (!email) continue;
 
-      const userName = user.user_metadata?.name || user.user_metadata?.full_name || 'Usuário';
+      // Try to get name from profiles table first, fallback to user_metadata
+      let userName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      if (!userName) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        userName = profile?.full_name || 'Usuário';
+      }
       const firstName = userName.split(' ')[0];
 
       const html = layout(`
