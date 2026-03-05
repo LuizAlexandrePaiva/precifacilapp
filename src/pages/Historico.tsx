@@ -89,8 +89,8 @@ export default function Historico() {
   const margemBadge = (acimaMin: boolean | null) => {
     if (acimaMin === null) return <span className="text-muted-foreground text-xs">—</span>;
     return acimaMin
-      ? <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200 text-xs font-medium px-2 py-0.5">✓ Acima</Badge>
-      : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs font-medium px-2 py-0.5">✗ Abaixo</Badge>;
+      ? <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✓ Acima</Badge>
+      : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✗ Abaixo</Badge>;
   };
 
   const margemTooltipText = 'Mostra se o projeto ficou acima ou abaixo do seu preço mínimo por hora. Verde significa que foi rentável. Vermelho significa que você cobrou menos do que o necessário.';
@@ -107,28 +107,28 @@ export default function Historico() {
       {projects.map((p) => {
         const { valorHoraReal, acimaMin } = getProjectData(p);
         return (
-          <Card key={p.id}>
-            <CardContent className="p-4 space-y-2.5">
+          <Card key={p.id} className="shadow-sm">
+            <CardContent className="p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <p className="font-bold text-base text-foreground">{p.cliente}</p>
                 {margemBadge(acimaMin)}
               </div>
-              <p className="text-sm text-muted-foreground -mt-1">{p.projeto}</p>
+              <p className="text-sm text-muted-foreground -mt-2">{p.projeto}</p>
 
               <Separator />
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground text-xs mb-0.5">Valor Cotado</p>
-                  <p className="font-semibold text-foreground">{formatCurrency(Number(p.valor_cotado))}</p>
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor Cotado</p>
+                  <p className="text-[15px] font-semibold text-foreground">{formatCurrency(Number(p.valor_cotado))}</p>
                 </div>
                 <div className="min-h-[2.5rem] flex flex-col">
-                  <p className="text-muted-foreground text-xs mb-0.5">Horas Reais</p>
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Horas Reais</p>
                   {p.horas_reais !== null ? (
-                    <p className="font-semibold text-foreground leading-7">{p.horas_reais}h</p>
+                    <p className="text-[15px] font-semibold text-foreground leading-7">{p.horas_reais}h</p>
                   ) : (
                     <button
-                      className="text-xs font-semibold text-primary border border-primary bg-transparent rounded px-2 py-0 h-auto leading-7 self-start hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer"
+                      className="text-xs font-semibold text-primary border border-primary bg-transparent rounded px-3 py-1.5 h-auto self-start hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer"
                       onClick={() => { setEditProject(p); setHorasReais(''); }}
                     >
                       Informar horas
@@ -136,15 +136,15 @@ export default function Historico() {
                   )}
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs mb-0.5">Valor/Hora Real</p>
-                  <p className="font-semibold text-foreground">
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor/Hora Real</p>
+                  <p className="text-[15px] font-semibold text-foreground">
                     {valorHoraReal !== null
                       ? formatCurrency(valorHoraReal)
                       : '—'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-xs mb-0.5 flex items-center gap-1">
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
                     Margem
                     {helpIcon('Margem', margemTooltipText)}
                   </p>
@@ -152,10 +152,10 @@ export default function Historico() {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-1">
+              <div className="flex justify-end pt-2">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-7 text-xs border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer">
+                    <Button size="sm" variant="ghost" className="text-xs border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer px-4 py-2.5 h-auto">
                       <Trash2 className="h-3 w-3 mr-1" />Excluir
                     </Button>
                   </AlertDialogTrigger>
