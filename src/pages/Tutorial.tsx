@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Calculator,
   FileText,
@@ -53,18 +54,19 @@ function StepCard({ stepNumber, icon: Icon, title, description }: StepCardProps)
 interface SectionProps {
   steps: StepCardProps[];
   actionLabel: string;
-  actionPath: string;
+  actionPath?: string;
+  actionOnClick?: () => void;
   navigate: (path: string) => void;
 }
 
-function Section({ steps, actionLabel, actionPath, navigate }: SectionProps) {
+function Section({ steps, actionLabel, actionPath, actionOnClick, navigate }: SectionProps) {
   return (
     <div className="space-y-3">
       {steps.map((step) => (
         <StepCard key={step.stepNumber} {...step} />
       ))}
       <Button
-        onClick={() => navigate(actionPath)}
+        onClick={() => actionOnClick ? actionOnClick() : actionPath && navigate(actionPath)}
         className="w-full sm:w-auto mt-2"
         variant="outline"
       >
@@ -80,7 +82,6 @@ const tabs = [
   { value: 'propostas', label: 'Propostas', icon: FileText },
   { value: 'historico', label: 'Histórico', icon: History },
   { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { value: 'salvas', label: 'Salvas', icon: RefreshCw },
   { value: 'conta', label: 'Conta', icon: Settings },
 ];
 
@@ -88,12 +89,22 @@ export default function Tutorial() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('calculadora');
 
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch {
+      // silently fail
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />
-          Como usar o PreciFácil?
+          Como Usar o PreciFácil?
         </h1>
         <p className="text-muted-foreground mt-1">
           Aprenda cada funcionalidade em poucos passos
