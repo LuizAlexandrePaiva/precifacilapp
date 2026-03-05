@@ -22,19 +22,19 @@ function layout(content: string): string {
     <tr>
       <td align="center" style="padding:40px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#ffffff;border-radius:12px;border:1px solid ${BORDER};overflow:hidden;">
-          <!-- Header -->
+          <!-- Cabeçalho -->
           <tr>
             <td style="background-color:${PRIMARY};padding:28px 32px;text-align:center;">
               <span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Preci</span><span style="font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;opacity:0.85;">Fácil</span>
             </td>
           </tr>
-          <!-- Body -->
+          <!-- Conteúdo -->
           <tr>
             <td style="padding:32px;">
               ${content}
             </td>
           </tr>
-          <!-- Footer -->
+          <!-- Rodapé -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid ${BORDER};text-align:center;">
               <p style="margin:0;font-size:12px;color:${MUTED};line-height:1.5;">
@@ -71,6 +71,10 @@ function mutedText(text: string): string {
   return `<p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:${MUTED};">${text}</p>`;
 }
 
+function signature(): string {
+  return `<p style="margin:24px 0 0;font-size:15px;line-height:1.6;color:${FOREGROUND};">Equipe PreciFácil</p>`;
+}
+
 // ========== EMAIL 1 — BOAS-VINDAS ==========
 export function welcomeEmail(userName: string): { subject: string; html: string } {
   const firstName = userName?.split(' ')[0] || 'Usuário';
@@ -88,6 +92,7 @@ export function welcomeEmail(userName: string): { subject: string; html: string 
       ${paragraph('Você tem <strong>14 dias de acesso gratuito</strong> para explorar todos os recursos da plataforma.')}
       ${button('Acessar minha conta', SITE_URL)}
       ${mutedText('Aproveite ao máximo o seu período de teste!')}
+      ${signature()}
     `),
   };
 }
@@ -116,6 +121,7 @@ export function paymentConfirmedEmail(userName: string, planName: string, amount
       </table>
       ${button('Acessar minha conta', SITE_URL)}
       ${mutedText('Obrigado por confiar no PreciFácil!')}
+      ${signature()}
     `),
   };
 }
@@ -145,6 +151,7 @@ export function upgradeEmail(userName: string, newPlan: string): { subject: stri
       ${features}
       ${button('Explorar novos recursos', SITE_URL)}
       ${mutedText('Aproveite tudo o que o PreciFácil tem a oferecer!')}
+      ${signature()}
     `),
   };
 }
@@ -161,6 +168,7 @@ export function cancellationEmail(userName: string, accessUntil: string): { subj
       ${paragraph('Caso mude de ideia, você pode reativar sua assinatura a qualquer momento:')}
       ${button('Reativar assinatura', `${SITE_URL}/app`)}
       ${mutedText('Sentiremos sua falta! Estaremos aqui quando precisar.')}
+      ${signature()}
     `),
   };
 }
@@ -180,20 +188,23 @@ export function trialExpiringEmail(userName: string): { subject: string; html: s
       </ul>
       ${button('Escolher meu plano', `${SITE_URL}/app`)}
       ${mutedText('Não perca o acesso aos seus dados e projetos!')}
+      ${signature()}
     `),
   };
 }
 
 // ========== EMAIL 6 — RECUPERAÇÃO DE SENHA ==========
-export function passwordResetEmail(resetLink: string): { subject: string; html: string } {
+export function passwordResetEmail(userName: string, resetLink: string): { subject: string; html: string } {
+  const firstName = userName?.split(' ')[0] || 'Usuário';
   return {
     subject: 'Redefinição de senha — PreciFácil',
     html: layout(`
-      ${paragraph('Olá!')}
+      ${paragraph(`Olá, ${firstName}!`)}
       ${paragraph('Recebemos uma solicitação para redefinir a senha da sua conta no PreciFácil.')}
       ${paragraph('Clique no botão abaixo para criar uma nova senha:')}
       ${button('Redefinir minha senha', resetLink)}
       ${mutedText('Este link expira em 1 hora. Se você não solicitou a redefinição de senha, ignore este email — sua conta permanece segura.')}
+      ${signature()}
     `),
   };
 }
