@@ -418,9 +418,17 @@ export default function Propostas() {
                     <Label className="text-xs">WhatsApp</Label>
                     <Input
                       value={freelancerWhatsapp}
-                      onChange={(e) => setFreelancerWhatsapp(e.target.value)}
-                      placeholder="(11) 99999-9999"
-                      maxLength={15}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+                        let masked = '';
+                        if (digits.length > 0) masked += '(' + digits.slice(0, 2);
+                        if (digits.length >= 2) masked += ')';
+                        if (digits.length > 2) masked += digits.slice(2, 7);
+                        if (digits.length > 7) masked += '-' + digits.slice(7, 11);
+                        setFreelancerWhatsapp(masked);
+                      }}
+                      placeholder="(34)99999-9999"
+                      maxLength={14}
                     />
                   </div>
                 </div>
@@ -446,8 +454,10 @@ export default function Propostas() {
                   Está incluído
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger type="button">
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      <TooltipTrigger asChild>
+                        <button type="button" className="inline-flex">
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </button>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
                         Liste cada item incluído em uma linha separada. Exemplo: "Design de 5 páginas", "2 rodadas de revisão".
