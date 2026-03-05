@@ -1,53 +1,67 @@
 import * as React from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HelpCircle } from "lucide-react";
+import { useGlobalTooltip } from "@/contexts/TooltipContext";
 
 interface TouchTooltipProps {
   content: string;
   iconSize?: string;
 }
 
+let tooltipCounter = 0;
+
 export function TouchTooltip({ content, iconSize = "h-4 w-4" }: TouchTooltipProps) {
-  const [open, setOpen] = React.useState(false);
-  const [isTouch, setIsTouch] = React.useState(false);
+  const idRef = React.useRef(`tt-${++tooltipCounter}`);
+  const { activeTooltipId, setActiveTooltipId, isTouch } = useGlobalTooltip();
+  const isOpen = activeTooltipId === idRef.current;
 
-  React.useEffect(() => {
-    setIsTouch(window.matchMedia('(hover: none)').matches);
-  }, []);
+  const handleToggle = (e: React.PointerEvent | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveTooltipId(isOpen ? null : idRef.current);
+  };
 
-  if (isTouch) {
-    return (
-      <button
-        type="button"
-        className="inline-flex relative"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setOpen((prev) => !prev);
-        }}
-      >
-        <HelpCircle className={`${iconSize} text-muted-foreground`} />
-        {open && (
-          <div className="absolute left-0 top-full mt-1 z-[9999] max-w-xs rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md">
-            {content}
-          </div>
-        )}
-      </button>
-    );
-  }
+  // Desktop: hover open/close
+  const handleMouseEnter = () => {
+    if (!isTouch) setActiveTooltipId(idRef.current);
+  };
+  const handleMouseLeave = () => {
+    if (!isTouch) setActiveTooltipId(null);
+  };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button type="button" className="inline-flex">
-            <HelpCircle className={`${iconSize} text-muted-foreground`} />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
+    <span
+      className="inline-flex relative"
+      onPointerDown={(e) => {
+        if (isTouch) {
+          e.stopPropagation(); // prevent outside-click handler from immediately closing
+          handleToggle(e);
+        }
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button type="button" className="inline-flex cursor-help" tabIndex={-1}>
+        <HelpCircle className={`${iconSize} text-muted-foreground`} />
+      </button>
+      {isOpen && (
+        <div
+          className="absolute left-0 top-full mt-1 z-[9999] rounded-lg border bg-popover text-popover-foreground shadow-tooltip"
+          style={{
+            minWidth: 120,
+            maxWidth: 280,
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            fontSize: 13,
+            lineHeight: 1.5,
+            padding: "10px 14px",
+            textAlign: "left",
+            borderRadius: 8,
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           {content}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </div>
+      )}
+    </span>
   );
 }
