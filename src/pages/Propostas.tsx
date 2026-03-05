@@ -368,12 +368,12 @@ export default function Propostas() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-start md:items-center justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+        <div className="min-w-0 w-min">
+          <h1 className="text-2xl font-bold flex items-center gap-2 whitespace-nowrap">
             <FileText className="h-6 w-6 text-primary flex-shrink-0" />
             Propostas
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base max-w-fit">Gerencie suas propostas enviadas a clientes</p>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">Gerencie suas propostas enviadas a clientes</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
