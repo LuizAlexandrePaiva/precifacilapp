@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
   Calculator,
   FileText,
