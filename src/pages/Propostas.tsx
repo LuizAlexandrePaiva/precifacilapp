@@ -373,7 +373,7 @@ export default function Propostas() {
             <FileText className="h-6 w-6 text-primary flex-shrink-0" />
             Propostas
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">Gerencie suas propostas enviadas a clientes</p>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base max-w-fit">Gerencie suas propostas enviadas a clientes</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
