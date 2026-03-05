@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { HelpCircle } from "lucide-react";
 
 interface InfoModalProps {
