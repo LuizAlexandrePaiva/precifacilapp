@@ -183,14 +183,7 @@ export default function Historico() {
   );
 
   const helpIcon = (text: string) => (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-        </TooltipTrigger>
-        <TooltipContent className="max-w-xs">{text}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TouchTooltip content={text} iconSize="h-3.5 w-3.5" />
   );
 
   return (
@@ -313,10 +306,12 @@ export default function Historico() {
               Horas reais gastas
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger type="button">
-                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  <TooltipTrigger asChild>
+                    <button type="button" className="inline-flex">
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    </button>
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
+                  <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
                     Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
                   </TooltipContent>
                 </Tooltip>
