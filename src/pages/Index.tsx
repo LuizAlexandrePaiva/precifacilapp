@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Calculator, FileText, Send, Check, ChevronDown, DollarSign, AlertTriangle, HelpCircle, Quote } from 'lucide-react';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Quote } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
