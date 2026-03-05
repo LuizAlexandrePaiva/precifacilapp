@@ -10,6 +10,30 @@ interface InfoModalProps {
 
 export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalProps) {
   const [open, setOpen] = React.useState(false);
+  const [isClosing, setIsClosing] = React.useState(false);
+  const closeTimerRef = React.useRef<number | null>(null);
+
+  const closeModal = React.useCallback(() => {
+    setIsClosing(true);
+
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpen(false);
+      setIsClosing(false);
+      closeTimerRef.current = null;
+    }, 100);
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -20,90 +44,102 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
+          setIsClosing(false);
           setOpen(true);
         }}
       >
         <HelpCircle className={`${iconSize} text-muted-foreground`} />
       </button>
 
-      {open && createPortal(
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            zIndex: 9999,
-            background: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onClick={() => setOpen(false)}
-        >
-          {/* Modal */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10000,
-              width: "90%",
-              maxWidth: 360,
-              padding: 24,
-              borderRadius: 12,
-              background: "#ffffff",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3
+      {open &&
+        createPortal(
+          <>
+            <div
               style={{
-                fontSize: 16,
-                fontWeight: 700,
-                color: "#0f172a",
-                marginBottom: 12,
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                zIndex: 9999,
+                background: "rgba(0, 0, 0, 0.5)",
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
+                pointerEvents: isClosing ? "none" : "auto",
               }}
-            >
-              {title}
-            </h3>
-            <p
-              style={{
-                fontSize: 14,
-                lineHeight: 1.6,
-                color: "#4a5568",
-                marginBottom: 20,
-              }}
-            >
-              {content}
-            </p>
-            <button
-              type="button"
-              onClick={(e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setOpen(false);
+                closeModal();
               }}
+            />
+
+            <div
               style={{
-                width: "100%",
-                padding: "10px 0",
-                background: "#3182ce",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 10000,
+                width: "90%",
+                maxWidth: 360,
+                padding: 24,
+                borderRadius: 12,
+                background: "#ffffff",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
               }}
             >
-              Entendi
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
+              <h3
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                  marginBottom: 12,
+                }}
+              >
+                {title}
+              </h3>
+              <p
+                style={{
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  color: "#4a5568",
+                  marginBottom: 20,
+                }}
+              >
+                {content}
+              </p>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  e.nativeEvent.stopImmediatePropagation();
+                  closeModal();
+                }}
+                style={{
+                  width: "100%",
+                  padding: "10px 0",
+                  background: "#3182ce",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Entendi
+              </button>
+            </div>
+          </>,
+          document.body,
+        )}
     </>
   );
 }
