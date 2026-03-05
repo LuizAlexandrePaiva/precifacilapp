@@ -80,7 +80,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Proposta Comercial', margin, y);
+  doc.text('Proposta Comercial', margin, y); // already ASCII-safe
   y += 12;
 
   const createdDate = new Date(proposal.created_at);
@@ -90,7 +90,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   const infoItems = [
     { label: 'Cliente', value: proposal.cliente },
     { label: 'Projeto', value: proposal.projeto },
-    { label: 'Data de emissao', value: createdDate.toLocaleDateString('pt-BR') },
+    { label: 'Data de emiss\u00E3o', value: createdDate.toLocaleDateString('pt-BR') },
   ];
 
   doc.setFontSize(10);
@@ -111,7 +111,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...BLUE_PRIMARY);
   doc.setFontSize(10);
-  doc.text(`Valida ate: ${validUntil.toLocaleDateString('pt-BR')}`, margin + 4, y + 2);
+  doc.text(`V\u00E1lida at\u00E9: ${validUntil.toLocaleDateString('pt-BR')}`, margin + 4, y + 2);
   y += 18;
 
   // ─── 3. SCOPE ───
@@ -131,7 +131,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...DARK_TEXT);
-      doc.text('Esta incluido:', margin, y);
+      doc.text('Est\u00E1 inclu\u00EDdo:', margin, y);
       y += 7;
 
       const items = splitLines(proposal.inclusos);
@@ -152,7 +152,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...DARK_TEXT);
-      doc.text('Nao esta incluido:', margin, y);
+      doc.text('N\u00E3o est\u00E1 inclu\u00EDdo:', margin, y);
       y += 7;
 
       const items = splitLines(proposal.nao_inclusos);
@@ -186,14 +186,14 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Opcoes de Investimento', margin, y);
+  doc.text('Op\u00E7\u00F5es de Investimento', margin, y);
   y += 12;
 
   const prazoHoras = proposal.prazo_unidade === 'dias' ? proposal.prazo * 8 : proposal.prazo;
   const packages = [
-    { key: 'basico', name: 'Preco Minimo', mult: pacoteMultiplier.basico, desc: 'Cobre custos operacionais' },
-    { key: 'padrao', name: 'Preco Justo', mult: pacoteMultiplier.padrao, desc: 'Margem saudavel de 40%', recommended: true },
-    { key: 'premium', name: 'Preco Premium', mult: pacoteMultiplier.premium, desc: 'Projetos urgentes ou complexos' },
+    { key: 'basico', name: 'Pre\u00E7o M\u00EDnimo', mult: pacoteMultiplier.basico, desc: 'Entrega padr\u00E3o, conforme escopo definido' },
+    { key: 'padrao', name: 'Pre\u00E7o Justo', mult: pacoteMultiplier.padrao, desc: 'Equil\u00EDbrio ideal entre qualidade e investimento', recommended: true },
+    { key: 'premium', name: 'Pre\u00E7o Premium', mult: pacoteMultiplier.premium, desc: 'Prioridade m\u00E1xima e suporte estendido' },
   ];
 
   // Table header
@@ -209,7 +209,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFont('helvetica', 'bold');
   doc.text('PACOTE', col1X + 4, y + 3);
   doc.text('VALOR', col2X + 4, y + 3);
-  doc.text('OBSERVACAO', col3X + 4, y + 3);
+  doc.text('OBSERVA\u00C7\u00C3O', col3X + 4, y + 3);
   y += rowHeight + 1;
 
   // Table rows
@@ -261,7 +261,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
     // Prazo below value
     doc.setFontSize(8);
     doc.setTextColor(...LIGHT_GRAY);
-    doc.text(`${prazoHoras}h estimadas`, col2X + 4, y + 8);
+    doc.text(`${prazoHoras}h estimadas`, col2X + 4, y + 8); // 'estimadas' is ASCII-safe in Helvetica
 
     y += rowHeight + 3;
   });
@@ -273,7 +273,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Condicoes de Pagamento', margin, y);
+  doc.text('Condi\u00E7\u00F5es de Pagamento', margin, y);
   y += 9;
 
   doc.setFontSize(10);
@@ -310,7 +310,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(8);
   doc.setTextColor(...LIGHT_GRAY);
   doc.setFont('helvetica', 'normal');
-  doc.text('Gerado via PreciFacil · precifacil.app.br', margin, footerY);
+  doc.text('Gerado via PreciFacil \u00B7 precifacil.app.br', margin, footerY);
 
   doc.save(
     `Proposta_${proposal.cliente.replace(/\s+/g, '_')}_${proposal.projeto.replace(/\s+/g, '_')}.pdf`

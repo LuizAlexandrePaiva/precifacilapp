@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
+import InputMask from 'react-input-mask';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
@@ -415,7 +416,15 @@ export default function Propostas() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">WhatsApp</Label>
-                    <Input value={freelancerWhatsapp} onChange={(e) => setFreelancerWhatsapp(e.target.value)} placeholder="(11) 99999-9999" />
+                    <InputMask
+                      mask="(99) 99999-9999"
+                      value={freelancerWhatsapp}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFreelancerWhatsapp(e.target.value)}
+                    >
+                      {((inputProps: any) => (
+                        <Input {...inputProps} placeholder="(11) 99999-9999" />
+                      )) as any}
+                    </InputMask>
                   </div>
                 </div>
               </div>
