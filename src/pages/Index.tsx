@@ -119,7 +119,12 @@ const faqs = [
 
 export default function Index() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) navigate('/app', { replace: true });
+  }, [user, navigate]);
 
   const handleCheckout = async (planKey: 'essencial' | 'pro') => {
     if (!user) {
