@@ -80,7 +80,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Proposta Comercial', margin, y); // already ASCII-safe
+  doc.text('Proposta Comercial', margin, y);
   y += 12;
 
   const createdDate = new Date(proposal.created_at);
@@ -90,7 +90,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   const infoItems = [
     { label: 'Cliente', value: proposal.cliente },
     { label: 'Projeto', value: proposal.projeto },
-    { label: 'Data de emiss\u00E3o', value: createdDate.toLocaleDateString('pt-BR') },
+    { label: 'Data de emiss\xe3o', value: createdDate.toLocaleDateString('pt-BR') },
   ];
 
   doc.setFontSize(10);
@@ -111,7 +111,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...BLUE_PRIMARY);
   doc.setFontSize(10);
-  doc.text(`V\u00E1lida at\u00E9: ${validUntil.toLocaleDateString('pt-BR')}`, margin + 4, y + 2);
+  doc.text(`V\xe1lida at\xe9: ${validUntil.toLocaleDateString('pt-BR')}`, margin + 4, y + 2);
   y += 18;
 
   // ─── 3. SCOPE ───
@@ -131,7 +131,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...DARK_TEXT);
-      doc.text('Est\u00E1 inclu\u00EDdo:', margin, y);
+      doc.text('Est\xe1 inclu\xeddo:', margin, y);
       y += 7;
 
       const items = splitLines(proposal.inclusos);
@@ -151,7 +151,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...DARK_TEXT);
-      doc.text('N\u00E3o est\u00E1 inclu\u00EDdo:', margin, y);
+      doc.text('N\xe3o est\xe1 inclu\xeddo:', margin, y);
       y += 7;
 
       const items = splitLines(proposal.nao_inclusos);
@@ -184,31 +184,31 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Op\u00E7\u00F5es de Investimento', margin, y);
+  doc.text('Op\xe7\xf5es de Investimento', margin, y);
   y += 12;
 
   const prazoHoras = proposal.prazo_unidade === 'dias' ? proposal.prazo * 8 : proposal.prazo;
   const packages = [
-    { key: 'basico', name: 'Pre\u00E7o M\u00EDnimo', mult: pacoteMultiplier.basico, desc: 'Entrega padr\u00E3o, conforme escopo definido' },
-    { key: 'padrao', name: 'Pre\u00E7o Justo', mult: pacoteMultiplier.padrao, desc: 'Equil\u00EDbrio ideal entre qualidade e investimento', recommended: true },
-    { key: 'premium', name: 'Pre\u00E7o Premium', mult: pacoteMultiplier.premium, desc: 'Prioridade m\u00E1xima e suporte estendido' },
+    { key: 'basico', name: 'Pre\xe7o M\xednimo', mult: pacoteMultiplier.basico, desc: 'Entrega padr\xe3o, conforme escopo definido' },
+    { key: 'padrao', name: 'Pre\xe7o Justo', mult: pacoteMultiplier.padrao, desc: 'Equil\xedbrio ideal entre qualidade e investimento', recommended: true },
+    { key: 'premium', name: 'Pre\xe7o Premium', mult: pacoteMultiplier.premium, desc: 'Prioridade m\xe1xima e suporte estendido' },
   ];
 
   // Table header
   const col1X = margin;
   const col2X = margin + 65;
   const col3X = margin + 115;
-  const rowHeight = 14;
+  const rowHeight = 18;
 
   doc.setFillColor(...BLUE_DARK);
-  doc.roundedRect(margin, y - 5, contentWidth, rowHeight, 1.5, 1.5, 'F');
+  doc.roundedRect(margin, y - 5, contentWidth, 14, 1.5, 1.5, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.text('PACOTE', col1X + 4, y + 3);
   doc.text('VALOR', col2X + 4, y + 3);
-  doc.text('OBSERVA\u00C7\u00C3O', col3X + 4, y + 3);
-  y += rowHeight + 1;
+  doc.text('OBSERVA\xc7\xc3O', col3X + 4, y + 3);
+  y += 14 + 1;
 
   // Table rows
   packages.forEach((pkg) => {
@@ -216,16 +216,16 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
 
     if (pkg.recommended) {
       doc.setFillColor(...BLUE_LIGHT_BG);
-      doc.rect(margin, y - 5, contentWidth, rowHeight + 2, 'F');
+      doc.rect(margin, y - 5, contentWidth, rowHeight, 'F');
     } else {
       doc.setFillColor(250, 250, 252);
-      doc.rect(margin, y - 5, contentWidth, rowHeight + 2, 'F');
+      doc.rect(margin, y - 5, contentWidth, rowHeight, 'F');
     }
 
     // Draw light border
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.2);
-    doc.rect(margin, y - 5, contentWidth, rowHeight + 2, 'S');
+    doc.rect(margin, y - 5, contentWidth, rowHeight, 'S');
 
     doc.setFontSize(10);
     doc.setTextColor(...DARK_TEXT);
@@ -235,15 +235,21 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
     // "Recomendado" badge
     if (pkg.recommended) {
       const badgeText = 'Recomendado';
-      const nameWidth = doc.getTextWidth(pkg.name);
-      const badgeX = col1X + 4 + nameWidth + 3;
       doc.setFontSize(7);
+      const nameWidth = doc.getTextWidth(pkg.name);
+      // Reset to 10 to measure name correctly, then back to 7 for badge
+      doc.setFontSize(10);
+      const realNameWidth = doc.getTextWidth(pkg.name);
+      doc.setFontSize(7);
+      const badgeX = col1X + 4 + realNameWidth + 4;
       doc.setFillColor(...BLUE_PRIMARY);
-      const badgeW = doc.getTextWidth(badgeText) + 5;
-      doc.roundedRect(badgeX, y - 2, badgeW, 6, 1.5, 1.5, 'F');
+      const badgeW = doc.getTextWidth(badgeText) + 6;
+      const badgeH = 5.5;
+      const badgeY = y - 1;
+      doc.roundedRect(badgeX, badgeY, badgeW, badgeH, 1.5, 1.5, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
-      doc.text(badgeText, badgeX + 2.5, y + 2.5);
+      doc.text(badgeText, badgeX + 3, badgeY + 4);
       doc.setFontSize(10);
     }
 
@@ -261,9 +267,9 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
     // Prazo below value
     doc.setFontSize(8);
     doc.setTextColor(...LIGHT_GRAY);
-    doc.text(`${prazoHoras}h estimadas`, col2X + 4, y + 8); // 'estimadas' is ASCII-safe in Helvetica
+    doc.text(`${prazoHoras}h estimadas`, col2X + 4, y + 9);
 
-    y += rowHeight + 3;
+    y += rowHeight + 2;
   });
 
   y += 10;
@@ -273,13 +279,13 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...DARK_TEXT);
-  doc.text('Condi\u00E7\u00F5es de Pagamento', margin, y);
+  doc.text('Condi\xe7\xf5es de Pagamento', margin, y);
   y += 9;
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...DARK_TEXT);
-  const paymentText = proposal.forma_pagamento || '50% na assinatura · 50% na entrega final';
+  const paymentText = proposal.forma_pagamento || '50% na assinatura \xb7 50% na entrega final';
   const paymentLines = doc.splitTextToSize(paymentText, contentWidth);
   doc.text(paymentLines, margin, y);
   y += paymentLines.length * 5 + 12;
@@ -310,7 +316,7 @@ export function generateProposalPdf(proposal: ProposalPdfData) {
   doc.setFontSize(8);
   doc.setTextColor(...LIGHT_GRAY);
   doc.setFont('helvetica', 'normal');
-  doc.text('Gerado via PreciFacil \u00B7 precifacil.app.br', margin, footerY);
+  doc.text('Gerado via PreciFacil \xb7 precifacil.app.br', margin, footerY);
 
   doc.save(
     `Proposta_${proposal.cliente.replace(/\s+/g, '_')}_${proposal.projeto.replace(/\s+/g, '_')}.pdf`
