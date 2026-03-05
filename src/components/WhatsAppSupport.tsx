@@ -1,5 +1,4 @@
 import { MessageCircle } from "lucide-react";
-import { TouchTooltip } from "@/components/TouchTooltip";
 
 // ============================================================
 // 📱 NÚMERO DO WHATSAPP DE SUPORTE — ALTERE AQUI
@@ -13,7 +12,6 @@ export function WhatsAppSupport() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
-      <TouchTooltip content="Suporte via WhatsApp" iconSize="h-0 w-0" />
       <a
         href={url}
         target="_blank"

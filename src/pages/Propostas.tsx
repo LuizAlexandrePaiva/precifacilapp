@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { TouchTooltip } from '@/components/TouchTooltip';
+import { InfoModal } from '@/components/InfoModal';
 import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, Trash2, Lock, Download } from 'lucide-react';
@@ -146,7 +146,6 @@ export default function Propostas() {
     if (!user) return;
     const valorPacote = calcValorPacote();
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
-
 
     const { error } = await supabase.from('proposals').insert({
       user_id: user.id,
@@ -305,7 +304,7 @@ export default function Propostas() {
             <Button size="sm" variant="outline" className="h-8 text-xs flex-1 min-w-0 opacity-50 cursor-not-allowed" disabled>
               <Lock className="h-3 w-3 mr-1" />PDF
             </Button>
-            <TouchTooltip content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
+            <InfoModal title="Exportar PDF" content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
           </span>
         )}
         <AlertDialog>
@@ -432,7 +431,7 @@ export default function Propostas() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Está incluído
-                  <TouchTooltip content="Tudo que será entregue ao cliente conforme combinado." />
+                  <InfoModal title="Está incluído" content="Tudo que será entregue ao cliente conforme combinado." />
                 </Label>
                 <Textarea value={inclusos} onChange={(e) => setInclusos(e.target.value)} placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"} rows={3} />
               </div>
@@ -441,7 +440,7 @@ export default function Propostas() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Não está incluído
-                  <TouchTooltip content="Tudo que está fora do escopo para evitar mal-entendidos." />
+                  <InfoModal title="Não está incluído" content="Tudo que está fora do escopo para evitar mal-entendidos." />
                 </Label>
                 <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"} rows={2} />
               </div>
@@ -462,7 +461,7 @@ export default function Propostas() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-1 h-5">
                     <Label>Nível da proposta</Label>
-                    <TouchTooltip content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
+                    <InfoModal title="Nível da proposta" content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
                   </div>
                   <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                     <SelectTrigger className={pacote === 'selecione' ? 'text-muted-foreground' : ''}>
@@ -547,7 +546,7 @@ export default function Propostas() {
                   <TableHead>
                     <div className="flex items-center gap-1 justify-end">
                       Ações
-                      <TouchTooltip content="Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas." iconSize="h-3.5 w-3.5" />
+                      <InfoModal title="Ações" content="Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas." iconSize="h-3.5 w-3.5" />
                     </div>
                   </TableHead>
                 </TableRow>

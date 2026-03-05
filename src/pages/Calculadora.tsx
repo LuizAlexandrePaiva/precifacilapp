@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
+import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
-import { Calculator, ArrowRight, HelpCircle, Lock } from 'lucide-react';
+import { Calculator, ArrowRight, Lock } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -136,14 +136,10 @@ export default function Calculadora() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Semanas sem trabalhar por ano
-                  <Popover>
-                    <PopoverTrigger type="button">
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    </PopoverTrigger>
-                    <PopoverContent className="max-w-xs text-sm">
-                      Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano.
-                    </PopoverContent>
-                  </Popover>
+                  <InfoModal
+                    title="Semanas sem trabalhar"
+                    content="Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano."
+                  />
                 </Label>
                 <Input
                   inputMode="decimal"
@@ -188,7 +184,7 @@ export default function Calculadora() {
                 { icon: '💰', label: 'Meta líquida', value: `R$ ${formatBR(metaLiquida)}` },
                 { icon: '🧾', label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
                 { icon: '🏠', label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
-                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
+                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
                 { icon: '📊', label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-sm">
@@ -196,12 +192,11 @@ export default function Calculadora() {
                     <span>{item.icon}</span>
                     <span className="text-muted-foreground">{item.label}</span>
                     {item.tooltip && (
-                      <Popover>
-                        <PopoverTrigger type="button">
-                          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
-                        </PopoverTrigger>
-                        <PopoverContent className="max-w-xs text-sm">{item.tooltip}</PopoverContent>
-                      </Popover>
+                      <InfoModal
+                        title={item.tooltipTitle!}
+                        content={item.tooltip}
+                        iconSize="h-3.5 w-3.5"
+                      />
                     )}
                   </span>
                   <span className="font-semibold">{item.value}</span>
