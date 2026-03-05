@@ -416,15 +416,12 @@ export default function Propostas() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">WhatsApp</Label>
-                    <InputMask
-                      mask="(99) 99999-9999"
+                    <Input
                       value={freelancerWhatsapp}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFreelancerWhatsapp(e.target.value)}
-                    >
-                      {((inputProps: any) => (
-                        <Input {...inputProps} placeholder="(11) 99999-9999" />
-                      )) as any}
-                    </InputMask>
+                      onChange={(e) => setFreelancerWhatsapp(e.target.value)}
+                      placeholder="(11) 99999-9999"
+                      maxLength={15}
+                    />
                   </div>
                 </div>
               </div>
