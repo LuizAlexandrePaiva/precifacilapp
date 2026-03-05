@@ -126,9 +126,12 @@ export default function Historico() {
                   {p.horas_reais !== null ? (
                     <p className="font-semibold text-foreground leading-7">{p.horas_reais}h</p>
                   ) : (
-                    <Button size="sm" variant="outline" className="h-7 text-xs mt-0.5 self-start" onClick={() => { setEditProject(p); setHorasReais(''); }}>
+                    <button
+                      className="text-xs font-semibold text-[#3182ce] border border-[#3182ce] bg-white rounded px-2 py-0 h-auto leading-7 self-start hover:bg-blue-50 transition-colors"
+                      onClick={() => { setEditProject(p); setHorasReais(''); }}
+                    >
                       Informar horas
-                    </Button>
+                    </button>
                   )}
                 </div>
                 <div>
