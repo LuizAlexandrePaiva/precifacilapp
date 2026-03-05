@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { History, HelpCircle, Trash2 } from 'lucide-react';
+import { TouchTooltip } from '@/components/TouchTooltip';
+import { History, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -183,14 +183,7 @@ export default function Historico() {
   );
 
   const helpIcon = (text: string) => (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-        </TooltipTrigger>
-        <TooltipContent className="max-w-xs">{text}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TouchTooltip content={text} iconSize="h-3.5 w-3.5" />
   );
 
   return (
@@ -311,16 +304,7 @@ export default function Historico() {
           <div className="space-y-2">
             <Label className="flex items-center gap-1">
               Horas reais gastas
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger type="button">
-                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <TouchTooltip content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
             </Label>
             <Input
               inputMode="decimal"

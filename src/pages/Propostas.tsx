@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TouchTooltip } from '@/components/TouchTooltip';
 import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
@@ -438,18 +439,7 @@ export default function Propostas() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Está incluído
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button type="button" className="inline-flex">
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                        Tudo que será entregue ao cliente conforme combinado.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <TouchTooltip content="Tudo que será entregue ao cliente conforme combinado." />
                 </Label>
                 <Textarea value={inclusos} onChange={(e) => setInclusos(e.target.value)} placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"} rows={3} />
               </div>
@@ -458,18 +448,7 @@ export default function Propostas() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Não está incluído
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button type="button" className="inline-flex">
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                        Tudo que está fora do escopo para evitar mal-entendidos.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <TouchTooltip content="Tudo que está fora do escopo para evitar mal-entendidos." />
                 </Label>
                 <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"} rows={2} />
               </div>
@@ -490,18 +469,7 @@ export default function Propostas() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-1 h-5">
                     <Label>Nível da proposta</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button type="button" className="inline-flex">
-                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                          O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade.
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <TouchTooltip content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
                   </div>
                   <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                     <SelectTrigger className={pacote === 'selecione' ? 'text-muted-foreground' : ''}>
@@ -586,18 +554,7 @@ export default function Propostas() {
                   <TableHead>
                     <div className="flex items-center gap-1 justify-end">
                       Ações
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button type="button" className="inline-flex">
-                              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" align="start" className="max-w-xs z-[9999]">
-                            Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas.
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <TouchTooltip content="Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas." iconSize="h-3.5 w-3.5" />
                     </div>
                   </TableHead>
                 </TableRow>
