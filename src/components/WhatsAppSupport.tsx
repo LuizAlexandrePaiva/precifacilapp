@@ -18,13 +18,14 @@ export function WhatsAppSupport() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            size="icon"
-            className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-[#25D366] hover:bg-[#1da851] text-white shadow-lg shadow-black/20"
-            onClick={() => window.open(url, "_blank")}
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-[#25D366] hover:bg-[#1da851] text-white shadow-lg shadow-black/20 flex items-center justify-center"
           >
             <MessageCircle className="h-6 w-6" />
-          </Button>
+          </a>
         </TooltipTrigger>
         <TooltipContent side="left">Suporte via WhatsApp</TooltipContent>
       </Tooltip>
