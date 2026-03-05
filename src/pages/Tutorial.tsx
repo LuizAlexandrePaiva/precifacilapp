@@ -100,7 +100,7 @@ export default function Tutorial() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 overflow-hidden">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />
@@ -127,7 +127,7 @@ export default function Tutorial() {
         </TabsList>
 
         {/* Mobile: horizontal scroll pills */}
-        <div className="sm:hidden -mx-4 px-4 overflow-x-auto scrollbar-hide">
+        <div className="sm:hidden -mx-4 px-4 overflow-x-auto overflow-y-hidden scrollbar-hide" style={{ maxWidth: '100vw' }}>
           <div className="flex gap-2 pb-2 w-max">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.value;
