@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CurrencyInput } from '@/components/CurrencyInput';
-import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock } from 'lucide-react';
+import { FileText, Plus, Check, X, Clock, HelpCircle, Trash2, Lock, Download } from 'lucide-react';
+import { generateProposalPdf } from '@/lib/generatePdf';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
@@ -45,7 +46,7 @@ const parseBR = (v: string) => {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
-  const { canAccessProposals } = useSubscription();
+  const { canAccessProposals, canExportPdf } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -375,6 +376,24 @@ export default function Propostas() {
                               <X className="h-3 w-3 mr-1" />Recusar
                             </Button>
                           </>
+                        )}
+                        {canExportPdf ? (
+                          <Button size="sm" variant="outline" className="h-7 text-xs w-24" onClick={() => generateProposalPdf(p)}>
+                            <Download className="h-3 w-3 mr-1" />PDF
+                          </Button>
+                        ) : (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button size="sm" variant="outline" className="h-7 text-xs w-24 opacity-50 cursor-not-allowed" disabled>
+                                  <Lock className="h-3 w-3 mr-1" />PDF
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                Disponível no plano Pro. Faça upgrade para exportar propostas em PDF.
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
