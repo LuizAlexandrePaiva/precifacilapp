@@ -446,7 +446,7 @@ export default function Propostas() {
                         </button>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        Liste cada item incluído em uma linha separada. Exemplo: "Design de 5 páginas", "2 rodadas de revisão".
+                        Tudo que será entregue ao cliente conforme combinado.
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -456,7 +456,21 @@ export default function Propostas() {
 
               {/* Scope - Não inclusos */}
               <div className="space-y-2">
-                <Label>Não está incluído</Label>
+                <Label className="flex items-center gap-1">
+                  Não está incluído
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" className="inline-flex">
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        Tudo que está fora do escopo para evitar mal-entendidos.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Label>
                 <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"} rows={2} />
               </div>
 
