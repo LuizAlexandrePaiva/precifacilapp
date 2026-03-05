@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Calculator,
   FileText,
@@ -53,18 +54,19 @@ function StepCard({ stepNumber, icon: Icon, title, description }: StepCardProps)
 interface SectionProps {
   steps: StepCardProps[];
   actionLabel: string;
-  actionPath: string;
+  actionPath?: string;
+  actionOnClick?: () => void;
   navigate: (path: string) => void;
 }
 
-function Section({ steps, actionLabel, actionPath, navigate }: SectionProps) {
+function Section({ steps, actionLabel, actionPath, actionOnClick, navigate }: SectionProps) {
   return (
     <div className="space-y-3">
       {steps.map((step) => (
         <StepCard key={step.stepNumber} {...step} />
       ))}
       <Button
-        onClick={() => navigate(actionPath)}
+        onClick={() => actionOnClick ? actionOnClick() : actionPath && navigate(actionPath)}
         className="w-full sm:w-auto mt-2"
         variant="outline"
       >
@@ -80,7 +82,6 @@ const tabs = [
   { value: 'propostas', label: 'Propostas', icon: FileText },
   { value: 'historico', label: 'Histórico', icon: History },
   { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { value: 'salvas', label: 'Salvas', icon: RefreshCw },
   { value: 'conta', label: 'Conta', icon: Settings },
 ];
 
@@ -88,12 +89,22 @@ export default function Tutorial() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('calculadora');
 
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch {
+      // silently fail
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />
-          Como usar o PreciFácil?
+          Como Usar o PreciFácil?
         </h1>
         <p className="text-muted-foreground mt-1">
           Aprenda cada funcionalidade em poucos passos
@@ -270,60 +281,29 @@ export default function Tutorial() {
           />
         </TabsContent>
 
-        {/* Propostas Salvas */}
-        <TabsContent value="salvas">
+        {/* Conta */}
+        <TabsContent value="conta">
           <Section
             navigate={navigate}
-            actionLabel="Ir para Propostas"
-            actionPath="/app/propostas"
+            actionLabel="Gerenciar assinatura"
+            actionOnClick={handleManageSubscription}
             steps={[
               {
                 stepNumber: 1,
-                icon: FileText,
-                title: 'Acesse propostas anteriores',
+                icon: CreditCard,
+                title: 'Gerencie seu plano pelo portal Stripe',
                 description:
-                  'Todas as propostas ficam salvas na aba Propostas. Filtre por status para encontrar rapidamente.',
+                  'Faça upgrade, downgrade ou altere sua forma de pagamento diretamente pelo portal seguro da Stripe. Clique em "Gerenciar assinatura" abaixo.',
               },
               {
                 stepNumber: 2,
-                icon: RefreshCw,
-                title: 'Reutilize uma proposta',
+                icon: DollarSign,
+                title: 'Cancele quando quiser pela Stripe',
                 description:
-                  'Use uma proposta anterior como referência para criar novas com valores e escopos similares.',
-              },
-              {
-                stepNumber: 3,
-                icon: Users,
-                title: 'Acompanhe o status de cada cliente',
-                description:
-                  'Saiba quais propostas estão pendentes, aprovadas ou recusadas sem perder o controle.',
+                  'Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal da Stripe. Seu acesso continua até o fim do período pago.',
               },
             ]}
           />
-        </TabsContent>
-
-        {/* Conta */}
-        <TabsContent value="conta">
-          <div className="space-y-3">
-            <StepCard
-              stepNumber={1}
-              icon={Settings}
-              title="Atualize seus dados"
-              description="Edite seu nome e informações de contato que aparecem nas propostas geradas."
-            />
-            <StepCard
-              stepNumber={2}
-              icon={CreditCard}
-              title="Gerencie seu plano"
-              description="Faça upgrade para desbloquear mais cálculos e propostas, ou altere seu plano atual."
-            />
-            <StepCard
-              stepNumber={3}
-              icon={DollarSign}
-              title="Cancele quando quiser"
-              description="Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal de pagamento."
-            />
-          </div>
         </TabsContent>
       </Tabs>
     </div>
