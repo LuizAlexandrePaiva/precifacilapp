@@ -102,3 +102,6 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4" }: InfoModalPro
         </>,
         document.body
       )}
+    </>
+  );
+}
