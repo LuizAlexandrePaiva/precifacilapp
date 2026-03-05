@@ -218,7 +218,10 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Plano atual:</span>
-                <Badge variant={plan === 'free' || plan === 'trial' ? 'outline' : 'default'}>
+                <Badge 
+                  variant={plan === 'free' || plan === 'trial' ? 'outline' : 'default'}
+                  className={plan === 'free' || plan === 'trial' ? 'border-primary/40 bg-primary/10 text-primary font-semibold' : ''}
+                >
                   {planLabels[plan]}
                 </Badge>
               </div>
@@ -230,7 +233,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex gap-2">
-            {(plan === 'free' || plan === 'trial') && (
+            {plan === 'free' && (
               <Button size="sm" onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
             )}
             {plan === 'essencial' && (
