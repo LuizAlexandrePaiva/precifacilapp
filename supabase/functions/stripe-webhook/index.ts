@@ -91,6 +91,35 @@ Deno.serve(async (req) => {
 
   logStep('Event received', { type: event.type, id: event.id });
 
+  const supabaseAdmin = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    { auth: { persistSession: false } }
+  );
+
+  // Helper to get user name from profiles table
+  async function getUserName(email: string): Promise<string> {
+    try {
+      const { data: usersData } = await supabaseAdmin.auth.admin.listUsers();
+      const user = usersData?.users?.find(u => u.email === email);
+      if (user) {
+        // Check profiles table first
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        if (profile?.full_name) return profile.full_name;
+        // Fallback to user_metadata
+        if (user.user_metadata?.full_name) return user.user_metadata.full_name;
+        if (user.user_metadata?.name) return user.user_metadata.name;
+      }
+    } catch (err) {
+      logStep('Error fetching user name', { error: err.message });
+    }
+    return 'Usuário';
+  }
+
   try {
     switch (event.type) {
       // ── PAYMENT CONFIRMED ──
