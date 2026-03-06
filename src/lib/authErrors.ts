@@ -1,6 +1,6 @@
 const ERROR_MAP: Record<string, string> = {
-  'Invalid login credentials': 'Senha incorreta. Tente novamente ou Recuperar senha.',
-  'Email not confirmed': 'E-mail ainda não confirmado. Verifique sua caixa de entrada.',
+  'Invalid login credentials': 'E-mail ou senha incorretos.',
+  'Email not confirmed': 'Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.',
   'User already registered': 'Este e-mail já possui uma conta. Tente Fazer login ou recupere sua senha.',
   'Signup requires a valid password': 'Informe uma senha válida.',
   'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres.',
