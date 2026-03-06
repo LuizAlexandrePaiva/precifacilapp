@@ -24,7 +24,7 @@ const planLabels: Record<string, string> = {
 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export default function Dashboard() {
-  const { plan, subscriptionEnd, refreshSubscription, canViewChart, trialDaysLeft, isTrialExpired } = useSubscription();
+  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canAccessDashboard, trialDaysLeft, isTrialExpired } = useSubscription();
   const { user } = useAuth();
   const { metaMensal, metaLoaded, carregarMeta } = useMeta();
   const [searchParams] = useSearchParams();
@@ -122,6 +122,28 @@ export default function Dashboard() {
       toast.error('Erro ao iniciar checkout');
     }
   };
+
+  if (!canAccessDashboard) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <LayoutDashboard className="h-6 w-6 text-primary" />
+            Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">Visão geral do seu negócio</p>
+        </div>
+        <Card className="border-amber-500/50">
+          <CardContent className="py-12 text-center space-y-4">
+            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
+            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
+            <p className="text-muted-foreground">O Dashboard está disponível a partir do plano Essencial (R$ 29/mês).</p>
+            <Button onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
