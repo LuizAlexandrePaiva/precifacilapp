@@ -251,7 +251,13 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {metaLoaded && metaMensal === null ? (
+          {!metaLoaded ? (
+            <div className="space-y-3">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-64" />
+              <Skeleton className="h-2 w-full" />
+            </div>
+          ) : metaMensal === null ? (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 Você ainda não definiu sua meta. Use a Calculadora para calcular seu preço mínimo e sua meta será criada automaticamente.

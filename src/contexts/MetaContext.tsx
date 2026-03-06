@@ -50,6 +50,17 @@ export function MetaProvider({ children }: { children: ReactNode }) {
     setMetaLiquida(newMetaLiquida);
   }, []);
 
+  // Auto-load meta when user is authenticated
+  useEffect(() => {
+    if (user?.id) {
+      carregarMeta(user.id);
+    } else {
+      setMetaMensal(null);
+      setMetaLiquida(null);
+      setMetaLoaded(false);
+    }
+  }, [user?.id, carregarMeta]);
+
   return (
     <MetaContext.Provider value={{ metaMensal, metaLiquida, metaLoaded, carregarMeta, atualizarMeta }}>
       {children}
