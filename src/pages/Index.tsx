@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Quote } from 'lucide-react';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Gift } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,7 +20,7 @@ const plans = [
     name: 'Grátis',
     price: 'R$ 0',
     period: '/mês',
-    features: ['1 cálculo por mês', 'Resultado básico', 'Sem propostas'],
+    features: ['1 cálculo por mês', 'Veja seu preço mínimo por hora', 'Sem propostas'],
     cta: 'Começar Grátis',
     highlighted: false,
     planKey: 'free' as const,
@@ -29,7 +29,7 @@ const plans = [
     name: 'Essencial',
     price: 'R$ 29',
     period: '/mês',
-    features: ['Cálculos ilimitados', 'Gerador de propostas', 'Histórico de projetos', 'Dashboard básico'],
+    features: ['Cálculos ilimitados', 'Gerador de propostas', 'Histórico de projetos', 'Acompanhe suas propostas'],
     cta: 'Assinar Essencial',
     highlighted: true,
     planKey: 'essencial' as const,
@@ -76,26 +76,26 @@ const steps = [
   {
     icon: Send,
     title: 'Gere uma proposta profissional',
-    desc: 'Monte e envie uma proposta com 3 opções de pacote para o cliente em menos de 1 minuto.',
+    desc: 'Monte uma proposta com 3 opções de preço, baixe em PDF profissional e compartilhe com o cliente pelo canal que preferir.',
     step: '03',
   },
 ];
 
-const testimonials = [
+const proofNumbers = [
   {
-    name: 'Ana Lima',
-    role: 'Designer Freelancer',
-    quote: 'Descobri que estava cobrando R$35/hora quando precisava cobrar R$67. Em 1 mês reajustei todos os clientes.',
+    icon: Clock,
+    number: '2 min',
+    text: 'para descobrir seu preço mínimo real',
   },
   {
-    name: 'Carlos Mendes',
-    role: 'Desenvolvedor MEI',
-    quote: 'Nunca soube explicar meu preço pro cliente. Agora mando a proposta com o cálculo e eles entendem na hora.',
+    icon: Layers,
+    number: '3 níveis',
+    text: 'de proposta: Mínimo, Justo e Premium',
   },
   {
-    name: 'Juliana Costa',
-    role: 'Consultora de Marketing',
-    quote: 'Parei de aceitar projeto abaixo do mínimo. Trabalho menos e ganho mais.',
+    icon: Gift,
+    number: '14 dias',
+    text: 'grátis para testar sem cartão',
   },
 ];
 
@@ -185,18 +185,18 @@ export default function Index() {
         }} />
         <div className="container text-center max-w-3xl mx-auto relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
-            Freelancer, MEI ou autônomo:{' '}
+            Você sabe quanto cobrar —{' '}
             <span className="bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
-              descubra se você está no prejuízo.
+              ou acha que sabe?
             </span>
           </h1>
           <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            O PreciFácil calcula o preço real que você precisa cobrar — considerando impostos, férias e horas perdidas que você nem lembra de contar. Em 2 minutos você descobre quanto cobrar para parar de perder dinheiro.
+            O PreciFácil calcula o preço mínimo que você precisa cobrar para não trabalhar no prejuízo. Leva 2 minutos. É grátis para começar.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço grátis agora</Link>
+            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora — é grátis</Link>
           </Button>
-          <p className="text-sm text-blue-200/60 mt-4">14 dias grátis, sem cartão de crédito. Resultado em 2 minutos.</p>
+          <p className="text-sm text-blue-200/60 mt-4">14 dias grátis · Sem cartão de crédito · Cancele quando quiser</p>
         </div>
       </section>
 
@@ -219,7 +219,7 @@ export default function Index() {
             ))}
           </div>
           <p className="text-center text-lg md:text-xl font-semibold text-primary max-w-2xl mx-auto">
-            Se você respondeu sim para qualquer um desses, está cobrando errado — e perdendo dinheiro todo mês sem saber.
+            Se você se identificou com qualquer um desses, o PreciFácil foi feito pra você.
           </p>
         </div>
       </section>
@@ -248,20 +248,26 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 4. Social Proof */}
-      <section className="py-20 bg-muted/50">
+      {/* 4. Social Proof — Numbers */}
+      <section className="py-20" style={{
+        background: 'linear-gradient(160deg, hsl(213 74% 97%) 0%, hsl(213 30% 93%) 100%)',
+      }}>
         <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">O que nossos usuários dizem</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-foreground">
+            Simples, rápido e feito para a realidade brasileira
+          </h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">
+            Sem planilha, sem contador, sem complicação.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <Card key={i} className="border-0 shadow-md bg-card h-full">
-                <CardContent className="pt-8 pb-6 px-6 h-full flex flex-col">
-                  <Quote className="h-8 w-8 text-primary/30 mb-4 flex-shrink-0" />
-                  <p className="text-foreground leading-relaxed italic flex-1">"{t.quote}"</p>
-                  <div className="border-t border-border pt-4 mt-6">
-                    <p className="font-semibold text-foreground text-sm">{t.name}</p>
-                    <p className="text-muted-foreground text-xs">{t.role}</p>
+            {proofNumbers.map((item, i) => (
+              <Card key={i} className="border-0 shadow-md bg-card text-center">
+                <CardContent className="pt-10 pb-8 px-6">
+                  <div className="rounded-full bg-primary/10 w-14 h-14 flex items-center justify-center mx-auto mb-5">
+                    <item.icon className="h-7 w-7 text-primary" />
                   </div>
+                  <p className="text-4xl md:text-5xl font-extrabold text-primary mb-3">{item.number}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.text}</p>
                 </CardContent>
               </Card>
             ))}
@@ -282,10 +288,10 @@ export default function Index() {
             <span className="text-blue-300">nunca vai recuperar.</span>
           </h2>
           <p className="text-lg text-blue-100/70 mb-10 max-w-xl mx-auto">
-            Freelancers que usam o PreciFácil descobrem em média que estavam cobrando 35% abaixo do necessário. Quanto você já perdeu?
+            Cada proposta enviada sem cálculo é dinheiro que você não vai recuperar. Comece agora e descubra o preço que você realmente precisa cobrar.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="text-center whitespace-nowrap">Descobrir meu preço real agora — é grátis</Link>
+            <Link to="/cadastro" className="text-center whitespace-nowrap">Descobrir meu preço real — é grátis</Link>
           </Button>
         </div>
       </section>
