@@ -17,11 +17,9 @@ export function MetaProvider({ children }: { children: ReactNode }) {
   const [metaLoaded, setMetaLoaded] = useState(false);
 
   const carregarMeta = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('meta_mensal, meta_liquida')
-      .eq('id', userId)
-      .maybeSingle();
+    const { data, error } = await supabase.rpc('get_user_meta', {
+      p_user_id: userId,
+    });
 
     if (error) {
       console.error('Erro ao carregar meta:', error.message, error.code);
@@ -29,9 +27,10 @@ export function MetaProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (data) {
-      const ml = data.meta_liquida;
-      const mm = Number(data.meta_mensal);
+    if (data && data.length > 0) {
+      const row = data[0];
+      const ml = row.meta_liquida;
+      const mm = Number(row.meta_mensal);
       if (ml != null && Number(ml) > 0) {
         setMetaMensal(mm);
         setMetaLiquida(Number(ml));
