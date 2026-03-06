@@ -9,39 +9,68 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [highlightGoogle, setHighlightGoogle] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  const checkIfGoogleOnly = async (email: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-auth-provider', {
+        body: { email },
+      });
+      if (error || !data) return false;
+      // User exists and only has google provider (no email/password)
+      if (data.exists && data.providers) {
+        const providers = data.providers as string[];
+        return providers.includes('google') && !providers.includes('email');
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setHighlightGoogle(false);
+
     const { error } = await signIn(email, password);
-    setLoading(false);
+
     if (error) {
-      const msg = translateSupabaseError(error.message, 'login');
-      if (msg.includes('Recuperar senha')) {
-        toast.error(
-          <span>
-            Senha incorreta. Tente novamente ou{' '}
-            <a href="/esqueci-senha" className="underline font-medium text-primary">Recuperar senha</a>.
-          </span>
-        );
-      } else {
-        toast.error(msg);
+      // Check if this is a Google-only account
+      if (error.message.includes('Invalid login credentials')) {
+        const isGoogleOnly = await checkIfGoogleOnly(email);
+        if (isGoogleOnly) {
+          setHighlightGoogle(true);
+          toast.error(
+            "Este e-mail foi cadastrado com o Google. Clique em 'Entrar com Google' para acessar sua conta."
+          );
+          setLoading(false);
+          return;
+        }
       }
-    } else {
-      navigate('/app');
+
+      const msg = translateSupabaseError(error.message, 'login');
+      toast.error(msg);
+      setLoading(false);
+      return;
     }
+
+    setLoading(false);
+    navigate('/app');
   };
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
+    setHighlightGoogle(false);
     try {
       const result = await signInWithGoogleOAuth();
       if (result.error) {
@@ -88,8 +117,8 @@ export default function Login() {
 
           <Button
             type="button"
-            variant="outline"
-            className="w-full gap-2"
+            variant={highlightGoogle ? "default" : "outline"}
+            className={`w-full gap-2 transition-all ${highlightGoogle ? 'ring-2 ring-primary ring-offset-2 animate-pulse' : ''}`}
             onClick={handleGoogleSignIn}
             disabled={googleLoading}
           >
