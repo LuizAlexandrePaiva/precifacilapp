@@ -132,13 +132,16 @@ Deno.serve(async (req) => {
         // Determine plan from line items
         const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
         const priceId = lineItems.data[0]?.price?.id;
+        const productId = lineItems.data[0]?.price?.product as string;
         let planName = 'Essencial';
         let planKey = 'essencial';
-        if (priceId === 'price_1T85Q1E1gwfPeM7rWXIYEIv1') {
+        // Support both production and test price/product IDs
+        if (priceId === 'price_1T7PjsE1gwfPeM7rAbWAP7O2' || priceId === 'price_1T85Q1E1gwfPeM7rWXIYEIv1'
+          || productId === 'prod_U5av2HKRFqJrDg' || productId === 'prod_U6I0MxAJP0ZqTg') {
           planName = 'Pro';
           planKey = 'pro';
         }
-        logStep('Plan determined', { priceId, planName });
+        logStep('Plan determined', { priceId, productId, planName });
 
         const amountTotal = session.amount_total ? (session.amount_total / 100).toFixed(2).replace('.', ',') : '0,00';
         const date = new Date().toLocaleDateString('pt-BR');
