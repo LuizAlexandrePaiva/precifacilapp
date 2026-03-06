@@ -371,8 +371,7 @@ export default function Index() {
                 <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-5">
                   {faq.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
-                  {faq.a}
+                <AccordionContent className="text-muted-foreground pb-5 leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.a }} />
                 </AccordionContent>
               </AccordionItem>
             ))}
