@@ -116,6 +116,14 @@ const faqs = [
     q: 'A proposta gerada é profissional o suficiente para enviar ao cliente?',
     a: 'Sim. A proposta é gerada em formato limpo e profissional, com as 3 opções de pacote, escopo e prazo — pronta para enviar por email ou WhatsApp.',
   },
+  {
+    q: 'Funciona para MEI, autônomo e PJ?',
+    a: 'Sim. O PreciFácil foi feito para a realidade brasileira. Na calculadora você escolhe seu regime tributário — MEI (~5%), Autônomo PF (~27,5%) ou PJ Simples Nacional (~12%) — e o sistema já aplica o imposto correto no cálculo do seu preço mínimo. Sem precisar entender de contabilidade.',
+  },
+  {
+    q: 'Posso refazer o cálculo quantas vezes quiser?',
+    a: 'Sim, sem limite no plano Essencial e Pro. Você pode simular cenários diferentes — mudar sua meta de ganho, ajustar horas ou custos — e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
+  },
 ];
 
 export default function Index() {
