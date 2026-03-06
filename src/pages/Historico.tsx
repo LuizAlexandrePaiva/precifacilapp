@@ -174,7 +174,7 @@ export default function Historico() {
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
                     Margem
-                    {helpIcon('Margem', margemTooltipText)}
+                    {helpIcon('Margem do projeto', margemTooltipContent)}
                   </p>
                   <div>{margemBadge(acimaMin)}</div>
                 </div>
@@ -242,19 +242,19 @@ export default function Historico() {
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Horas Reais
-                      {helpIcon('Horas Reais', 'Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.')}
+                      {helpIcon('Horas reais trabalhadas', horasReaisContent)}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Valor/Hora Real
-                      {helpIcon('Valor/Hora Real', 'Calculamos dividindo o valor total do projeto pelas horas que você realmente trabalhou. Se estiver abaixo do seu preço mínimo, o projeto foi menos rentável do que o esperado.')}
+                      {helpIcon('Valor por hora real', valorHoraRealContent)}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Margem
-                      {helpIcon('Margem', margemTooltipText)}
+                      {helpIcon('Margem do projeto', margemTooltipContent)}
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -328,7 +328,7 @@ export default function Historico() {
           <div className="space-y-2">
             <Label className="flex items-center gap-1">
               Horas reais gastas
-              <InfoModal title="Horas reais gastas" content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
+              <InfoModal title="Horas reais trabalhadas" content={horasReaisContent} />
             </Label>
             <Input
               inputMode="decimal"
