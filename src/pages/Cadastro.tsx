@@ -30,8 +30,9 @@ export default function Cadastro() {
       return;
     }
     setLoading(true);
-    const { error } = await signUp(email, password, fullName.trim());
+    const { data, error } = await signUp(email, password, fullName.trim());
     setLoading(false);
+
     if (error) {
       const msg = translateSupabaseError(error.message, 'signup');
       if (msg.includes('Fazer login')) {
@@ -45,10 +46,23 @@ export default function Cadastro() {
       } else {
         toast.error(msg);
       }
-    } else {
-      toast.success('Conta criada! Verifique seu email para confirmar.');
-      navigate('/login');
+      return;
     }
+
+    // Supabase returns identities: [] when email already exists (with email confirmation enabled)
+    if (data?.user?.identities && data.user.identities.length === 0) {
+      toast.error(
+        <span>
+          Este e-mail já possui uma conta. Tente{' '}
+          <a href="/login" className="underline font-medium text-primary">Fazer login</a>{' '}
+          ou recupere sua senha.
+        </span>
+      );
+      return;
+    }
+
+    toast.success('Conta criada! Verifique seu email para confirmar.');
+    navigate('/login');
   };
 
   const handleGoogleSignIn = async () => {
