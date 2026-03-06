@@ -13,6 +13,7 @@ interface MetaContextType {
 const MetaContext = createContext<MetaContextType | undefined>(undefined);
 
 export function MetaProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [metaMensal, setMetaMensal] = useState<number | null>(null);
   const [metaLiquida, setMetaLiquida] = useState<number | null>(null);
   const [metaLoaded, setMetaLoaded] = useState(false);
