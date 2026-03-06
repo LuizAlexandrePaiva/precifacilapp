@@ -7,11 +7,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { InfoModal } from '@/components/InfoModal';
-import { History, Trash2 } from 'lucide-react';
+import { History, Trash2, Lock } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -28,6 +29,7 @@ interface Project {
 
 export default function Historico() {
   const { user } = useAuth();
+  const { canAccessHistory } = useSubscription();
   const isMobile = useIsMobile();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -209,6 +211,40 @@ export default function Historico() {
       })}
     </div>
   );
+
+  const handleUpgradeHistory = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: PLANS_CONFIG.essencial.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch {
+      toast.error('Erro ao iniciar checkout');
+    }
+  };
+
+  if (!canAccessHistory) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <History className="h-6 w-6 text-primary" />
+            Histórico de Projetos
+          </h1>
+          <p className="text-muted-foreground mt-1">Acompanhe seus projetos aprovados e compare com o preço mínimo</p>
+        </div>
+        <Card className="border-amber-500/50">
+          <CardContent className="py-12 text-center space-y-4">
+            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
+            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
+            <p className="text-muted-foreground">O Histórico de Projetos está disponível a partir do plano Essencial (R$ 29/mês).</p>
+            <Button onClick={handleUpgradeHistory}>Assinar Essencial</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

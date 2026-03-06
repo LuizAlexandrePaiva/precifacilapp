@@ -113,7 +113,55 @@ Deno.serve(async (req) => {
 
   try {
     switch (event.type) {
-      // ── PAGAMENTO CONFIRMADO ──
+      // ── CHECKOUT CONCLUÍDO (assinatura via Stripe Checkout) ──
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        logStep('Checkout session completed', { sessionId: session.id, mode: session.mode });
+
+        if (session.mode !== 'subscription') {
+          logStep('Not a subscription checkout, skipping');
+          break;
+        }
+
+        const email = session.customer_email || (session.customer_details as any)?.email;
+        if (!email) {
+          logStep('No email found on checkout session');
+          break;
+        }
+
+        // Determine plan from line items
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const priceId = lineItems.data[0]?.price?.id;
+        let planName = 'Essencial';
+        let planKey = 'essencial';
+        if (priceId === 'price_1T7PjsE1gwfPeM7rAbWAP7O2') {
+          planName = 'Pro';
+          planKey = 'pro';
+        }
+        logStep('Plan determined', { priceId, planName });
+
+        const amountTotal = session.amount_total ? (session.amount_total / 100).toFixed(2).replace('.', ',') : '0,00';
+        const date = new Date().toLocaleDateString('pt-BR');
+        const userName = await getUserName(email);
+
+        const html = layout(`
+          ${p(`Olá, ${userName.split(' ')[0]}!`)}
+          ${p('Seu pagamento foi processado com sucesso. Confira os detalhes abaixo:')}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border:1px solid ${BORDER};border-radius:8px;overflow:hidden;">
+            <tr><td style="padding:12px 16px;background-color:${BG_LIGHT};font-size:13px;color:${MUTED};font-weight:600;">Plano</td><td style="padding:12px 16px;background-color:${BG_LIGHT};font-size:15px;color:${FOREGROUND};font-weight:600;text-align:right;">${planName}</td></tr>
+            <tr><td style="padding:12px 16px;font-size:13px;color:${MUTED};font-weight:600;">Valor</td><td style="padding:12px 16px;font-size:15px;color:${FOREGROUND};font-weight:600;text-align:right;">R$ ${amountTotal}</td></tr>
+            <tr><td style="padding:12px 16px;background-color:${BG_LIGHT};font-size:13px;color:${MUTED};font-weight:600;">Data</td><td style="padding:12px 16px;background-color:${BG_LIGHT};font-size:15px;color:${FOREGROUND};text-align:right;">${date}</td></tr>
+          </table>
+          ${btn('Acessar minha conta', SITE_URL)}
+          ${small('Obrigado por confiar no PreciFácil!')}
+          ${signature()}
+        `);
+
+        await sendEmail(resend, email, 'Pagamento confirmado — PreciFácil', html);
+        break;
+      }
+
+      // ── PAGAMENTO CONFIRMADO (fallback) ──
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const email = paymentIntent.receipt_email || paymentIntent.metadata?.email;
