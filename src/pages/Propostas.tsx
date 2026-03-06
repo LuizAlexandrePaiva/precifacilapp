@@ -445,7 +445,7 @@ export default function Propostas() {
                     <Textarea
                       value={inclusos}
                       onChange={(e) => setInclusos(e.target.value)}
-                      placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"}
+                      placeholder=""
                       className="min-h-[100px] resize-y"
                     />
                   </div>
@@ -459,7 +459,7 @@ export default function Propostas() {
                     <Textarea
                       value={naoInclusos}
                       onChange={(e) => setNaoInclusos(e.target.value)}
-                      placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"}
+                      placeholder=""
                       className="min-h-[100px] resize-y"
                     />
                   </div>
