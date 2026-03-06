@@ -274,33 +274,33 @@ export default function Calculadora() {
         <Card className="border-primary">
           <CardContent className="pt-6 space-y-6">
             <h3 className="text-lg font-bold text-center">Seu Preço Mínimo</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-accent rounded-lg">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="text-center p-3 sm:p-4 bg-accent rounded-lg overflow-hidden">
                 <p className="text-sm text-muted-foreground mb-1">Por hora</p>
-                <p className="text-2xl sm:text-3xl font-bold text-primary whitespace-nowrap">
+                <p className="font-bold text-primary" style={{ fontSize: 'clamp(1rem, 4vw, 1.875rem)' }}>
                   R$ {result.precoHora.toFixed(2).replace('.', ',')}
                 </p>
               </div>
-              <div className="text-center p-4 bg-accent rounded-lg">
+              <div className="text-center p-3 sm:p-4 bg-accent rounded-lg overflow-hidden">
                 <p className="text-sm text-muted-foreground mb-1">Por dia (8h)</p>
-                <p className="text-2xl sm:text-3xl font-bold text-primary whitespace-nowrap">
+                <p className="font-bold text-primary" style={{ fontSize: 'clamp(1rem, 4vw, 1.875rem)' }}>
                   R$ {result.precoDia.toFixed(2).replace('.', ',')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-muted rounded-lg p-4 space-y-3">
+            <div className="bg-muted rounded-lg p-3 sm:p-4 space-y-3">
               <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
               {[
                 { label: 'Salário desejado', value: `R$ ${formatBR(metaLiquida)}` },
-                { label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
+                { label: `Impostos (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'PF ~27,5%' : 'Simples ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
                 { label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
-                { label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
+                { label: 'Horas faturáveis/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
                 { label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
               ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2">
-                    <span className="text-muted-foreground">{item.label}</span>
+                <div key={item.label} className="flex items-start justify-between gap-2 text-[13px] sm:text-sm">
+                  <span className="flex items-center gap-1 min-w-0 max-w-[55%]">
+                    <span className="text-muted-foreground break-words">{item.label}</span>
                     {item.tooltip && (
                       <InfoModal
                         title={item.tooltipTitle!}
@@ -309,12 +309,14 @@ export default function Calculadora() {
                       />
                     )}
                   </span>
-                  <span className="font-semibold">{item.value}</span>
+                  <span className="font-semibold text-right max-w-[45%] break-words">{item.value}</span>
                 </div>
               ))}
-              <div className="border-t border-border pt-3 mt-3 flex items-center justify-between font-bold">
+              <div className="border-t border-border pt-3 mt-3 flex items-center justify-between gap-2 font-bold">
                 <span>Resultado</span>
-                <span className="text-primary text-lg">R$ {result.precoHora.toFixed(2).replace('.', ',')}/hora</span>
+                <span className="text-primary" style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
+                  R$ {result.precoHora.toFixed(2).replace('.', ',')}/hora
+                </span>
               </div>
             </div>
 
