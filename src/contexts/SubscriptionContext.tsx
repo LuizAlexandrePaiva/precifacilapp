@@ -72,6 +72,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null);
 
   const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  console.log('[SUB] Admin check:', { email: user?.email, isAdmin, ADMIN_EMAILS });
   const isTrialExpired = trialDaysLeft !== null && trialDaysLeft <= 0;
 
   useEffect(() => {
