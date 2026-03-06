@@ -69,13 +69,17 @@ export default function Calculadora() {
     };
     const calcResult = calcularPreco(input);
 
-    const newMeta = calcResult.custoTotal;
-    if (ctxMetaMensal !== null && Math.abs(newMeta - ctxMetaMensal) > 0.01) {
+    const valorAtual = Number(metaLiquida);
+    const valorSalvo = Number(ctxMetaLiquida ?? 0);
+
+    console.log('=== HANDLE CALC ===');
+    console.log('valorAtual (metaLiquida):', valorAtual);
+    console.log('valorSalvo (ctxMetaLiquida):', valorSalvo);
+    console.log('ctxMetaMensal:', ctxMetaMensal);
+
+    if (valorAtual > 0 && valorAtual !== valorSalvo) {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
-    } else if (ctxMetaMensal === null) {
-      setPendingResult(calcResult);
-      saveMetaAndFinish(calcResult);
     } else {
       setResult(calcResult);
     }
@@ -85,14 +89,22 @@ export default function Calculadora() {
   const saveMetaAndFinish = async (calcResult: CalculationResult) => {
     const newMeta = calcResult.custoTotal;
     if (user) {
+      console.log('=== SAVE META ===');
+      console.log('user.id:', user.id);
+      console.log('p_meta_mensal:', Number(newMeta));
+      console.log('p_meta_liquida:', Number(metaLiquida));
+
       const { error } = await supabase.rpc('update_user_meta', {
         p_user_id: user.id,
         p_meta_mensal: Number(newMeta),
         p_meta_liquida: Number(metaLiquida),
       });
+
+      console.log('RPC error:', error);
+
       if (error) {
         console.error('Erro ao salvar meta:', error);
-        toast.error('Erro ao salvar meta. Tente novamente.');
+        toast.error('Erro ao salvar meta: ' + error.message);
         return;
       }
       atualizarMeta(newMeta, metaLiquida);
