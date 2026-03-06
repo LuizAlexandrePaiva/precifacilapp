@@ -301,13 +301,13 @@ export default function Calculadora() {
               <div className="text-center p-3 sm:p-4 bg-accent rounded-lg overflow-hidden">
                 <p className="text-sm text-muted-foreground mb-1">Por hora</p>
                 <p className="font-bold text-primary" style={{ fontSize: 'clamp(1rem, 4vw, 1.875rem)' }}>
-                  R$ {result.precoHora.toFixed(2).replace('.', ',')}
+                  R$ {formatBR(result.precoHora)}
                 </p>
               </div>
               <div className="text-center p-3 sm:p-4 bg-accent rounded-lg overflow-hidden">
                 <p className="text-sm text-muted-foreground mb-1">Por dia (8h)</p>
                 <p className="font-bold text-primary" style={{ fontSize: 'clamp(1rem, 4vw, 1.875rem)' }}>
-                  R$ {result.precoDia.toFixed(2).replace('.', ',')}
+                  R$ {formatBR(result.precoDia)}
                 </p>
               </div>
             </div>
@@ -338,7 +338,7 @@ export default function Calculadora() {
               <div className="border-t border-border pt-3 mt-3 flex items-center justify-between gap-2 font-bold">
                 <span>Resultado</span>
                 <span className="text-primary" style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
-                  R$ {result.precoHora.toFixed(2).replace('.', ',')}/hora
+                  R$ {formatBR(result.precoHora)}/hora
                 </span>
               </div>
             </div>
