@@ -50,8 +50,14 @@ export default function Calculadora() {
       .from('profiles')
       .select('meta_mensal, meta_liquida')
       .eq('id', user.id)
-      .single()
-      .then(({ data }) => {
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Erro ao buscar perfil na calculadora:', error.message, error.code);
+          setLoaded(true);
+          return;
+        }
+
         if (data) {
           const ml = (data as any).meta_liquida;
           const mm = data.meta_mensal;

@@ -28,12 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const welcomeSentRef = useRef<Set<string>>(new Set());
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('full_name')
       .eq('id', userId)
-      .single();
-    setProfile(data);
+      .maybeSingle();
+
+    if (error) {
+      console.error('Erro ao buscar perfil:', error.message, error.code);
+      return;
+    }
+
+    setProfile(data ?? null);
   };
 
   const refreshProfile = async () => {

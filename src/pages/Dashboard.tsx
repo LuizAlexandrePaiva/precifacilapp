@@ -55,8 +55,14 @@ export default function Dashboard() {
       .from('profiles')
       .select('meta_mensal, meta_liquida')
       .eq('id', user.id)
-      .single()
-      .then(({ data }) => {
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Erro ao buscar perfil no dashboard:', error.message, error.code);
+          setMetaLoaded(true);
+          return;
+        }
+
         if (data) {
           const mm = Number(data.meta_mensal);
           const ml = (data as any).meta_liquida;
