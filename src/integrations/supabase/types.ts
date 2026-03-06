@@ -21,6 +21,7 @@ export type Database = {
           id: string
           meta_liquida: number | null
           meta_mensal: number
+          onboarding_concluido: boolean | null
           updated_at: string
         }
         Insert: {
@@ -29,6 +30,7 @@ export type Database = {
           id: string
           meta_liquida?: number | null
           meta_mensal?: number
+          onboarding_concluido?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -37,6 +39,7 @@ export type Database = {
           id?: string
           meta_liquida?: number | null
           meta_mensal?: number
+          onboarding_concluido?: boolean | null
           updated_at?: string
         }
         Relationships: []
