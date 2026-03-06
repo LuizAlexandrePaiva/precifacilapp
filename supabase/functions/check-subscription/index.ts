@@ -69,14 +69,29 @@ serve(async (req) => {
     }
 
     const subscription = subscriptions.data[0];
-    const productId = subscription.items.data[0].price.product;
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    const priceId = subscription.items.data[0]?.price?.id;
+    const productId = subscription.items.data[0]?.price?.product;
     
+    logStep("Subscription details", { priceId, productId, currentPeriodEnd: subscription.current_period_end });
+
+    let subscriptionEnd: string | null = null;
+    try {
+      const endTimestamp = typeof subscription.current_period_end === 'number'
+        ? subscription.current_period_end * 1000
+        : Date.parse(String(subscription.current_period_end));
+      if (!isNaN(endTimestamp)) {
+        subscriptionEnd = new Date(endTimestamp).toISOString();
+      }
+    } catch (e) {
+      logStep("Date parse warning", { raw: subscription.current_period_end });
+    }
+
+    // Map both production and test product IDs
     let plan = "free";
-    if (productId === "prod_U5avmHLpzQ3Wwl") plan = "essencial";
-    else if (productId === "prod_U5av2HKRFqJrDg") plan = "pro";
+    if (productId === "prod_U5avmHLpzQ3Wwl" || productId === "prod_U6HzKp8Jup6nih") plan = "essencial";
+    else if (productId === "prod_U5av2HKRFqJrDg" || productId === "prod_U6I0MxAJP0ZqTg") plan = "pro";
     
-    logStep("Active subscription found", { plan, productId, subscriptionEnd });
+    logStep("Plan resolved", { plan, productId, priceId });
 
     return new Response(JSON.stringify({
       subscribed: true,
