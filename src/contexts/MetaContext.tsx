@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface MetaContextType {
@@ -13,7 +12,6 @@ interface MetaContextType {
 const MetaContext = createContext<MetaContextType | undefined>(undefined);
 
 export function MetaProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
   const [metaMensal, setMetaMensal] = useState<number | null>(null);
   const [metaLiquida, setMetaLiquida] = useState<number | null>(null);
   const [metaLoaded, setMetaLoaded] = useState(false);
@@ -26,13 +24,13 @@ export function MetaProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
 
     if (error) {
-      console.error('Erro ao carregar meta:', error.message);
+      console.error('Erro ao carregar meta:', error.message, error.code);
       setMetaLoaded(true);
       return;
     }
 
     if (data) {
-      const ml = (data as any).meta_liquida;
+      const ml = data.meta_liquida;
       const mm = Number(data.meta_mensal);
       if (ml != null && Number(ml) > 0) {
         setMetaMensal(mm);
@@ -50,16 +48,28 @@ export function MetaProvider({ children }: { children: ReactNode }) {
     setMetaLiquida(newMetaLiquida);
   }, []);
 
-  // Auto-load meta when user is authenticated
+  // Auto-load meta from auth session directly
   useEffect(() => {
-    if (user?.id) {
-      carregarMeta(user.id);
-    } else {
-      setMetaMensal(null);
-      setMetaLiquida(null);
-      setMetaLoaded(false);
-    }
-  }, [user?.id, carregarMeta]);
+    const inicializar = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        await carregarMeta(session.user.id);
+      }
+    };
+    inicializar();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.id) {
+        carregarMeta(session.user.id);
+      } else {
+        setMetaMensal(null);
+        setMetaLiquida(null);
+        setMetaLoaded(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [carregarMeta]);
 
   return (
     <MetaContext.Provider value={{ metaMensal, metaLiquida, metaLoaded, carregarMeta, atualizarMeta }}>
