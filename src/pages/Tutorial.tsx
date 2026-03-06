@@ -5,24 +5,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
-  Calculator,
-  FileText,
-  History,
-  LayoutDashboard,
-  BookOpen,
-  ArrowRight,
-  Settings,
-  CreditCard,
-  Target,
-  TrendingUp,
-  Clock,
-  DollarSign,
-  Users,
-  BarChart3,
-  Pencil,
-  Download,
-  Send,
-  RefreshCw,
+  Calculator, FileText, History, LayoutDashboard, BookOpen, ArrowRight, Settings,
+  CreditCard, Target, TrendingUp, Clock, DollarSign, Users, BarChart3,
+  Download, Send, RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -138,7 +123,6 @@ export default function Tutorial() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {/* Desktop: grid tabs */}
         <TabsList className="hidden sm:inline-flex w-full h-auto gap-1 bg-muted p-1">
           {tabs.map((tab) => (
             <TabsTrigger
@@ -152,7 +136,6 @@ export default function Tutorial() {
           ))}
         </TabsList>
 
-        {/* Mobile: horizontal scroll pills */}
         <div className="sm:hidden -mx-4 px-4 overflow-x-auto overflow-y-hidden scrollbar-hide" style={{ maxWidth: '100vw' }}>
           <div className="flex gap-2 pb-2 pr-4" style={{ width: 'max-content' }}>
             {tabs.map((tab) => {
@@ -187,7 +170,7 @@ export default function Tutorial() {
                 icon: DollarSign,
                 title: 'Informe quanto quer ganhar por mês',
                 description:
-                  'No campo "Quanto quero ganhar por mês", digite o valor que você quer receber no bolso — já descontados impostos e despesas.',
+                  'No campo "Quanto quero ganhar por mês", digite o valor que você quer receber no bolso — já descontados impostos e despesas. Esse valor também define sua Meta de Faturamento no Dashboard.',
               },
               {
                 stepNumber: 2,
@@ -208,7 +191,7 @@ export default function Tutorial() {
                 icon: Target,
                 title: 'Veja seu preço mínimo por hora',
                 description:
-                  'O sistema calcula o menor valor/hora viável. Cobrar abaixo disso significa prejuízo.',
+                  'O sistema calcula o menor valor/hora viável. Cobrar abaixo disso significa prejuízo. Se o valor mudou, o sistema pergunta se quer atualizar a meta no Dashboard.',
               },
               {
                 stepNumber: 5,
@@ -309,19 +292,12 @@ export default function Tutorial() {
               {
                 stepNumber: 2,
                 icon: Target,
-                title: 'Configure sua Meta de Faturamento',
+                title: 'Meta de Faturamento automática',
                 description:
-                  'Defina quanto quer faturar com clientes neste mês. A barra de progresso mostra o quanto já alcançou com projetos concluídos.',
+                  'A Meta de Faturamento vem automaticamente da Calculadora de Preço. Para atualizá-la, basta acessar a Calculadora e informar o novo valor que deseja ganhar por mês.',
               },
               {
                 stepNumber: 3,
-                icon: Pencil,
-                title: 'Edite a meta de faturamento a qualquer momento',
-                description:
-                  'Clique no ícone de lápis ao lado da meta para alterar o valor. A mudança é salva automaticamente.',
-              },
-              {
-                stepNumber: 4,
                 icon: TrendingUp,
                 title: 'Interprete faturamento vs meta',
                 description:

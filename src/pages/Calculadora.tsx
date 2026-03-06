@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +12,7 @@ import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, Lock } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -19,7 +21,8 @@ const formatBR = (v: number) =>
 
 export default function Calculadora() {
   const navigate = useNavigate();
-  const { plan, canCalculate, incrementCalcCount, monthlyCalcCount } = useSubscription();
+  const { plan, canCalculate, incrementCalcCount } = useSubscription();
+  const { user } = useAuth();
 
   const [metaLiquida, setMetaLiquida] = useState(0);
   const [horasPorSemana, setHorasPorSemana] = useState('');
@@ -29,6 +32,30 @@ export default function Calculadora() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
+
+  // Saved meta from DB
+  const [savedMeta, setSavedMeta] = useState<number | null>(null);
+  // Confirmation modal state
+  const [showMetaConfirm, setShowMetaConfirm] = useState(false);
+  const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
+  const [isClosingConfirm, setIsClosingConfirm] = useState(false);
+
+  // Load current saved meta
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('profiles')
+      .select('meta_mensal')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.meta_mensal != null && Number(data.meta_mensal) !== 5000) {
+          setSavedMeta(Number(data.meta_mensal));
+        }
+      });
+  }, [user]);
+
+  const computeResult = (input: CalculationInput) => calcularPreco(input);
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +70,58 @@ export default function Calculadora() {
       custosFixos,
       semanasFerias: parseFloat(semanasFerias) || 0,
     };
-    setResult(calcularPreco(input));
+    const calcResult = computeResult(input);
+
+    // Check if meta changed
+    const newMeta = calcResult.custoTotal;
+    if (savedMeta !== null && Math.abs(newMeta - savedMeta) > 0.01) {
+      setPendingResult(calcResult);
+      setShowMetaConfirm(true);
+    } else if (savedMeta === null) {
+      // First time — save automatically
+      setPendingResult(calcResult);
+      saveMetaAndFinish(calcResult);
+    } else {
+      setResult(calcResult);
+    }
     if (plan === 'free') incrementCalcCount();
+  };
+
+  const saveMetaAndFinish = async (calcResult: CalculationResult) => {
+    const newMeta = calcResult.custoTotal;
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ meta_mensal: newMeta } as any)
+        .eq('id', user.id);
+      if (error) {
+        toast.error('Erro ao atualizar meta de faturamento.');
+      } else {
+        setSavedMeta(newMeta);
+        toast.success('Meta de faturamento atualizada no Dashboard!');
+      }
+    }
+    setResult(calcResult);
+    setShowMetaConfirm(false);
+    setPendingResult(null);
+  };
+
+  const handleConfirmMeta = () => {
+    if (pendingResult) saveMetaAndFinish(pendingResult);
+  };
+
+  const handleDeclineMeta = () => {
+    if (pendingResult) setResult(pendingResult);
+    setShowMetaConfirm(false);
+    setPendingResult(null);
+  };
+
+  const closeConfirmModal = () => {
+    setIsClosingConfirm(true);
+    setTimeout(() => {
+      handleDeclineMeta();
+      setIsClosingConfirm(false);
+    }, 100);
   };
 
   const handleGoToProposal = () => {
@@ -96,8 +173,15 @@ export default function Calculadora() {
         <CardContent className="pt-6">
           <form onSubmit={handleCalc} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Col 1 Row 1 */}
               <div className="space-y-2">
-                <Label>Quanto quero ganhar por mês (R$)</Label>
+                <Label className="flex items-center gap-1">
+                  Quanto quero ganhar por mês (R$)
+                  <InfoModal
+                    title="Quanto quero ganhar por mês"
+                    content="Informe o valor que você quer receber no bolso ao final do mês, já descontados impostos e despesas. Este valor é usado para calcular seu preço mínimo por hora e também define a Meta de Faturamento exibida no seu Dashboard."
+                  />
+                </Label>
                 <CurrencyInput
                   value={metaLiquida}
                   onValueChange={setMetaLiquida}
@@ -105,6 +189,8 @@ export default function Calculadora() {
                 />
                 <p className="text-xs text-muted-foreground">Valor que você quer receber no bolso, após impostos e despesas</p>
               </div>
+
+              {/* Col 2 Row 1 */}
               <div className="space-y-2">
                 <Label>Horas de trabalho por semana</Label>
                 <Input
@@ -116,6 +202,8 @@ export default function Calculadora() {
                 />
                 <p className="text-xs text-muted-foreground">Quantas horas por semana você dedica ao trabalho</p>
               </div>
+
+              {/* Col 1 Row 2 */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Regime tributário
@@ -133,6 +221,8 @@ export default function Calculadora() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Col 2 Row 2 */}
               <div className="space-y-2">
                 <Label>Custos fixos mensais (R$)</Label>
                 <CurrencyInput
@@ -142,6 +232,10 @@ export default function Calculadora() {
                 />
                 <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas, assinaturas e outros gastos recorrentes</p>
               </div>
+            </div>
+
+            {/* Full width row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
                   Semanas sem trabalhar por ano
@@ -159,6 +253,7 @@ export default function Calculadora() {
                 />
               </div>
             </div>
+
             <Button type="submit" className="w-full" size="lg" disabled={!canCalculate && plan === 'free'}>
               {!canCalculate && plan === 'free' ? 'Limite atingido — Faça upgrade' : 'Calcular'}
             </Button>
@@ -224,7 +319,7 @@ export default function Calculadora() {
         </Card>
       )}
 
-      {/* Modal de limite atingido — Plano Grátis */}
+      {/* Limit modal */}
       <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
         <DialogContent className="max-w-sm text-center">
           <DialogHeader>
@@ -241,6 +336,60 @@ export default function Calculadora() {
           </Button>
         </DialogContent>
       </Dialog>
+
+      {/* Meta confirmation modal */}
+      {showMetaConfirm && createPortal(
+        <>
+          <div
+            style={{
+              position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+              zIndex: 9999, background: 'rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+              pointerEvents: isClosingConfirm ? 'none' : 'auto',
+            }}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); closeConfirmModal(); }}
+          />
+          <div
+            style={{
+              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+              zIndex: 10000, width: '90%', maxWidth: 400, padding: 24,
+              borderRadius: 12, background: '#ffffff', border: '1px solid #e2e8f0',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            }}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>
+              Atualizar meta de faturamento?
+            </h3>
+            <p style={{ fontSize: 14, lineHeight: 1.6, color: '#4a5568', marginBottom: 20 }}>
+              O valor que você quer ganhar por mês mudou. Deseja atualizar sua Meta de Faturamento no Dashboard?
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleConfirmMeta(); }}
+                style={{
+                  width: '100%', padding: '10px 0', background: '#3182ce', color: '#fff',
+                  border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                Sim, atualizar
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeclineMeta(); }}
+                style={{
+                  width: '100%', padding: '10px 0', background: 'transparent', color: '#4a5568',
+                  border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                Não, manter atual
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   );
 }
