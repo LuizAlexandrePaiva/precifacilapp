@@ -185,9 +185,9 @@ export default function Tutorial() {
               {
                 stepNumber: 1,
                 icon: DollarSign,
-                title: 'Informe sua meta líquida',
+                title: 'Informe quanto quer ganhar por mês',
                 description:
-                  'Digite quanto você quer receber limpo por mês, depois de impostos e custos.',
+                  'No campo "Quanto quero ganhar por mês", digite o valor que você quer receber no bolso — já descontados impostos e despesas.',
               },
               {
                 stepNumber: 2,
@@ -309,14 +309,14 @@ export default function Tutorial() {
               {
                 stepNumber: 2,
                 icon: Target,
-                title: 'Configure sua Meta Mensal',
+                title: 'Configure sua Meta de Faturamento',
                 description:
-                  'Defina quanto quer faturar por mês. A barra de progresso mostra o quanto já alcançou com projetos concluídos.',
+                  'Defina quanto quer faturar com clientes neste mês. A barra de progresso mostra o quanto já alcançou com projetos concluídos.',
               },
               {
                 stepNumber: 3,
                 icon: Pencil,
-                title: 'Edite a meta a qualquer momento',
+                title: 'Edite a meta de faturamento a qualquer momento',
                 description:
                   'Clique no ícone de lápis ao lado da meta para alterar o valor. A mudança é salva automaticamente.',
               },

@@ -45,7 +45,7 @@ export function calcularPreco(input: CalculationInput): CalculationResult {
   const precoHora = custoTotal / horasFaturaveis;
   const precoDia = precoHora * 8;
 
-  const explicacao = `Para alcançar sua meta líquida de R$ ${input.metaLiquida.toLocaleString('pt-BR')}/mês, ` +
+  const explicacao = `Para garantir R$ ${input.metaLiquida.toLocaleString('pt-BR')}/mês no bolso, ` +
     `somamos seus custos fixos de R$ ${input.custosFixos.toLocaleString('pt-BR')} ` +
     `e o imposto estimado de R$ ${impostoEstimado.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} (regime ${getRegimeNome(input.regime)}). ` +
     `Isso dá um custo total de R$ ${custoTotal.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}/mês. ` +
