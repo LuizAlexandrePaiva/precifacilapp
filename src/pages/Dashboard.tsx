@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock } from 'lucide-react';
+import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, ArrowRight } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,7 +29,8 @@ export default function Dashboard() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
-  const [metaMensal, setMetaMensal] = useState<number>(5000);
+  const [metaMensal, setMetaMensal] = useState<number | null>(null);
+  const [metaLoaded, setMetaLoaded] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -52,12 +53,42 @@ export default function Dashboard() {
       .then(({ data }) => setProposals(data || []));
     supabase
       .from('profiles')
-      .select('meta_mensal')
+      .select('meta_mensal, meta_liquida')
       .eq('id', user.id)
       .single()
       .then(({ data }) => {
-        if (data?.meta_mensal != null) setMetaMensal(Number(data.meta_mensal));
+        if (data) {
+          const mm = Number(data.meta_mensal);
+          const ml = (data as any).meta_liquida;
+          // If meta_liquida was never set, the user never used the calculator
+          if (ml == null || Number(ml) === 0) {
+            setMetaMensal(null);
+          } else {
+            setMetaMensal(mm);
+          }
+        }
+        setMetaLoaded(true);
       });
+  }, [user]);
+
+  // Listen for realtime changes to profile meta
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel('dashboard-meta')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
+        (payload) => {
+          const ml = (payload.new as any).meta_liquida;
+          const mm = Number((payload.new as any).meta_mensal);
+          if (ml != null && Number(ml) > 0) {
+            setMetaMensal(mm);
+          }
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const chartData = useMemo(() => {
@@ -96,7 +127,7 @@ export default function Dashboard() {
     return { faturamentoMes, totalPropostas, taxaAprovacao };
   }, [projects, proposals]);
 
-  const metaProgress = metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
+  const metaProgress = metaMensal && metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
   const cards = [
     { title: 'Faturamento do Mês', value: `R$ ${stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-primary' },
@@ -256,17 +287,30 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="text-2xl font-bold">
-            R$ {metaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </div>
-          <p className="text-xs text-muted-foreground">Total que você quer faturar com seus clientes neste mês</p>
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-              <span>{metaProgress}%</span>
+          {metaLoaded && metaMensal === null ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Você ainda não definiu sua meta. Use a Calculadora para calcular seu preço mínimo e sua meta será criada automaticamente.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => navigate('/app/calculadora')}>
+                Ir para a Calculadora <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
             </div>
-            <Progress value={metaProgress} className="h-2" />
-          </div>
+          ) : (
+            <>
+              <div className="text-2xl font-bold">
+                R$ {(metaMensal ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-muted-foreground">Total que você precisa faturar com seus clientes neste mês</p>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                  <span>{metaProgress}%</span>
+                </div>
+                <Progress value={metaProgress} className="h-2" />
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
