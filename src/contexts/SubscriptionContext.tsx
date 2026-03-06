@@ -30,10 +30,16 @@ const PLANS_CONFIG = {
   essencial: {
     price_id: 'price_1T85PkE1gwfPeM7rCwIpfsbq',
     product_id: 'prod_U6HzKp8Jup6nih',
+    // Production fallbacks
+    price_id_prod: 'price_1T7PjJE1gwfPeM7rxhK4HiRI',
+    product_id_prod: 'prod_U5avmHLpzQ3Wwl',
   },
   pro: {
     price_id: 'price_1T85Q1E1gwfPeM7rWXIYEIv1',
     product_id: 'prod_U6I0MxAJP0ZqTg',
+    // Production fallbacks
+    price_id_prod: 'price_1T7PjsE1gwfPeM7rAbWAP7O2',
+    product_id_prod: 'prod_U5av2HKRFqJrDg',
   },
 };
 
