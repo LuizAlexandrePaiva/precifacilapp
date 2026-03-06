@@ -70,16 +70,13 @@ export default function Calculadora() {
     const calcResult = calcularPreco(input);
 
     const newMeta = calcResult.custoTotal;
-    if (savedMetaMensal !== null && Math.abs(newMeta - savedMetaMensal) > 0.01) {
-      // Meta changed — ask user
+    if (ctxMetaMensal !== null && Math.abs(newMeta - ctxMetaMensal) > 0.01) {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
-    } else if (savedMetaMensal === null) {
-      // First time — save automatically
+    } else if (ctxMetaMensal === null) {
       setPendingResult(calcResult);
       saveMetaAndFinish(calcResult);
     } else {
-      // Same meta — just show result
       setResult(calcResult);
     }
     if (plan === 'free') incrementCalcCount();
@@ -97,8 +94,7 @@ export default function Calculadora() {
         toast.error('Erro ao salvar meta. Tente novamente.');
         return;
       }
-      setSavedMetaMensal(newMeta);
-      setSavedMetaLiquida(metaLiquida);
+      atualizarMeta(newMeta, metaLiquida);
       toast.success('Meta de faturamento atualizada no Dashboard!');
     }
     setResult(calcResult);

@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, ArrowRight } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState, useEffect, useMemo } from 'react';
@@ -24,13 +25,12 @@ const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set
 export default function Dashboard() {
   const { plan, subscriptionEnd, refreshSubscription, canViewChart, trialDaysLeft, isTrialExpired } = useSubscription();
   const { user } = useAuth();
+  const { metaMensal, metaLoaded, carregarMeta } = useMeta();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
-  const [metaMensal, setMetaMensal] = useState<number | null>(null);
-  const [metaLoaded, setMetaLoaded] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -41,6 +41,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
+    if (!metaLoaded) carregarMeta(user.id);
     supabase
       .from('projects')
       .select('*')
@@ -51,51 +52,7 @@ export default function Dashboard() {
       .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => setProposals(data || []));
-    supabase
-      .from('profiles')
-      .select('meta_mensal, meta_liquida')
-      .eq('id', user.id)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Erro ao buscar perfil no dashboard:', error.message, error.code);
-          setMetaLoaded(true);
-          return;
-        }
-
-        if (data) {
-          const mm = Number(data.meta_mensal);
-          const ml = (data as any).meta_liquida;
-          // If meta_liquida was never set, the user never used the calculator
-          if (ml == null || Number(ml) === 0) {
-            setMetaMensal(null);
-          } else {
-            setMetaMensal(mm);
-          }
-        }
-        setMetaLoaded(true);
-      });
-  }, [user]);
-
-  // Listen for realtime changes to profile meta
-  useEffect(() => {
-    if (!user) return;
-    const channel = supabase
-      .channel('dashboard-meta')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
-        (payload) => {
-          const ml = (payload.new as any).meta_liquida;
-          const mm = Number((payload.new as any).meta_mensal);
-          if (ml != null && Number(ml) > 0) {
-            setMetaMensal(mm);
-          }
-        }
-      )
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user, metaLoaded, carregarMeta]);
 
   const chartData = useMemo(() => {
     const now = new Date();
