@@ -170,7 +170,7 @@ export default function Tutorial() {
                 icon: LayoutDashboard,
                 title: 'Acompanhe suas métricas',
                 description:
-                  'Veja propostas enviadas, aprovadas, recusadas e o faturamento total do mês em um só lugar.',
+                  'Veja o total de propostas enviadas, sua taxa de aprovação e o faturamento do mês em um só lugar.',
               },
               {
                 stepNumber: 2,
@@ -253,9 +253,9 @@ export default function Tutorial() {
               {
                 stepNumber: 3,
                 icon: Send,
-                title: 'Envie para o cliente',
+                title: 'Compartilhe com o cliente',
                 description:
-                  'Compartilhe a proposta diretamente por WhatsApp ou e-mail com todos os detalhes formatados.',
+                  'Baixe o PDF da proposta e envie para o cliente pelo canal de sua preferência, como WhatsApp ou e-mail.',
               },
               {
                 stepNumber: 4,
