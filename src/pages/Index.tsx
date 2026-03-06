@@ -372,7 +372,6 @@ export default function Index() {
                   {faq.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground pb-5 leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.a }} />
-                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
