@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
   Calculator, FileText, History, LayoutDashboard, BookOpen, ArrowRight, Settings,
-  CreditCard, Target, TrendingUp, Clock, DollarSign, Users, BarChart3,
-  Download, Send, RefreshCw,
+  CreditCard, Target, TrendingUp, Clock, DollarSign, BarChart3,
+  Download, Send,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
