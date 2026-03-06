@@ -577,7 +577,14 @@ export default function Propostas() {
                   <TableHead className="w-[200px]">
                     <div className="flex items-center gap-1 justify-end">
                       Ações
-                      <InfoModal title="Ações" content="Marque Aprovada quando o cliente aceitar a proposta — ela irá automaticamente para o Histórico. Marque Recusada para registrar propostas não aceitas." iconSize="h-3.5 w-3.5" />
+                      <InfoModal title="Ações" content={
+                        <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                          <li style={{ marginBottom: 8 }}><strong>Aprovada</strong> — cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Recusada</strong> — registra propostas não aceitas para acompanhamento.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong> — exporta a proposta em PDF profissional. Disponível no plano Pro.</li>
+                          <li><strong>Excluir</strong> — remove a proposta permanentemente. Ação irreversível.</li>
+                        </ul>
+                      } iconSize="h-3.5 w-3.5" />
                     </div>
                   </TableHead>
                 </TableRow>

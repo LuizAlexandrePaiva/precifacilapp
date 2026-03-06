@@ -93,12 +93,40 @@ export default function Historico() {
       : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✗ Abaixo</Badge>;
   };
 
-  const margemTooltipText = 'Mostra se o projeto ficou acima ou abaixo do seu preço mínimo por hora. Verde significa que foi rentável. Vermelho significa que você cobrou menos do que o necessário.';
+  const margemTooltipContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Mostra se você cobrou acima ou abaixo do seu custo mínimo neste projeto.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Verde</strong> — você cobrou acima do mínimo. Resultado saudável.</li>
+        <li><strong>Vermelho</strong> — você cobrou abaixo do mínimo. Prejuízo real.</li>
+      </ul>
+    </div>
+  );
+
+  const horasReaisContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Registre as horas que você realmente trabalhou — não as estimadas.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Se for maior que o estimado</strong>, você cobrou menos do que deveria.</li>
+        <li><strong>Use esse dado</strong> para melhorar suas estimativas nos próximos projetos.</li>
+      </ul>
+    </div>
+  );
+
+  const valorHoraRealContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Calculado dividindo o valor total pelas horas reais trabalhadas.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Compare</strong> com seu preço mínimo da Calculadora.</li>
+        <li><strong>Se for menor que o mínimo</strong>, você trabalhou no prejuízo neste projeto.</li>
+      </ul>
+    </div>
+  );
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-  const helpIcon = (title: string, text: string) => (
+  const helpIcon = (title: string, text: React.ReactNode) => (
     <InfoModal title={title} content={text} iconSize="h-3.5 w-3.5" />
   );
 
@@ -146,7 +174,7 @@ export default function Historico() {
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
                     Margem
-                    {helpIcon('Margem', margemTooltipText)}
+                    {helpIcon('Margem do projeto', margemTooltipContent)}
                   </p>
                   <div>{margemBadge(acimaMin)}</div>
                 </div>
@@ -214,19 +242,19 @@ export default function Historico() {
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Horas Reais
-                      {helpIcon('Horas Reais', 'Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável.')}
+                      {helpIcon('Horas reais trabalhadas', horasReaisContent)}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Valor/Hora Real
-                      {helpIcon('Valor/Hora Real', 'Calculamos dividindo o valor total do projeto pelas horas que você realmente trabalhou. Se estiver abaixo do seu preço mínimo, o projeto foi menos rentável do que o esperado.')}
+                      {helpIcon('Valor por hora real', valorHoraRealContent)}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-1">
                       Margem
-                      {helpIcon('Margem', margemTooltipText)}
+                      {helpIcon('Margem do projeto', margemTooltipContent)}
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -300,7 +328,7 @@ export default function Historico() {
           <div className="space-y-2">
             <Label className="flex items-center gap-1">
               Horas reais gastas
-              <InfoModal title="Horas reais gastas" content="Informe quantas horas você realmente trabalhou neste projeto após concluí-lo. Isso permite comparar com o que foi cotado e descobrir se o projeto foi rentável." />
+              <InfoModal title="Horas reais trabalhadas" content={horasReaisContent} />
             </Label>
             <Input
               inputMode="decimal"
