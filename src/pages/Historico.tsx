@@ -93,7 +93,35 @@ export default function Historico() {
       : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✗ Abaixo</Badge>;
   };
 
-  const margemTooltipText = 'Mostra se o projeto ficou acima ou abaixo do seu preço mínimo por hora. Verde significa que foi rentável. Vermelho significa que você cobrou menos do que o necessário.';
+  const margemTooltipContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Mostra se você cobrou acima ou abaixo do seu custo mínimo neste projeto.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Verde</strong> — você cobrou acima do mínimo. Resultado saudável.</li>
+        <li><strong>Vermelho</strong> — você cobrou abaixo do mínimo. Prejuízo real.</li>
+      </ul>
+    </div>
+  );
+
+  const horasReaisContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Registre as horas que você realmente trabalhou — não as estimadas.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Se for maior que o estimado</strong>, você cobrou menos do que deveria.</li>
+        <li><strong>Use esse dado</strong> para melhorar suas estimativas nos próximos projetos.</li>
+      </ul>
+    </div>
+  );
+
+  const valorHoraRealContent = (
+    <div>
+      <p style={{ marginBottom: 8 }}>Calculado dividindo o valor total pelas horas reais trabalhadas.</p>
+      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+        <li style={{ marginBottom: 8 }}><strong>Compare</strong> com seu preço mínimo da Calculadora.</li>
+        <li><strong>Se for menor que o mínimo</strong>, você trabalhou no prejuízo neste projeto.</li>
+      </ul>
+    </div>
+  );
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

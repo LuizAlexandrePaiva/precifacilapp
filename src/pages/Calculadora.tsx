@@ -217,7 +217,17 @@ export default function Calculadora() {
                   Regime tributário
                   <InfoModal
                     title="Regime tributário"
-                    content="Selecione como você emite nota fiscal. MEI: para microempreendedores individuais (~5% de imposto). Autônomo PF: pessoa física com carnê-leão (~27,5%). PJ Simples Nacional: empresa no Simples (~12%). Se não sabe, escolha o que mais se aproxima — você pode alterar depois."
+                    content={
+                      <div>
+                        <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                          <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong> — fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~15%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~15%)</strong> — CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Lucro Presumido (~25%)</strong> — maior carga tributária e mais obrigações fiscais.</li>
+                        </ul>
+                        <p style={{ marginTop: 12 }}>Escolha o regime correto para calcular o impacto real no seu preço.</p>
+                      </div>
+                    }
                   />
                 </Label>
                 <Select value={regime} onValueChange={(v) => setRegime(v as RegimeTributario)}>
@@ -249,8 +259,16 @@ export default function Calculadora() {
               <Label className="flex items-center gap-1">
                 Semanas sem trabalhar por ano
                 <InfoModal
-                  title="Semanas sem trabalhar"
-                  content="Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano."
+                  title="Semanas sem trabalhar por ano"
+                  content={
+                    <div>
+                      <p style={{ marginBottom: 8 }}>São as semanas em que você não vai faturar — férias, feriados e imprevistos.</p>
+                      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                        <li style={{ marginBottom: 8 }}><strong>Recomendado:</strong> pelo menos 4 semanas por ano.</li>
+                        <li><strong>Quanto mais semanas</strong>, menos horas disponíveis — e maior será seu preço por hora.</li>
+                      </ul>
+                    </div>
+                  }
                 />
               </Label>
               <InputWithSuffix
