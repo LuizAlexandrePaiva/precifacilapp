@@ -66,16 +66,16 @@ function Section({ steps, actionLabel, actionPath, actionOnClick, navigate }: Se
 }
 
 const tabs = [
+  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { value: 'calculadora', label: 'Calculadora', icon: Calculator },
   { value: 'propostas', label: 'Propostas', icon: FileText },
   { value: 'historico', label: 'Histórico', icon: History },
-  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { value: 'conta', label: 'Conta', icon: Settings },
 ];
 
 export default function Tutorial() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('calculadora');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [showNoSubModal, setShowNoSubModal] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
@@ -158,6 +158,38 @@ export default function Tutorial() {
           </div>
         </div>
 
+        {/* Dashboard */}
+        <TabsContent value="dashboard">
+          <Section
+            navigate={navigate}
+            actionLabel="Ir para Dashboard"
+            actionPath="/app"
+            steps={[
+              {
+                stepNumber: 1,
+                icon: LayoutDashboard,
+                title: 'Acompanhe suas métricas',
+                description:
+                  'Veja propostas enviadas, aprovadas, recusadas e o faturamento total do mês em um só lugar.',
+              },
+              {
+                stepNumber: 2,
+                icon: Target,
+                title: 'Meta de Faturamento automática',
+                description:
+                  'A Meta de Faturamento é definida automaticamente pela Calculadora de Preço e não pode ser editada diretamente no Dashboard. Para atualizá-la, acesse a Calculadora e altere o valor que deseja ganhar por mês.',
+              },
+              {
+                stepNumber: 3,
+                icon: TrendingUp,
+                title: 'Interprete faturamento vs meta',
+                description:
+                  'Se a barra está verde, você está no caminho certo. Se está baixa, considere ajustar preços ou prospectar mais clientes.',
+              },
+            ]}
+          />
+        </TabsContent>
+
         {/* Calculadora */}
         <TabsContent value="calculadora">
           <Section
@@ -170,35 +202,28 @@ export default function Tutorial() {
                 icon: DollarSign,
                 title: 'Informe quanto quer ganhar por mês',
                 description:
-                  'No campo "Quanto quero ganhar por mês", digite o valor que você quer receber no bolso — já descontados impostos e despesas. Esse valor também define sua Meta de Faturamento no Dashboard.',
+                  'No campo "Quanto quero ganhar por mês", digite o valor líquido desejado. Se você já fez um cálculo antes, o campo pré-preenche automaticamente com o último valor salvo. Campos de R$ formatam automaticamente ao digitar.',
               },
               {
                 stepNumber: 2,
                 icon: Calculator,
-                title: 'Preencha seus custos fixos',
+                title: 'Preencha seus custos e horas',
                 description:
-                  'Inclua aluguel, internet, ferramentas, assinaturas e qualquer gasto recorrente.',
+                  'Informe custos fixos mensais (R$), horas de trabalho por semana, regime tributário e semanas sem trabalhar por ano. Os campos numéricos exibem sufixos como "horas" e "semanas" para facilitar o preenchimento.',
               },
               {
                 stepNumber: 3,
-                icon: Clock,
-                title: 'Defina suas horas de trabalho',
-                description:
-                  'Indique quantas horas por semana você trabalha e quantas semanas de férias tira por ano.',
-              },
-              {
-                stepNumber: 4,
                 icon: Target,
                 title: 'Veja seu preço mínimo por hora',
                 description:
-                  'O sistema calcula o menor valor/hora viável. Cobrar abaixo disso significa prejuízo. Se o valor mudou, o sistema pergunta se quer atualizar a meta no Dashboard.',
+                  'O sistema calcula o menor valor/hora viável. Se o valor que você quer ganhar mudou em relação ao anterior, o sistema pergunta se deseja atualizar a Meta de Faturamento no Dashboard.',
               },
               {
-                stepNumber: 5,
+                stepNumber: 4,
                 icon: ArrowRight,
-                title: 'Use esse número como base',
+                title: 'Gere uma proposta a partir do resultado',
                 description:
-                  'Clique em "Gerar Proposta" para criar uma proposta usando seu preço mínimo como ponto de partida.',
+                  'Após o cálculo, clique no botão "Gerar Proposta" para criar uma proposta comercial usando seu preço mínimo como ponto de partida.',
               },
             ]}
           />
@@ -214,16 +239,16 @@ export default function Tutorial() {
               {
                 stepNumber: 1,
                 icon: FileText,
-                title: 'Crie uma proposta em 2 minutos',
+                title: 'Crie uma proposta completa',
                 description:
-                  'Preencha cliente, projeto, escopo e prazo. O preço/hora pode vir direto da calculadora.',
+                  'Preencha seus dados (nome, email, WhatsApp com máscara automática), dados do projeto (cliente, projeto, escopo), preço/hora (R$ com formatação automática), nível da proposta, prazo, validade e forma de pagamento.',
               },
               {
                 stepNumber: 2,
                 icon: TrendingUp,
                 title: 'Escolha entre 3 níveis de preço',
                 description:
-                  'Mínimo (x1): cobre seus custos. Justo (x1,4): margem confortável. Premium (x2): projetos de alto valor.',
+                  'Mínimo (x1): cobre seus custos. Justo (x1,4): margem confortável — recomendado. Premium (x2): projetos de alto valor ou urgentes.',
               },
               {
                 stepNumber: 3,
@@ -270,38 +295,6 @@ export default function Tutorial() {
                 title: 'Analise sua rentabilidade',
                 description:
                   'Compare o valor cobrado com as horas reais. Descubra se sua precificação está saudável ou se precisa ajustar.',
-              },
-            ]}
-          />
-        </TabsContent>
-
-        {/* Dashboard */}
-        <TabsContent value="dashboard">
-          <Section
-            navigate={navigate}
-            actionLabel="Ir para Dashboard"
-            actionPath="/app"
-            steps={[
-              {
-                stepNumber: 1,
-                icon: LayoutDashboard,
-                title: 'Acompanhe suas métricas',
-                description:
-                  'Veja propostas enviadas, aprovadas, recusadas e o faturamento total do mês em um só lugar.',
-              },
-              {
-                stepNumber: 2,
-                icon: Target,
-                title: 'Meta de Faturamento automática',
-                description:
-                  'A Meta de Faturamento vem automaticamente da Calculadora de Preço. Para atualizá-la, basta acessar a Calculadora e informar o novo valor que deseja ganhar por mês.',
-              },
-              {
-                stepNumber: 3,
-                icon: TrendingUp,
-                title: 'Interprete faturamento vs meta',
-                description:
-                  'Se a barra está verde, você está no caminho certo. Se está baixa, considere ajustar preços ou prospectar mais clientes.',
               },
             ]}
           />
