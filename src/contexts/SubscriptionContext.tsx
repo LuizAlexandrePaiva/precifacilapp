@@ -17,6 +17,8 @@ interface SubscriptionContextType {
   incrementCalcCount: () => void;
   canCalculate: boolean;
   canAccessProposals: boolean;
+  canAccessHistory: boolean;
+  canAccessDashboard: boolean;
   canExportPdf: boolean;
   canViewChart: boolean;
   isAdmin: boolean;
@@ -175,6 +177,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const hasTrialOrPaid = effectivePlan === 'trial' || effectivePlan === 'essencial' || effectivePlan === 'pro';
   const canCalculate = isAdmin || hasTrialOrPaid || monthlyCalcCount < 1;
   const canAccessProposals = isAdmin || hasTrialOrPaid;
+  const canAccessHistory = isAdmin || hasTrialOrPaid;
+  const canAccessDashboard = isAdmin || hasTrialOrPaid;
   const canExportPdf = isAdmin || effectivePlan === 'pro';
   const canViewChart = isAdmin || effectivePlan === 'pro';
 
@@ -189,6 +193,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       incrementCalcCount,
       canCalculate,
       canAccessProposals,
+      canAccessHistory,
+      canAccessDashboard,
       canExportPdf,
       canViewChart,
       isAdmin,
