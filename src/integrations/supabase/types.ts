@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          meta_liquida: number | null
           meta_mensal: number
           updated_at: string
         }
@@ -26,6 +27,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          meta_liquida?: number | null
           meta_mensal?: number
           updated_at?: string
         }
@@ -33,6 +35,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          meta_liquida?: number | null
           meta_mensal?: number
           updated_at?: string
         }

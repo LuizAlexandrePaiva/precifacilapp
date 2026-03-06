@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN meta_liquida numeric DEFAULT NULL;
