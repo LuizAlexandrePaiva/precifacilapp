@@ -97,31 +97,39 @@ export default function Calculadora() {
           <form onSubmit={handleCalc} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Meta líquida mensal (R$)</Label>
+                <Label>Quanto quero ganhar por mês (R$)</Label>
                 <CurrencyInput
                   value={metaLiquida}
                   onValueChange={setMetaLiquida}
                   placeholder="R$ 0,00"
                 />
+                <p className="text-xs text-muted-foreground">Valor que você quer receber no bolso, após impostos e despesas</p>
               </div>
               <div className="space-y-2">
                 <Label>Horas de trabalho por semana</Label>
                 <Input
                   inputMode="decimal"
-                  placeholder="Ex: 40"
+                  placeholder="Ex: 40 horas"
                   value={horasPorSemana}
                   onChange={(e) => setHorasPorSemana(e.target.value)}
                   required
                 />
+                <p className="text-xs text-muted-foreground">Quantas horas por semana você dedica ao trabalho</p>
               </div>
               <div className="space-y-2">
-                <Label>Regime tributário</Label>
+                <Label className="flex items-center gap-1">
+                  Regime tributário
+                  <InfoModal
+                    title="Regime tributário"
+                    content="Selecione como você emite nota fiscal. MEI: para microempreendedores individuais (~5% de imposto). Autônomo PF: pessoa física com carnê-leão (~27,5%). PJ Simples Nacional: empresa no Simples (~12%). Se não sabe, escolha o que mais se aproxima — você pode alterar depois."
+                  />
+                </Label>
                 <Select value={regime} onValueChange={(v) => setRegime(v as RegimeTributario)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mei">MEI</SelectItem>
-                    <SelectItem value="autonomo_pf">Autônomo PF</SelectItem>
-                    <SelectItem value="pj_simples">PJ Simples Nacional</SelectItem>
+                    <SelectItem value="mei">MEI (~5% de imposto)</SelectItem>
+                    <SelectItem value="autonomo_pf">Autônomo PF (~27,5%)</SelectItem>
+                    <SelectItem value="pj_simples">PJ Simples Nacional (~12%)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -132,6 +140,7 @@ export default function Calculadora() {
                   onValueChange={setCustosFixos}
                   placeholder="R$ 0,00"
                 />
+                <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas, assinaturas e outros gastos recorrentes</p>
               </div>
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
@@ -143,7 +152,7 @@ export default function Calculadora() {
                 </Label>
                 <Input
                   inputMode="decimal"
-                  placeholder="Ex: 4"
+                  placeholder="Ex: 4 semanas"
                   value={semanasFerias}
                   onChange={(e) => setSemanasFerias(e.target.value)}
                   required
@@ -181,7 +190,7 @@ export default function Calculadora() {
             <div className="bg-muted rounded-lg p-4 space-y-3">
               <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
               {[
-                { icon: '💰', label: 'Meta líquida', value: `R$ ${formatBR(metaLiquida)}` },
+                { icon: '💰', label: 'Salário desejado', value: `R$ ${formatBR(metaLiquida)}` },
                 { icon: '🧾', label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
                 { icon: '🏠', label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
                 { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },

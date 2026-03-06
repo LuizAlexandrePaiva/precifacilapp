@@ -486,7 +486,7 @@ export default function Propostas() {
                 <div className="flex gap-2">
                   <Input
                     inputMode="decimal"
-                    placeholder="Ex: 40"
+                    placeholder="Ex: 40 horas"
                     value={prazo}
                     onChange={(e) => setPrazo(e.target.value)}
                     required

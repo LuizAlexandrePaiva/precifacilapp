@@ -66,7 +66,7 @@ export default function Dashboard() {
   const saveMeta = useCallback(async () => {
     const value = parseFloat(metaInput);
     if (isNaN(value) || value <= 0) {
-      toast.error('Informe um valor válido para a meta.');
+      toast.error('Informe um valor válido para a meta de faturamento.');
       return;
     }
     const { error } = await supabase
@@ -78,7 +78,7 @@ export default function Dashboard() {
     } else {
       setMetaMensal(value);
       setEditingMeta(false);
-      toast.success('Meta atualizada!');
+      toast.success('Meta de faturamento atualizada!');
     }
   }, [metaInput, user]);
 
@@ -268,15 +268,15 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Meta Mensal Card with Progress */}
+      {/* Meta de Faturamento Card with Progress */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
-            Meta Mensal
+            Meta de Faturamento
             <InfoModal
-              title="Meta Mensal"
-              content="Defina quanto você deseja faturar por mês. O valor é comparado automaticamente com o faturamento real dos seus projetos concluídos no mês atual, exibindo uma barra de progresso. Clique no ícone de lápis para editar sua meta a qualquer momento."
+              title="Meta de Faturamento"
+              content="Defina quanto você quer faturar com seus clientes neste mês. O valor é comparado automaticamente com a receita real dos projetos concluídos, exibindo uma barra de progresso. Clique no ícone de lápis para editar a qualquer momento."
             />
           </CardTitle>
           {!editingMeta ? (
@@ -364,7 +364,7 @@ export default function Dashboard() {
 
       <Card>
         <CardContent className="py-12 text-center text-muted-foreground">
-          <p>Comece usando a <strong>Calculadora</strong> para definir seu preço e registre projetos no <strong>Histórico</strong> para ver seus dados aqui.</p>
+          <p>Comece usando a <strong>Calculadora</strong> para descobrir seu preço mínimo e registre projetos no <strong>Histórico</strong> para acompanhar seus resultados aqui.</p>
         </CardContent>
       </Card>
     </div>
