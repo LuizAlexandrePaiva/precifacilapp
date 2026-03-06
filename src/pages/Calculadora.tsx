@@ -102,17 +102,22 @@ export default function Calculadora() {
     const newMeta = calcResult.custoTotal;
     if (user) {
       console.log('Salvando meta:', { userId: user.id, meta_mensal: newMeta, meta_liquida: metaLiquida });
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .update({ meta_mensal: newMeta, meta_liquida: metaLiquida } as any)
-        .eq('id', user.id)
-        .select();
+        .eq('id', user.id);
       if (error) {
         console.error('Erro ao salvar meta:', error);
         toast.error('Erro ao salvar meta. Tente novamente.');
         return;
       }
-      console.log('Meta salva com sucesso:', data);
+      // Verify the save worked
+      const { data: verify } = await supabase
+        .from('profiles')
+        .select('meta_mensal, meta_liquida')
+        .eq('id', user.id)
+        .single();
+      console.log('Meta verificada após save:', verify);
       setSavedMetaMensal(newMeta);
       setSavedMetaLiquida(metaLiquida);
       toast.success('Meta de faturamento atualizada no Dashboard!');
