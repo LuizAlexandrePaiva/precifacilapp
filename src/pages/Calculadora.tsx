@@ -226,7 +226,7 @@ export default function Calculadora() {
                       <div>
                         <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
                           <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong> — fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~15%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~27,5%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
                           <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~15%)</strong> — CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
                           
                         </ul>
