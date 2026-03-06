@@ -13,6 +13,7 @@ import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } 
 import { Calculator, ArrowRight, Lock } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -23,6 +24,7 @@ export default function Calculadora() {
   const navigate = useNavigate();
   const { plan, canCalculate, incrementCalcCount } = useSubscription();
   const { user } = useAuth();
+  const { metaMensal: ctxMetaMensal, metaLiquida: ctxMetaLiquida, metaLoaded, carregarMeta, atualizarMeta } = useMeta();
 
   const [metaLiquida, setMetaLiquida] = useState(0);
   const [horasPorSemana, setHorasPorSemana] = useState('');
@@ -33,45 +35,24 @@ export default function Calculadora() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  // Saved values from DB
-  const [savedMetaMensal, setSavedMetaMensal] = useState<number | null>(null);
-  const [savedMetaLiquida, setSavedMetaLiquida] = useState<number | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
   // Confirmation modal state
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
   const [isClosingConfirm, setIsClosingConfirm] = useState(false);
 
-  // Load saved values and pre-fill
+  // Load meta from context
   useEffect(() => {
-    if (!user) return;
-    supabase
-      .from('profiles')
-      .select('meta_mensal, meta_liquida')
-      .eq('id', user.id)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Erro ao buscar perfil na calculadora:', error.message, error.code);
-          setLoaded(true);
-          return;
-        }
+    if (user && !metaLoaded) {
+      carregarMeta(user.id);
+    }
+  }, [user, metaLoaded, carregarMeta]);
 
-        if (data) {
-          const ml = (data as any).meta_liquida;
-          const mm = data.meta_mensal;
-          if (ml != null && Number(ml) > 0) {
-            setSavedMetaLiquida(Number(ml));
-            setMetaLiquida(Number(ml));
-          }
-          if (mm != null && Number(mm) !== 5000) {
-            setSavedMetaMensal(Number(mm));
-          }
-        }
-        setLoaded(true);
-      });
-  }, [user]);
+  // Pre-fill from context when loaded
+  useEffect(() => {
+    if (metaLoaded && ctxMetaLiquida != null && ctxMetaLiquida > 0) {
+      setMetaLiquida(ctxMetaLiquida);
+    }
+  }, [metaLoaded, ctxMetaLiquida]);
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,16 +70,13 @@ export default function Calculadora() {
     const calcResult = calcularPreco(input);
 
     const newMeta = calcResult.custoTotal;
-    if (savedMetaMensal !== null && Math.abs(newMeta - savedMetaMensal) > 0.01) {
-      // Meta changed — ask user
+    if (ctxMetaMensal !== null && Math.abs(newMeta - ctxMetaMensal) > 0.01) {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
-    } else if (savedMetaMensal === null) {
-      // First time — save automatically
+    } else if (ctxMetaMensal === null) {
       setPendingResult(calcResult);
       saveMetaAndFinish(calcResult);
     } else {
-      // Same meta — just show result
       setResult(calcResult);
     }
     if (plan === 'free') incrementCalcCount();
@@ -116,8 +94,7 @@ export default function Calculadora() {
         toast.error('Erro ao salvar meta. Tente novamente.');
         return;
       }
-      setSavedMetaMensal(newMeta);
-      setSavedMetaLiquida(metaLiquida);
+      atualizarMeta(newMeta, metaLiquida);
       toast.success('Meta de faturamento atualizada no Dashboard!');
     }
     setResult(calcResult);
