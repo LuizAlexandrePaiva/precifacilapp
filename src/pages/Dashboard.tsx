@@ -42,7 +42,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    if (!metaLoaded) carregarMeta(user.id);
     supabase
       .from('projects')
       .select('*')
@@ -53,7 +52,7 @@ export default function Dashboard() {
       .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => setProposals(data || []));
-  }, [user, metaLoaded, carregarMeta]);
+  }, [user]);
 
   const chartData = useMemo(() => {
     const now = new Date();
