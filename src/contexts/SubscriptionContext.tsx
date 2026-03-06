@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type Plan = 'free' | 'trial' | 'essencial' | 'pro';
 
-const ADMIN_EMAILS = ['lapsantis@protonmail.com'];
+const ADMIN_EMAILS = ['lapsantis@protonmail.com', 'lapsantis@gmail.com'];
 const TRIAL_DAYS = 14;
 
 interface SubscriptionContextType {
