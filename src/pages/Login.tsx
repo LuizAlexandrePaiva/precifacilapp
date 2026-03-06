@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
+import { translateSupabaseError } from '@/lib/authErrors';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -23,7 +24,17 @@ export default function Login() {
     const { error } = await signIn(email, password);
     setLoading(false);
     if (error) {
-      toast.error('Erro ao entrar: ' + error.message);
+      const msg = translateSupabaseError(error.message, 'login');
+      if (msg.includes('Recuperar senha')) {
+        toast.error(
+          <span>
+            Senha incorreta. Tente novamente ou{' '}
+            <a href="/esqueci-senha" className="underline font-medium text-primary">Recuperar senha</a>.
+          </span>
+        );
+      } else {
+        toast.error(msg);
+      }
     } else {
       navigate('/app');
     }

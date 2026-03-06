@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
+import { translateSupabaseError } from '@/lib/authErrors';
 
 export default function Cadastro() {
   const [fullName, setFullName] = useState('');
@@ -32,7 +33,18 @@ export default function Cadastro() {
     const { error } = await signUp(email, password, fullName.trim());
     setLoading(false);
     if (error) {
-      toast.error('Erro ao criar conta: ' + error.message);
+      const msg = translateSupabaseError(error.message, 'signup');
+      if (msg.includes('Fazer login')) {
+        toast.error(
+          <span>
+            Este e-mail já possui uma conta. Tente{' '}
+            <a href="/login" className="underline font-medium text-primary">Fazer login</a>{' '}
+            ou recupere sua senha.
+          </span>
+        );
+      } else {
+        toast.error(msg);
+      }
     } else {
       toast.success('Conta criada! Verifique seu email para confirmar.');
       navigate('/login');

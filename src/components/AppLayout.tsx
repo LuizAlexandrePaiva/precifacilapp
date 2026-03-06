@@ -24,6 +24,12 @@ export function AppLayout() {
           <main className="flex-1 p-4 md:p-6 overflow-auto">
             <Outlet />
           </main>
+          <footer className="border-t px-4 py-3 text-center text-sm text-muted-foreground">
+            Dúvidas? Fale com a gente:{' '}
+            <a href="mailto:suporte@precifacil.app.br" className="text-primary hover:underline">
+              suporte@precifacil.app.br
+            </a>
+          </footer>
         </div>
         {plan === 'pro' && <WhatsAppSupport />}
       </div>
