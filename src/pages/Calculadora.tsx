@@ -185,7 +185,12 @@ export default function Calculadora() {
                   Quanto quero ganhar por mês
                   <InfoModal
                     title="Quanto quero ganhar por mês"
-                    content="Informe o valor que você quer receber no bolso ao final do mês, já descontados impostos e despesas. Este valor é usado para calcular seu preço mínimo por hora e também define a Meta de Faturamento exibida no seu Dashboard."
+                    content={
+                      <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                        <li style={{ marginBottom: 8 }}><strong>Valor líquido</strong> — o que você quer receber no bolso, já descontados impostos e despesas.</li>
+                        <li><strong>Define sua Meta de Faturamento</strong> no Dashboard e calcula seu preço mínimo por hora.</li>
+                      </ul>
+                    }
                   />
                 </Label>
                 <CurrencyInput
