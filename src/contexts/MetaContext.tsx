@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface MetaContextType {
@@ -12,6 +13,7 @@ interface MetaContextType {
 const MetaContext = createContext<MetaContextType | undefined>(undefined);
 
 export function MetaProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [metaMensal, setMetaMensal] = useState<number | null>(null);
   const [metaLiquida, setMetaLiquida] = useState<number | null>(null);
   const [metaLoaded, setMetaLoaded] = useState(false);
@@ -47,6 +49,17 @@ export function MetaProvider({ children }: { children: ReactNode }) {
     setMetaMensal(newMetaMensal);
     setMetaLiquida(newMetaLiquida);
   }, []);
+
+  // Auto-load meta when user is authenticated
+  useEffect(() => {
+    if (user?.id) {
+      carregarMeta(user.id);
+    } else {
+      setMetaMensal(null);
+      setMetaLiquida(null);
+      setMetaLoaded(false);
+    }
+  }, [user?.id, carregarMeta]);
 
   return (
     <MetaContext.Provider value={{ metaMensal, metaLiquida, metaLoaded, carregarMeta, atualizarMeta }}>

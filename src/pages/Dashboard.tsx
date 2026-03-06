@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, ArrowRight } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,7 +42,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    if (!metaLoaded) carregarMeta(user.id);
     supabase
       .from('projects')
       .select('*')
@@ -52,7 +52,7 @@ export default function Dashboard() {
       .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => setProposals(data || []));
-  }, [user, metaLoaded, carregarMeta]);
+  }, [user]);
 
   const chartData = useMemo(() => {
     const now = new Date();
@@ -250,7 +250,13 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {metaLoaded && metaMensal === null ? (
+          {!metaLoaded ? (
+            <div className="space-y-3">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-64" />
+              <Skeleton className="h-2 w-full" />
+            </div>
+          ) : metaMensal === null ? (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 Você ainda não definiu sua meta. Use a Calculadora para calcular seu preço mínimo e sua meta será criada automaticamente.
