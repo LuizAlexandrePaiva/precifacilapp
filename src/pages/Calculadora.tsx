@@ -87,7 +87,7 @@ export default function Calculadora() {
     if (user) {
       const { error } = await supabase
         .from('profiles')
-        .update({ meta_mensal: newMeta, meta_liquida: metaLiquida } as any)
+        .update({ meta_mensal: newMeta, meta_liquida: metaLiquida })
         .eq('id', user.id);
       if (error) {
         console.error('Erro ao salvar meta:', error);
