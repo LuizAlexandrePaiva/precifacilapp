@@ -159,7 +159,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_meta: {
+        Args: { p_user_id: string }
+        Returns: {
+          meta_liquida: number
+          meta_mensal: number
+        }[]
+      }
+      update_user_meta: {
+        Args: {
+          p_meta_liquida: number
+          p_meta_mensal: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

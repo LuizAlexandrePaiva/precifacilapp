@@ -85,10 +85,11 @@ export default function Calculadora() {
   const saveMetaAndFinish = async (calcResult: CalculationResult) => {
     const newMeta = calcResult.custoTotal;
     if (user) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ meta_mensal: newMeta, meta_liquida: metaLiquida })
-        .eq('id', user.id);
+      const { error } = await supabase.rpc('update_user_meta', {
+        p_user_id: user.id,
+        p_meta_mensal: Number(newMeta),
+        p_meta_liquida: Number(metaLiquida),
+      });
       if (error) {
         console.error('Erro ao salvar meta:', error);
         toast.error('Erro ao salvar meta. Tente novamente.');
