@@ -579,8 +579,8 @@ export default function Propostas() {
                       Ações
                       <InfoModal title="Ações" content={
                         <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                          <li style={{ marginBottom: 8 }}><strong>Aprovada</strong> — cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Recusada</strong> — registra propostas não aceitas para acompanhamento.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Aprovar</strong> — cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Recusar</strong> — registra propostas não aceitas para acompanhamento.</li>
                           <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong> — exporta a proposta em PDF profissional. Disponível no plano Pro.</li>
                           <li><strong>Excluir</strong> — remove a proposta permanentemente. Ação irreversível.</li>
                         </ul>
