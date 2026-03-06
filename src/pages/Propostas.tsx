@@ -479,7 +479,13 @@ export default function Propostas() {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-1 h-5">
                         Nível da proposta
-                        <InfoModal title="Nível da proposta" content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
+                        <InfoModal title="Nível da proposta" content={
+                          <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Mínimo</strong> — cobre exatamente seus custos. Use quando precisar fechar o projeto a qualquer custo.</li>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Justo</strong> — adiciona uma margem saudável de 40%. Recomendado para a maioria dos projetos.</li>
+                            <li><strong>Preço Premium</strong> — dobra o valor base. Ideal para projetos urgentes, complexos ou fora da sua especialidade.</li>
+                          </ul>
+                        } />
                       </Label>
                       <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
                         <SelectTrigger className={`h-11 ${pacote === 'selecione' ? 'text-muted-foreground' : ''}`}>
