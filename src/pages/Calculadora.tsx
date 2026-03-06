@@ -181,7 +181,7 @@ export default function Calculadora() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Col 1 Row 1 — Meta */}
               <div className="space-y-2">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 h-5">
                   Quanto quero ganhar por mês
                   <InfoModal
                     title="Quanto quero ganhar por mês"
@@ -199,7 +199,7 @@ export default function Calculadora() {
 
               {/* Col 2 Row 1 — Horas */}
               <div className="space-y-2">
-                <Label>Horas de trabalho por semana</Label>
+                <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
                 <InputWithSuffix
                   inputMode="decimal"
                   placeholder="Ex: 40"
@@ -213,7 +213,7 @@ export default function Calculadora() {
 
               {/* Col 1 Row 2 — Regime */}
               <div className="space-y-2">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 h-5">
                   Regime tributário
                   <InfoModal
                     title="Regime tributário"
@@ -233,7 +233,7 @@ export default function Calculadora() {
 
               {/* Col 2 Row 2 — Custos fixos */}
               <div className="space-y-2">
-                <Label>Custos fixos mensais</Label>
+                <Label className="h-5 flex items-center">Custos fixos mensais</Label>
                 <CurrencyInput
                   value={custosFixos}
                   onValueChange={setCustosFixos}
