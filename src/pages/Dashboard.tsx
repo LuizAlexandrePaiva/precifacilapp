@@ -2,15 +2,14 @@ import { InfoModal } from '@/components/InfoModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, Pencil, Check } from 'lucide-react';
+import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, Calculator } from 'lucide-react';
 import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 const planLabels: Record<string, string> = {
@@ -26,12 +25,12 @@ export default function Dashboard() {
   const { plan, subscriptionEnd, refreshSubscription, canViewChart, trialDaysLeft, isTrialExpired } = useSubscription();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
-  const [metaMensal, setMetaMensal] = useState<number>(5000);
-  const [editingMeta, setEditingMeta] = useState(false);
-  const [metaInput, setMetaInput] = useState('');
+  const [metaMensal, setMetaMensal] = useState<number | null>(null);
+  const [metaLoaded, setMetaLoaded] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -40,7 +39,6 @@ export default function Dashboard() {
     }
   }, [searchParams, refreshSubscription]);
 
-  // Fetch projects, proposals, and user meta
   useEffect(() => {
     if (!user) return;
     supabase
@@ -59,30 +57,16 @@ export default function Dashboard() {
       .eq('id', user.id)
       .single()
       .then(({ data }) => {
-        if (data?.meta_mensal != null) setMetaMensal(Number(data.meta_mensal));
+        if (data?.meta_mensal != null && Number(data.meta_mensal) !== 5000) {
+          setMetaMensal(Number(data.meta_mensal));
+        } else {
+          // Default 5000 means user never set it from calculator
+          setMetaMensal(null);
+        }
+        setMetaLoaded(true);
       });
   }, [user]);
 
-  const saveMeta = useCallback(async () => {
-    const value = parseFloat(metaInput);
-    if (isNaN(value) || value <= 0) {
-      toast.error('Informe um valor válido para a meta de faturamento.');
-      return;
-    }
-    const { error } = await supabase
-      .from('profiles')
-      .update({ meta_mensal: value } as any)
-      .eq('id', user!.id);
-    if (error) {
-      toast.error('Erro ao salvar meta.');
-    } else {
-      setMetaMensal(value);
-      setEditingMeta(false);
-      toast.success('Meta de faturamento atualizada!');
-    }
-  }, [metaInput, user]);
-
-  // Build last 6 months chart data from projects
   const chartData = useMemo(() => {
     const now = new Date();
     const months: { name: string; faturamento: number }[] = [];
@@ -116,14 +100,10 @@ export default function Dashboard() {
       ? Math.round((propostasAprovadas / totalPropostas) * 100)
       : 0;
 
-    return {
-      faturamentoMes,
-      totalPropostas,
-      taxaAprovacao,
-    };
+    return { faturamentoMes, totalPropostas, taxaAprovacao };
   }, [projects, proposals]);
 
-  const metaProgress = metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
+  const metaProgress = metaMensal && metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
   const cards = [
     { title: 'Faturamento do Mês', value: `R$ ${stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-primary' },
@@ -218,7 +198,7 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Plano atual:</span>
-                <Badge 
+                <Badge
                   variant={plan === 'free' || plan === 'trial' ? 'outline' : 'default'}
                   className={plan === 'free' || plan === 'trial' ? 'border-primary/40 bg-primary/10 text-primary font-semibold' : ''}
                 >
@@ -268,7 +248,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Meta de Faturamento Card with Progress */}
+      {/* Meta de Faturamento Card — Read Only */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -276,54 +256,38 @@ export default function Dashboard() {
             Meta de Faturamento
             <InfoModal
               title="Meta de Faturamento"
-              content="Defina quanto você quer faturar com seus clientes neste mês. O valor é comparado automaticamente com a receita real dos projetos concluídos, exibindo uma barra de progresso. Clique no ícone de lápis para editar a qualquer momento."
+              content="Este valor é calculado automaticamente com base no que você definiu na Calculadora de Preço. Para atualizar sua meta, acesse a Calculadora e informe o novo valor que deseja ganhar por mês."
+              actionLabel="Ir para a Calculadora"
+              onAction={() => navigate('/app/calculadora')}
             />
           </CardTitle>
-          {!editingMeta ? (
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7"
-              onClick={() => { setMetaInput(String(metaMensal)); setEditingMeta(true); }}
-            >
-              <Pencil className="h-4 w-4 text-muted-foreground" />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7"
-              onClick={saveMeta}
-            >
-              <Check className="h-4 w-4 text-primary" />
-            </Button>
-          )}
         </CardHeader>
         <CardContent className="space-y-3">
-          {editingMeta ? (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">R$</span>
-              <Input
-                type="number"
-                value={metaInput}
-                onChange={(e) => setMetaInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && saveMeta()}
-                className="max-w-[180px]"
-                autoFocus
-              />
+          {metaLoaded && metaMensal === null ? (
+            <div className="text-center py-4 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Nenhuma meta definida. Use a Calculadora para definir seu preço e sua meta será criada automaticamente.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => navigate('/app/calculadora')}>
+                <Calculator className="h-4 w-4 mr-2" />
+                Ir para a Calculadora
+              </Button>
             </div>
           ) : (
-            <div className="text-2xl font-bold">
-              R$ {metaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-            </div>
+            <>
+              <div className="text-2xl font-bold">
+                R$ {(metaMensal ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-muted-foreground">Total que você quer faturar com seus clientes neste mês</p>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                  <span>{metaProgress}%</span>
+                </div>
+                <Progress value={metaProgress} className="h-2" />
+              </div>
+            </>
           )}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-              <span>{metaProgress}%</span>
-            </div>
-            <Progress value={metaProgress} className="h-2" />
-          </div>
         </CardContent>
       </Card>
 
