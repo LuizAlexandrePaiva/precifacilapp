@@ -4,7 +4,7 @@ import { HelpCircle } from "lucide-react";
 
 interface InfoModalProps {
   title: string;
-  content: string;
+  content: React.ReactNode;
   iconSize?: string;
   actionLabel?: string;
   onAction?: () => void;
@@ -69,9 +69,9 @@ export function InfoModal({ title, content, iconSize = "h-4 w-4", actionLabel, o
               <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>
                 {title}
               </h3>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: "#4a5568", marginBottom: 20 }}>
+              <div style={{ fontSize: 14, lineHeight: 1.6, color: "#4a5568", marginBottom: 20 }}>
                 {content}
-              </p>
+              </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {actionLabel && onAction && (
                   <button
