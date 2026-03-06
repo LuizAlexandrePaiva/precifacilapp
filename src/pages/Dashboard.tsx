@@ -29,8 +29,7 @@ export default function Dashboard() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
-  const [metaMensal, setMetaMensal] = useState<number | null>(null);
-  const [metaLoaded, setMetaLoaded] = useState(false);
+  const [metaMensal, setMetaMensal] = useState<number>(5000);
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -57,13 +56,7 @@ export default function Dashboard() {
       .eq('id', user.id)
       .single()
       .then(({ data }) => {
-        if (data?.meta_mensal != null && Number(data.meta_mensal) !== 5000) {
-          setMetaMensal(Number(data.meta_mensal));
-        } else {
-          // Default 5000 means user never set it from calculator
-          setMetaMensal(null);
-        }
-        setMetaLoaded(true);
+        if (data?.meta_mensal != null) setMetaMensal(Number(data.meta_mensal));
       });
   }, [user]);
 
@@ -103,7 +96,7 @@ export default function Dashboard() {
     return { faturamentoMes, totalPropostas, taxaAprovacao };
   }, [projects, proposals]);
 
-  const metaProgress = metaMensal && metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
+  const metaProgress = metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
   const cards = [
     { title: 'Faturamento do Mês', value: `R$ ${stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-primary' },
@@ -263,31 +256,17 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {metaLoaded && metaMensal === null ? (
-            <div className="text-center py-4 space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Nenhuma meta definida. Use a Calculadora para definir seu preço e sua meta será criada automaticamente.
-              </p>
-              <Button variant="outline" size="sm" onClick={() => navigate('/app/calculadora')}>
-                <Calculator className="h-4 w-4 mr-2" />
-                Ir para a Calculadora
-              </Button>
+          <div className="text-2xl font-bold">
+            R$ {metaMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </div>
+          <p className="text-xs text-muted-foreground">Total que você quer faturar com seus clientes neste mês</p>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              <span>{metaProgress}%</span>
             </div>
-          ) : (
-            <>
-              <div className="text-2xl font-bold">
-                R$ {(metaMensal ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </div>
-              <p className="text-xs text-muted-foreground">Total que você quer faturar com seus clientes neste mês</p>
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>R$ {stats.faturamentoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  <span>{metaProgress}%</span>
-                </div>
-                <Progress value={metaProgress} className="h-2" />
-              </div>
-            </>
-          )}
+            <Progress value={metaProgress} className="h-2" />
+          </div>
         </CardContent>
       </Card>
 
