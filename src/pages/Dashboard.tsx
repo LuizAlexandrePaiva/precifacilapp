@@ -243,7 +243,12 @@ export default function Dashboard() {
             Meta de Faturamento
             <InfoModal
               title="Meta de Faturamento"
-              content="Este valor é calculado automaticamente com base no que você definiu na Calculadora de Preço. Para atualizar sua meta, acesse a Calculadora e informe o novo valor que deseja ganhar por mês."
+              content={
+                <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                  <li style={{ marginBottom: 8 }}><strong>Calculado automaticamente</strong> — com base no valor que você definiu na Calculadora de Preço.</li>
+                  <li><strong>Para atualizar</strong>, acesse a Calculadora e informe o novo valor que deseja ganhar por mês.</li>
+                </ul>
+              }
               actionLabel="Ir para a Calculadora"
               onAction={() => navigate('/app/calculadora')}
             />
