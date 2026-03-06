@@ -467,7 +467,7 @@ export default function Propostas() {
                   {/* Preço/hora + Nível */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Preço/hora</Label>
+                      <Label className="h-5 flex items-center">Preço/hora</Label>
                       <CurrencyInput
                         value={precoHora}
                         onValueChange={setPrecoHora}
@@ -477,7 +477,7 @@ export default function Propostas() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-1">
+                      <Label className="flex items-center gap-1 h-5">
                         Nível da proposta
                         <InfoModal title="Nível da proposta" content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
                       </Label>
