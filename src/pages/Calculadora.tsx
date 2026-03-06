@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
@@ -33,29 +33,39 @@ export default function Calculadora() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  // Saved meta from DB
-  const [savedMeta, setSavedMeta] = useState<number | null>(null);
+  // Saved values from DB
+  const [savedMetaMensal, setSavedMetaMensal] = useState<number | null>(null);
+  const [savedMetaLiquida, setSavedMetaLiquida] = useState<number | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
   // Confirmation modal state
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
   const [isClosingConfirm, setIsClosingConfirm] = useState(false);
 
-  // Load current saved meta
+  // Load saved values and pre-fill
   useEffect(() => {
     if (!user) return;
     supabase
       .from('profiles')
-      .select('meta_mensal')
+      .select('meta_mensal, meta_liquida')
       .eq('id', user.id)
       .single()
       .then(({ data }) => {
-        if (data?.meta_mensal != null && Number(data.meta_mensal) !== 5000) {
-          setSavedMeta(Number(data.meta_mensal));
+        if (data) {
+          const ml = (data as any).meta_liquida;
+          const mm = data.meta_mensal;
+          if (ml != null && Number(ml) > 0) {
+            setSavedMetaLiquida(Number(ml));
+            setMetaLiquida(Number(ml));
+          }
+          if (mm != null && Number(mm) !== 5000) {
+            setSavedMetaMensal(Number(mm));
+          }
         }
+        setLoaded(true);
       });
   }, [user]);
-
-  const computeResult = (input: CalculationInput) => calcularPreco(input);
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,18 +80,19 @@ export default function Calculadora() {
       custosFixos,
       semanasFerias: parseFloat(semanasFerias) || 0,
     };
-    const calcResult = computeResult(input);
+    const calcResult = calcularPreco(input);
 
-    // Check if meta changed
     const newMeta = calcResult.custoTotal;
-    if (savedMeta !== null && Math.abs(newMeta - savedMeta) > 0.01) {
+    if (savedMetaMensal !== null && Math.abs(newMeta - savedMetaMensal) > 0.01) {
+      // Meta changed — ask user
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
-    } else if (savedMeta === null) {
+    } else if (savedMetaMensal === null) {
       // First time — save automatically
       setPendingResult(calcResult);
       saveMetaAndFinish(calcResult);
     } else {
+      // Same meta — just show result
       setResult(calcResult);
     }
     if (plan === 'free') incrementCalcCount();
@@ -92,12 +103,13 @@ export default function Calculadora() {
     if (user) {
       const { error } = await supabase
         .from('profiles')
-        .update({ meta_mensal: newMeta } as any)
+        .update({ meta_mensal: newMeta, meta_liquida: metaLiquida } as any)
         .eq('id', user.id);
       if (error) {
         toast.error('Erro ao atualizar meta de faturamento.');
       } else {
-        setSavedMeta(newMeta);
+        setSavedMetaMensal(newMeta);
+        setSavedMetaLiquida(metaLiquida);
         toast.success('Meta de faturamento atualizada no Dashboard!');
       }
     }
@@ -261,10 +273,8 @@ export default function Calculadora() {
 
       {result && (
         <Card className="border-primary">
-          <CardHeader>
-            <CardTitle className="text-center">Seu Preço Mínimo</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="pt-6 space-y-6">
+            <h3 className="text-lg font-bold text-center">Seu Preço Mínimo</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-accent rounded-lg">
                 <p className="text-sm text-muted-foreground mb-1">Por hora</p>
@@ -357,10 +367,10 @@ export default function Calculadora() {
             onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
           >
             <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>
-              Atualizar meta de faturamento?
+              Atualizar Meta de Faturamento?
             </h3>
             <p style={{ fontSize: 14, lineHeight: 1.6, color: '#4a5568', marginBottom: 20 }}>
-              O valor que você quer ganhar por mês mudou. Deseja atualizar sua Meta de Faturamento no Dashboard?
+              Você alterou o valor que deseja ganhar por mês. Deseja atualizar sua Meta de Faturamento no Dashboard?
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button
