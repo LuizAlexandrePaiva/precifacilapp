@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
+import { InputWithSuffix } from '@/components/InputWithSuffix';
 import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, Lock } from 'lucide-react';
@@ -35,19 +35,16 @@ export default function Calculadora() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  // Confirmation modal state
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
   const [isClosingConfirm, setIsClosingConfirm] = useState(false);
 
-  // Load meta from context
   useEffect(() => {
     if (user && !metaLoaded) {
       carregarMeta(user.id);
     }
   }, [user, metaLoaded, carregarMeta]);
 
-  // Pre-fill from context when loaded
   useEffect(() => {
     if (metaLoaded && ctxMetaLiquida != null && ctxMetaLiquida > 0) {
       setMetaLiquida(ctxMetaLiquida);
@@ -180,12 +177,12 @@ export default function Calculadora() {
 
       <Card>
         <CardContent className="pt-6">
-          <form onSubmit={handleCalc} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Col 1 Row 1 */}
+          <form onSubmit={handleCalc} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Col 1 Row 1 — Meta */}
               <div className="space-y-2">
-                <Label className="flex items-center gap-1 h-5">
-                  Quanto quero ganhar por mês (R$)
+                <Label className="flex items-center gap-1">
+                  Quanto quero ganhar por mês
                   <InfoModal
                     title="Quanto quero ganhar por mês"
                     content="Informe o valor que você quer receber no bolso ao final do mês, já descontados impostos e despesas. Este valor é usado para calcular seu preço mínimo por hora e também define a Meta de Faturamento exibida no seu Dashboard."
@@ -195,26 +192,28 @@ export default function Calculadora() {
                   value={metaLiquida}
                   onValueChange={setMetaLiquida}
                   placeholder="R$ 0,00"
+                  className="h-11"
                 />
-                <p className="text-xs text-muted-foreground">Valor que você quer receber no bolso, após impostos e despesas</p>
+                <p className="text-xs text-muted-foreground">Valor líquido desejado após impostos e despesas</p>
               </div>
 
-              {/* Col 2 Row 1 */}
+              {/* Col 2 Row 1 — Horas */}
               <div className="space-y-2">
-                <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
-                <Input
+                <Label>Horas de trabalho por semana</Label>
+                <InputWithSuffix
                   inputMode="decimal"
-                  placeholder="Ex: 40 horas"
+                  placeholder="Ex: 40"
+                  suffix="horas"
                   value={horasPorSemana}
                   onChange={(e) => setHorasPorSemana(e.target.value)}
                   required
                 />
-                <p className="text-xs text-muted-foreground">Quantas horas por semana você dedica ao trabalho</p>
+                <p className="text-xs text-muted-foreground">Horas semanais dedicadas ao trabalho</p>
               </div>
 
-              {/* Col 1 Row 2 */}
+              {/* Col 1 Row 2 — Regime */}
               <div className="space-y-2">
-                <Label className="flex items-center gap-1 h-5">
+                <Label className="flex items-center gap-1">
                   Regime tributário
                   <InfoModal
                     title="Regime tributário"
@@ -222,46 +221,49 @@ export default function Calculadora() {
                   />
                 </Label>
                 <Select value={regime} onValueChange={(v) => setRegime(v as RegimeTributario)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="mei">MEI (~5% de imposto)</SelectItem>
                     <SelectItem value="autonomo_pf">Autônomo PF (~27,5%)</SelectItem>
                     <SelectItem value="pj_simples">PJ Simples Nacional (~12%)</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground">Como você emite nota fiscal</p>
               </div>
 
-              {/* Col 2 Row 2 */}
+              {/* Col 2 Row 2 — Custos fixos */}
               <div className="space-y-2">
-                <Label className="h-5 flex items-center">Custos fixos mensais (R$)</Label>
+                <Label>Custos fixos mensais</Label>
                 <CurrencyInput
                   value={custosFixos}
                   onValueChange={setCustosFixos}
                   placeholder="R$ 0,00"
+                  className="h-11"
                 />
-                <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas, assinaturas e outros gastos recorrentes</p>
-              </div>
-
-              {/* Col 1 Row 3 */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-1 h-5">
-                  Semanas sem trabalhar por ano
-                  <InfoModal
-                    title="Semanas sem trabalhar"
-                    content="Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano."
-                  />
-                </Label>
-                <Input
-                  inputMode="decimal"
-                  placeholder="Ex: 4 semanas"
-                  value={semanasFerias}
-                  onChange={(e) => setSemanasFerias(e.target.value)}
-                  required
-                />
+                <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas e assinaturas</p>
               </div>
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={!canCalculate && plan === 'free'}>
+            {/* Full width — Semanas férias */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1">
+                Semanas sem trabalhar por ano
+                <InfoModal
+                  title="Semanas sem trabalhar"
+                  content="Usamos esse número para calcular quantas semanas você realmente trabalha no ano. Se você não tira férias, coloque 0. Exemplo: 4 semanas = aproximadamente 1 mês de descanso por ano."
+                />
+              </Label>
+              <InputWithSuffix
+                inputMode="decimal"
+                placeholder="Ex: 4"
+                suffix="semanas"
+                value={semanasFerias}
+                onChange={(e) => setSemanasFerias(e.target.value)}
+                required
+              />
+            </div>
+
+            <Button type="submit" className="w-full h-[52px] mt-6 text-base" size="lg" disabled={!canCalculate && plan === 'free'}>
               {!canCalculate && plan === 'free' ? 'Limite atingido — Faça upgrade' : 'Calcular'}
             </Button>
           </form>
@@ -290,15 +292,14 @@ export default function Calculadora() {
             <div className="bg-muted rounded-lg p-4 space-y-3">
               <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
               {[
-                { icon: '💰', label: 'Salário desejado', value: `R$ ${formatBR(metaLiquida)}` },
-                { icon: '🧾', label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
-                { icon: '🏠', label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
-                { icon: '⏱️', label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
-                { icon: '📊', label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
+                { label: 'Salário desejado', value: `R$ ${formatBR(metaLiquida)}` },
+                { label: `Impostos estimados (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'Autônomo PF ~27,5%' : 'Simples Nacional ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
+                { label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
+                { label: 'Horas faturáveis reais/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
+                { label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
-                    <span>{item.icon}</span>
                     <span className="text-muted-foreground">{item.label}</span>
                     {item.tooltip && (
                       <InfoModal
@@ -312,7 +313,7 @@ export default function Calculadora() {
                 </div>
               ))}
               <div className="border-t border-border pt-3 mt-3 flex items-center justify-between font-bold">
-                <span>✅ Resultado</span>
+                <span>Resultado</span>
                 <span className="text-primary text-lg">R$ {result.precoHora.toFixed(2).replace('.', ',')}/hora</span>
               </div>
             </div>

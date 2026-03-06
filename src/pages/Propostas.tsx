@@ -91,7 +91,6 @@ export default function Propostas() {
   const [freelancerEmail, setFreelancerEmail] = useState('');
   const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
 
-
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
       setPrecoHora(precoHoraFromCalc);
@@ -382,25 +381,28 @@ export default function Propostas() {
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" />Nova Proposta</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
+          <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
+            <DialogHeader className="px-6 pt-6 pb-0">
               <DialogTitle>Nova Proposta</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSave} className="space-y-4">
-              {/* Freelancer Info */}
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-muted-foreground">Seus dados (aparecem no PDF)</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Seu nome</Label>
-                    <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="Seu nome" />
+            <div className="flex-1 overflow-y-auto px-6 pb-0">
+              <form id="proposal-form" onSubmit={handleSave} className="space-y-5 py-4">
+                {/* Section: Seus dados */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Seus dados</h3>
+                  <p className="text-xs text-muted-foreground -mt-2">Essas informações aparecem no PDF da proposta</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Seu nome</Label>
+                      <Input value={freelancerNome} onChange={(e) => setFreelancerNome(e.target.value)} placeholder="Nome completo" className="h-11" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input value={freelancerEmail} onChange={(e) => setFreelancerEmail(e.target.value)} placeholder="seu@email.com" type="email" className="h-11" />
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Email</Label>
-                    <Input value={freelancerEmail} onChange={(e) => setFreelancerEmail(e.target.value)} placeholder="seu@email.com" type="email" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">WhatsApp</Label>
+                  <div className="space-y-2">
+                    <Label>WhatsApp</Label>
                     <Input
                       value={freelancerWhatsapp}
                       onInput={(e) => {
@@ -411,119 +413,139 @@ export default function Propostas() {
                       }}
                       placeholder="(11) 99999-9999"
                       maxLength={15}
+                      inputMode="tel"
+                      className="h-11 max-w-xs"
                     />
                   </div>
                 </div>
-              </div>
 
-              <Separator />
+                <Separator />
 
-              {/* Client & Project */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Nome do cliente</Label>
-                  <Input value={cliente} onChange={(e) => setCliente(e.target.value)} required placeholder="Ex: João Silva" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Nome do projeto</Label>
-                  <Input value={projeto} onChange={(e) => setProjeto(e.target.value)} required placeholder="Ex: Site institucional" />
-                </div>
-              </div>
+                {/* Section: Dados do projeto */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Dados do projeto</h3>
 
-              {/* Scope - Inclusos */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-1">
-                  Está incluído
-                  <InfoModal title="Está incluído" content="Tudo que será entregue ao cliente conforme combinado." />
-                </Label>
-                <Textarea value={inclusos} onChange={(e) => setInclusos(e.target.value)} placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"} rows={3} />
-              </div>
-
-              {/* Scope - Não inclusos */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-1">
-                  Não está incluído
-                  <InfoModal title="Não está incluído" content="Tudo que está fora do escopo para evitar mal-entendidos." />
-                </Label>
-                <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"} rows={2} />
-              </div>
-
-              {/* Price & Package */}
-              <div className="grid grid-cols-2 gap-4 items-start">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1 h-5">
-                    <Label>Preço/hora (R$)</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Nome do cliente</Label>
+                      <Input value={cliente} onChange={(e) => setCliente(e.target.value)} required placeholder="Ex: João Silva" className="h-11" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Nome do projeto</Label>
+                      <Input value={projeto} onChange={(e) => setProjeto(e.target.value)} required placeholder="Ex: Site institucional" className="h-11" />
+                    </div>
                   </div>
-                  <CurrencyInput
-                    value={precoHora}
-                    onValueChange={setPrecoHora}
-                    placeholder="R$ 0,00"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1 h-5">
-                    <Label>Nível da proposta</Label>
-                    <InfoModal title="Nível da proposta" content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
+
+                  {/* Inclusos */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1">
+                      Está incluído
+                      <InfoModal title="Está incluído" content="Tudo que será entregue ao cliente conforme combinado." />
+                    </Label>
+                    <Textarea
+                      value={inclusos}
+                      onChange={(e) => setInclusos(e.target.value)}
+                      placeholder={"Design de 5 páginas\n2 rodadas de revisão\nResponsivo mobile"}
+                      className="min-h-[100px] resize-y"
+                    />
                   </div>
-                  <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
-                    <SelectTrigger className={pacote === 'selecione' ? 'text-muted-foreground' : ''}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="selecione" disabled>Selecione o nível...</SelectItem>
-                      <SelectItem value="basico">Preço mínimo (×1)</SelectItem>
-                      <SelectItem value="padrao">Preço justo (×1,4) — Recomendado</SelectItem>
-                      <SelectItem value="premium">Preço premium (×2)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
-              {/* Deadline */}
-              <div className="space-y-2">
-                <Label>Prazo estimado</Label>
-                <div className="flex gap-2">
-                  <Input
-                    inputMode="decimal"
-                    placeholder="Ex: 40 horas"
-                    value={prazo}
-                    onChange={(e) => setPrazo(e.target.value)}
-                    required
-                    className="flex-1"
-                  />
-                  <Select value={prazoUnidade} onValueChange={(v) => setPrazoUnidade(v as PrazoUnidade)}>
-                    <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="horas">Horas</SelectItem>
-                      <SelectItem value="dias">Dias</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                  {/* Não inclusos */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1">
+                      Não está incluído
+                      <InfoModal title="Não está incluído" content="Tudo que está fora do escopo para evitar mal-entendidos." />
+                    </Label>
+                    <Textarea
+                      value={naoInclusos}
+                      onChange={(e) => setNaoInclusos(e.target.value)}
+                      placeholder={"Textos e conteúdo\nFotografia\nManutenção mensal"}
+                      className="min-h-[100px] resize-y"
+                    />
+                  </div>
 
-              {/* Payment & Validity */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Forma de pagamento</Label>
-                  <Input value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)} placeholder="50% na assinatura · 50% na entrega" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Validade (dias)</Label>
-                  <Input type="number" min={1} value={validadeDias} onChange={(e) => setValidadeDias(parseInt(e.target.value) || 7)} />
-                </div>
-              </div>
+                  {/* Preço/hora + Nível */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Preço/hora</Label>
+                      <CurrencyInput
+                        value={precoHora}
+                        onValueChange={setPrecoHora}
+                        placeholder="R$ 0,00"
+                        required
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-1">
+                        Nível da proposta
+                        <InfoModal title="Nível da proposta" content="O nível define o valor final da proposta. Preço mínimo cobre exatamente seus custos. Preço justo adiciona uma margem saudável de 40% — recomendado para a maioria dos projetos. Preço premium dobra o valor base — ideal para projetos urgentes, complexos ou fora da sua especialidade." />
+                      </Label>
+                      <Select value={pacote} onValueChange={(v) => setPacote(v as any)}>
+                        <SelectTrigger className={`h-11 ${pacote === 'selecione' ? 'text-muted-foreground' : ''}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="selecione" disabled>Selecione...</SelectItem>
+                          <SelectItem value="basico">Mínimo (×1)</SelectItem>
+                          <SelectItem value="padrao">Justo (×1,4)</SelectItem>
+                          <SelectItem value="premium">Premium (×2)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
 
-              {precoHora > 0 && (
-                <div className="bg-accent rounded-lg p-3 text-center">
-                  <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[getActivePacote()]}</p>
-                  <p className="text-xl font-bold text-primary">
-                    R$ {calcValorPacote().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
+                  {/* Prazo + Validade */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Prazo estimado</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          inputMode="decimal"
+                          placeholder="Ex: 40"
+                          value={prazo}
+                          onChange={(e) => setPrazo(e.target.value)}
+                          required
+                          className="flex-1 h-11"
+                        />
+                        <Select value={prazoUnidade} onValueChange={(v) => setPrazoUnidade(v as PrazoUnidade)}>
+                          <SelectTrigger className="w-24 h-11"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="horas">Horas</SelectItem>
+                            <SelectItem value="dias">Dias</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Validade (dias)</Label>
+                      <Input type="number" min={1} value={validadeDias} onChange={(e) => setValidadeDias(parseInt(e.target.value) || 7)} className="h-11" />
+                    </div>
+                  </div>
+
+                  {/* Forma de pagamento — full width */}
+                  <div className="space-y-2">
+                    <Label>Forma de pagamento</Label>
+                    <Input value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)} placeholder="Ex: 50% na assinatura, 50% na entrega" className="h-11" />
+                  </div>
+
+                  {precoHora > 0 && (
+                    <div className="bg-accent rounded-lg p-4 text-center">
+                      <p className="text-sm text-muted-foreground">Valor do pacote {pacoteLabel[getActivePacote()]}</p>
+                      <p className="text-xl font-bold text-primary">
+                        R$ {calcValorPacote().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-              <Button type="submit" className="w-full" size="lg">Salvar Proposta</Button>
-            </form>
+              </form>
+            </div>
+            {/* Sticky footer button */}
+            <div className="px-6 py-4 border-t bg-background">
+              <Button type="submit" form="proposal-form" className="w-full h-12 text-base" size="lg">
+                Salvar Proposta
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
