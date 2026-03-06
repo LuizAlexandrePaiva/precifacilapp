@@ -124,6 +124,10 @@ const faqs = [
     q: 'Posso refazer o cálculo quantas vezes quiser?',
     a: 'Sim, sem limite no plano Essencial e Pro. Você pode simular cenários diferentes — mudar sua meta de ganho, ajustar horas ou custos — e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
   },
+  {
+    q: 'Ainda tem dúvidas?',
+    a: 'Fale com a gente pelo e-mail <a href="mailto:suporte@precifacil.app.br" class="text-primary underline">suporte@precifacil.app.br</a> — respondemos em até 1 dia útil.',
+  },
 ];
 
 export default function Index() {
