@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
         const priceId = lineItems.data[0]?.price?.id;
         let planName = 'Essencial';
         let planKey = 'essencial';
-        if (priceId === 'price_1T7PjsE1gwfPeM7rAbWAP7O2') {
+        if (priceId === 'price_1T85Q1E1gwfPeM7rWXIYEIv1') {
           planName = 'Pro';
           planKey = 'pro';
         }
