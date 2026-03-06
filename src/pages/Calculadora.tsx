@@ -223,7 +223,7 @@ export default function Calculadora() {
                           <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong> — fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
                           <li style={{ marginBottom: 8 }}><strong>Autônomo (~15%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
                           <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~15%)</strong> — CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Lucro Presumido (~25%)</strong> — maior carga tributária e mais obrigações fiscais.</li>
+                          
                         </ul>
                         <p style={{ marginTop: 12 }}>Escolha o regime correto para calcular o impacto real no seu preço.</p>
                       </div>
