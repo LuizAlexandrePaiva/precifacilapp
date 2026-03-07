@@ -605,7 +605,7 @@ export default function Propostas() {
                     <TableCell className="font-medium">{p.cliente}</TableCell>
                     <TableCell>{p.projeto}</TableCell>
                     <TableCell>{pacoteLabel[p.pacote] || p.pacote}</TableCell>
-                    <TableCell>R$ {Number(p.valor_pacote).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                    <TableCell className="whitespace-nowrap">R$ {Number(p.valor_pacote).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell>{new Date(p.created_at).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell className="w-[200px]">
