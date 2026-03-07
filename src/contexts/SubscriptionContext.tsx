@@ -21,6 +21,7 @@ interface SubscriptionContextType {
   canAccessDashboard: boolean;
   canExportPdf: boolean;
   canViewChart: boolean;
+  canViewStats: boolean;
   isAdmin: boolean;
   trialDaysLeft: number | null;
   isTrialExpired: boolean;
@@ -188,6 +189,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const canAccessDashboard = isAdmin || hasTrialOrPaid;
   const canExportPdf = isAdmin || effectivePlan === 'pro';
   const canViewChart = isAdmin || effectivePlan === 'pro';
+  const canViewStats = isAdmin || effectivePlan === 'pro';
 
   return (
     <SubscriptionContext.Provider value={{
@@ -204,6 +206,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       canAccessDashboard,
       canExportPdf,
       canViewChart,
+      canViewStats,
       isAdmin,
       trialDaysLeft,
       isTrialExpired,
