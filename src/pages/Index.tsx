@@ -147,7 +147,17 @@ export default function Index() {
     setCheckoutLoading(planKey);
     try {
       const priceId = PLANS_CONFIG[planKey].price_id;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
+      if (!accessToken) {
+        toast.error('Sua sessão expirou. Faça login novamente.');
+        window.location.href = '/login';
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: { priceId },
       });
       if (error) throw error;

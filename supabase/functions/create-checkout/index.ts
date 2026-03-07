@@ -23,10 +23,10 @@ serve(async (req) => {
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) throw new Error("Unauthorized");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !userData?.user?.email) throw new Error("Unauthorized");
 
-    const email = claimsData.claims.email as string;
+    const email = userData.user.email;
     if (!email) throw new Error("Email not available in token");
 
     const { priceId } = await req.json();
