@@ -12,9 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useStripeAction } from '@/hooks/useStripeAction';
 
 interface Project {
   id: string;
@@ -40,7 +41,7 @@ export default function Historico() {
     if (!user) return;
     const { data, error } = await supabase
       .from('projects')
-      .select('*')
+      .select('id, cliente, projeto, valor_cotado, horas_reais, preco_min_hora, status, created_at')
       .order('created_at', { ascending: false });
     if (error) {
       toast.error('Erro ao carregar projetos');
@@ -212,16 +213,9 @@ export default function Historico() {
     </div>
   );
 
-  const handleUpgradeHistory = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: PLANS_CONFIG.essencial.price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Erro ao iniciar checkout');
-    }
+  const handleUpgradeHistory = () => {
+    const { checkout } = useStripeActionRef.current;
+    checkout('essencial');
   };
 
   if (subLoading) {

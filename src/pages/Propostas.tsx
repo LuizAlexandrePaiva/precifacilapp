@@ -268,8 +268,8 @@ export default function Propostas() {
             <Lock className="h-12 w-12 text-amber-600 mx-auto" />
             <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
             <p className="text-muted-foreground">Gerador de propostas disponível no plano Essencial.</p>
-            <Button onClick={handleUpgrade} disabled={checkoutLoading}>
-              {checkoutLoading ? 'Redirecionando...' : 'Assinar agora'}
+            <Button onClick={handleUpgrade} disabled={stripeLoading}>
+              {stripeLoading ? 'Redirecionando...' : 'Assinar agora'}
             </Button>
           </CardContent>
         </Card>
