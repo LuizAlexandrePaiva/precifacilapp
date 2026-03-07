@@ -57,6 +57,39 @@
   .cred-box p { margin: .3rem 0; }
   .cred-box strong { color: #92400e; }
 
+  /* MOBILE */
+  @media (max-width: 640px) {
+    .cover { min-height: 80vh; padding: 2rem 1.2rem; }
+    .cover .logo { font-size: 2.2rem; }
+    .cover h1 { font-size: 1.3rem; }
+    .cover .badge { font-size: .7rem; padding: .4rem 1rem; letter-spacing: 1.5px; }
+
+    .content { padding: 1rem .8rem; }
+    h2 { font-size: 1.2rem; margin: 1.8rem 0 .8rem; }
+    h3 { font-size: 1rem; }
+    h3 .screen-badge { font-size: .65rem; padding: 1px 6px; margin-left: 4px; }
+
+    p, li { font-size: .85rem; }
+    .label { font-size: .75rem; }
+
+    .screen-section { padding: .8rem .9rem; border-radius: 8px; }
+
+    /* Tables: horizontal scroll */
+    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; font-size: .8rem; }
+    thead, tbody, tr { display: table; width: 100%; table-layout: auto; }
+    th, td { padding: .4rem .5rem; }
+
+    .email-table td:first-child { white-space: normal; min-width: 120px; }
+
+    .cred-box { padding: .8rem .9rem; }
+    .cred-box code { word-break: break-all; }
+
+    .checklist li, .error-list li { padding-left: 1.3rem; }
+
+    ol { padding-left: 1.2rem; }
+    ol li { margin-bottom: .5rem; }
+  }
+
   /* PRINT */
   @media print {
     body { font-size: 11pt; }
