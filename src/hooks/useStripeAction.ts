@@ -21,8 +21,18 @@ export function useStripeAction() {
     if (loading) return;
     setLoading(true);
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
+      if (!accessToken) {
+        toast.error('Sua sessão expirou. Faça login novamente.');
+        window.location.href = '/login';
+        return;
+      }
+
       const { data, error } = await withTimeout(
         supabase.functions.invoke('create-checkout', {
+          headers: { Authorization: `Bearer ${accessToken}` },
           body: { priceId: PLANS_CONFIG[planKey].price_id },
         }),
         TIMEOUT_MS
