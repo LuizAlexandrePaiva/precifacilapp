@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +17,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [highlightGoogle, setHighlightGoogle] = useState(false);
-  const { signIn } = useAuth();
+  const { user, loading: authLoading, signIn } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect authenticated users away from login
+  if (!authLoading && user) {
+    return <Navigate to="/app" replace />;
+  }
 
   const checkIfGoogleOnly = async (email: string): Promise<boolean> => {
     try {

@@ -69,10 +69,6 @@ export default function Calculadora() {
     const valorAtual = Number(metaLiquida);
     const valorSalvo = Number(ctxMetaLiquida ?? 0);
 
-    console.log('=== HANDLE CALC ===');
-    console.log('valorAtual (metaLiquida):', valorAtual);
-    console.log('valorSalvo (ctxMetaLiquida):', valorSalvo);
-    console.log('ctxMetaMensal:', ctxMetaMensal);
 
     if (valorAtual > 0 && valorAtual !== valorSalvo) {
       setPendingResult(calcResult);
