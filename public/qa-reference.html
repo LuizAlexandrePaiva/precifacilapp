@@ -41,8 +41,8 @@
   .label { font-weight: 600; color: #475569; font-size: .82rem; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .3rem; }
 
   /* TABLE */
-  .table-wrap { width: 100%; margin: 1rem 0; }
-  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 480px; }
   th { background: #1e293b; color: #fff; text-align: left; padding: .6rem .8rem; white-space: nowrap; }
   td { padding: .55rem .8rem; border-bottom: 1px solid #e2e8f0; }
   tr:nth-child(even) td { background: #f8fafc; }
@@ -75,20 +75,11 @@
 
     .screen-section { padding: .8rem .9rem; border-radius: 8px; }
 
-    /* Tables: stacked card layout on mobile */
-    .table-wrap table,
-    .table-wrap thead,
-    .table-wrap tbody,
-    .table-wrap tr,
-    .table-wrap th,
-    .table-wrap td { display: block; width: 100%; }
-    .table-wrap thead { display: none; }
-    .table-wrap tr { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: .6rem; padding: .6rem .8rem; }
-    .table-wrap tr:nth-child(even) { background: #f8fafc; }
-    .table-wrap td { padding: .25rem 0; border: none; font-size: .85rem; }
-    .table-wrap td::before { content: attr(data-label); display: block; font-weight: 700; font-size: .72rem; color: #475569; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 1px; }
+    /* Tables: smaller text, wrapper handles scroll */
+    table { font-size: .75rem; min-width: 420px; }
+    th, td { padding: .35rem .45rem; }
 
-    .email-table td:first-child { white-space: normal; }
+    .email-table td:first-child { white-space: normal; min-width: 120px; }
 
     .cred-box { padding: .8rem .9rem; }
     .cred-box code { word-break: break-all; }
@@ -155,31 +146,42 @@
 
 <div class="screen-section">
   <h3>Stack técnica</h3>
-  <ul>
-    <li><strong>Frontend:</strong> React 18 + TypeScript + Vite</li>
-    <li><strong>Estilização:</strong> Tailwind CSS + shadcn/ui</li>
-    <li><strong>Roteamento:</strong> React Router v6 (lazy loading)</li>
-    <li><strong>Estado servidor:</strong> TanStack React Query (cache 2min / gc 5min)</li>
-    <li><strong>Backend / Auth:</strong> Lovable Cloud (Supabase) — PostgreSQL + RLS + Auth</li>
-    <li><strong>Pagamentos:</strong> Stripe (Checkout + Customer Portal + Webhooks)</li>
-    <li><strong>Emails transacionais:</strong> Resend (negócio) + Auth hooks (autenticação)</li>
-    <li><strong>PDF:</strong> jsPDF (geração client-side)</li>
-    <li><strong>Deploy:</strong> Lovable (com _headers e _redirects configurados)</li>
-  </ul>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Camada</th><th>Tecnologia</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td>React 18 + TypeScript + Vite</td></tr>
+      <tr><td>Estilização</td><td>Tailwind CSS + shadcn/ui</td></tr>
+      <tr><td>Roteamento</td><td>React Router v6 (lazy loading em todas as rotas)</td></tr>
+      <tr><td>Estado servidor</td><td>TanStack React Query (cache 2min / gc 5min)</td></tr>
+      <tr><td>Backend / Auth</td><td>Lovable Cloud (Supabase) — PostgreSQL + RLS + Auth</td></tr>
+      <tr><td>Pagamentos</td><td>Stripe (Checkout + Customer Portal + Webhooks)</td></tr>
+      <tr><td>Emails transacionais</td><td>Resend (negócio) + Auth hooks (autenticação)</td></tr>
+      <tr><td>PDF</td><td>jsPDF (geração client-side)</td></tr>
+      <tr><td>Deploy</td><td>Lovable (com _headers e _redirects configurados)</td></tr>
+    </tbody>
+  </table>
+  </div>
 </div>
 
 <div class="screen-section">
   <h3>URLs importantes</h3>
-  <ul>
-    <li><strong>Produção:</strong> https://precifacil.app.br</li>
-    <li><strong>Cadastro:</strong> /cadastro</li>
-    <li><strong>Login:</strong> /login</li>
-    <li><strong>App:</strong> /app</li>
-    <li><strong>Calculadora:</strong> /app/calculadora</li>
-    <li><strong>Propostas:</strong> /app/propostas</li>
-    <li><strong>Histórico:</strong> /app/historico</li>
-    <li><strong>Tutorial:</strong> /app/tutorial</li>
-  </ul>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Recurso</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Produção</td><td>https://precifacil.app.br</td></tr>
+      <tr><td>Landing page</td><td>https://precifacil.app.br/</td></tr>
+      <tr><td>Cadastro</td><td>https://precifacil.app.br/cadastro</td></tr>
+      <tr><td>Login</td><td>https://precifacil.app.br/login</td></tr>
+      <tr><td>App (autenticado)</td><td>https://precifacil.app.br/app</td></tr>
+      <tr><td>Calculadora</td><td>https://precifacil.app.br/app/calculadora</td></tr>
+      <tr><td>Propostas</td><td>https://precifacil.app.br/app/propostas</td></tr>
+      <tr><td>Histórico</td><td>https://precifacil.app.br/app/historico</td></tr>
+      <tr><td>Tutorial</td><td>https://precifacil.app.br/app/tutorial</td></tr>
+    </tbody>
+  </table>
+  </div>
 </div>
 
 <div class="cred-box">
@@ -191,7 +193,7 @@
     <li><strong>Grátis:</strong> usar conta com trial expirado (>14 dias) e sem assinatura ativa.</li>
     <li><strong>Essencial / Pro:</strong> assinar pelo checkout Stripe usando cartão de teste <code>4242 4242 4242 4242</code> (qualquer data futura, qualquer CVC).</li>
   </ul>
-  
+  <p style="margin-top:.5rem;font-size:.85rem;color:#92400e;">⚠ Para dúvidas durante os testes, entre em contato com <strong>suporte@precifacil.app.br</strong>.</p>
 </div>
 
 <h2>1. Fluxos a Testar</h2>
@@ -397,17 +399,24 @@
 <div class="screen-section">
   <h3>Emails Automáticos <span class="screen-badge">Backend</span></h3>
   <p class="label">Lista de emails e gatilhos</p>
-  <ul>
-    <li><strong>Confirme seu cadastro</strong> — Cadastro com email (auth hook) → Novo usuário</li>
-    <li><strong>Bem-vindo ao PreciFácil</strong> — Primeiro login após confirmação → Novo usuário</li>
-    <li><strong>Pagamento confirmado</strong> — Webhook Stripe: <code>checkout.session.completed</code> → Assinante</li>
-    <li><strong>Seu plano foi atualizado</strong> — Webhook Stripe: upgrade/downgrade → Assinante</li>
-    <li><strong>Assinatura cancelada</strong> — Webhook Stripe: <code>customer.subscription.deleted</code> → Ex-assinante</li>
-    <li><strong>Trial termina em 2 dias ⏳</strong> — Cron: 12º dia após criação da conta → Usuário em trial</li>
-    <li><strong>Trial termina amanhã</strong> — Cron: 13º dia após criação da conta → Usuário em trial</li>
-    <li><strong>Assinatura renova em 2 dias 🔄</strong> — Cron: 2 dias antes da renovação → Assinante ativo</li>
-    <li><strong>Redefinição de senha</strong> — Solicitação de reset (auth hook) → Usuário solicitante</li>
-  </ul>
+  <div class="table-wrap">
+  <table class="email-table">
+    <thead>
+      <tr><th>Email</th><th>Gatilho</th><th>Destinatário</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Confirme seu cadastro</td><td>Cadastro com email (auth hook)</td><td>Novo usuário</td></tr>
+      <tr><td>Bem-vindo ao PreciFácil</td><td>Primeiro login após confirmação</td><td>Novo usuário</td></tr>
+      <tr><td>Pagamento confirmado</td><td>Webhook Stripe: <code>checkout.session.completed</code></td><td>Assinante</td></tr>
+      <tr><td>Seu plano foi atualizado</td><td>Webhook Stripe: upgrade/downgrade</td><td>Assinante</td></tr>
+      <tr><td>Assinatura cancelada</td><td>Webhook Stripe: <code>customer.subscription.deleted</code></td><td>Ex-assinante</td></tr>
+      <tr><td>Trial termina em 2 dias ⏳</td><td>Cron: 12º dia após criação da conta</td><td>Usuário em trial</td></tr>
+      <tr><td>Trial termina amanhã</td><td>Cron: 13º dia após criação da conta</td><td>Usuário em trial</td></tr>
+      <tr><td>Assinatura renova em 2 dias 🔄</td><td>Cron: 2 dias antes da renovação</td><td>Assinante ativo</td></tr>
+      <tr><td>Redefinição de senha</td><td>Solicitação de reset (auth hook)</td><td>Usuário solicitante</td></tr>
+    </tbody>
+  </table>
+  </div>
   <p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Tom: profissional, tratamento pelo primeiro nome, assinado "Equipe PreciFácil". Emojis apenas nos assuntos de retenção.</p>
 </div>
 
@@ -419,14 +428,14 @@
     <tr><th>Recurso</th><th>Grátis</th><th>Essencial (R$29/mês)</th><th>Pro (R$59/mês)</th></tr>
   </thead>
   <tbody>
-    <tr><td data-label="Recurso">Calculadora de preço</td><td data-label="Grátis" class="tag-limit">1 cálculo/mês</td><td data-label="Essencial" class="tag-yes">Ilimitado</td><td data-label="Pro" class="tag-yes">Ilimitado</td></tr>
-    <tr><td data-label="Recurso">Criar propostas</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-yes">Ilimitado</td><td data-label="Pro" class="tag-yes">Ilimitado</td></tr>
-    <tr><td data-label="Recurso">Histórico de projetos</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-yes">✓</td><td data-label="Pro" class="tag-yes">✓</td></tr>
-    <tr><td data-label="Recurso">Dashboard básico</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-limit">Parcial (sem métricas financeiras)</td><td data-label="Pro" class="tag-yes">✓ Completo</td></tr>
-    <tr><td data-label="Recurso">Métricas: Faturamento, Propostas, Taxa de Aprovação</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-no">Bloqueado</td><td data-label="Pro" class="tag-yes">✓</td></tr>
-    <tr><td data-label="Recurso">Exportar proposta em PDF</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-no">Bloqueado</td><td data-label="Pro" class="tag-yes">✓</td></tr>
-    <tr><td data-label="Recurso">Suporte WhatsApp</td><td data-label="Grátis" class="tag-no">—</td><td data-label="Essencial" class="tag-no">—</td><td data-label="Pro" class="tag-yes">✓</td></tr>
-    <tr><td data-label="Recurso">Trial 14 dias (nível Essencial)</td><td data-label="" class="tag-yes" colspan="3" style="text-align:center">Automático para novos cadastros</td></tr>
+    <tr><td>Calculadora de preço</td><td class="tag-limit">1 cálculo/mês</td><td class="tag-yes">Ilimitado</td><td class="tag-yes">Ilimitado</td></tr>
+    <tr><td>Criar propostas</td><td class="tag-no">Bloqueado</td><td class="tag-yes">Ilimitado</td><td class="tag-yes">Ilimitado</td></tr>
+    <tr><td>Histórico de projetos</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td><td class="tag-yes">✓</td></tr>
+    <tr><td>Dashboard básico</td><td class="tag-no">Bloqueado</td><td class="tag-limit">Parcial (sem métricas financeiras)</td><td class="tag-yes">✓ Completo</td></tr>
+    <tr><td>Métricas: Faturamento, Propostas, Taxa de Aprovação</td><td class="tag-no">Bloqueado</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td></tr>
+    <tr><td>Exportar proposta em PDF</td><td class="tag-no">Bloqueado</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td></tr>
+    <tr><td>Suporte WhatsApp</td><td class="tag-no">—</td><td class="tag-no">—</td><td class="tag-yes">✓</td></tr>
+    <tr><td>Trial 14 dias (nível Essencial)</td><td class="tag-yes" colspan="3" style="text-align:center">Automático para novos cadastros</td></tr>
   </tbody>
 </table>
 </div>
