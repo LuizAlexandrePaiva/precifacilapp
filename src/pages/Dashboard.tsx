@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, ArrowRight } from 'lucide-react';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { useStripeAction } from '@/hooks/useStripeAction';
 
 const planLabels: Record<string, string> = {
   free: 'Grátis',
@@ -29,9 +30,10 @@ export default function Dashboard() {
   const { metaMensal, metaLoaded, carregarMeta } = useMeta();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [portalLoading, setPortalLoading] = useState(false);
+  const { loading: stripeLoading, checkout: stripeCheckout, portal: stripePortal } = useStripeAction();
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
@@ -42,16 +44,21 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => setProjects(data || []));
-    supabase
-      .from('proposals')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => setProposals(data || []));
+    setDataLoading(true);
+    Promise.all([
+      supabase
+        .from('projects')
+        .select('id, cliente, projeto, valor_cotado, status, created_at')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('proposals')
+        .select('id, status')
+        .order('created_at', { ascending: false }),
+    ]).then(([projRes, propRes]) => {
+      setProjects(projRes.data || []);
+      setProposals(propRes.data || []);
+      setDataLoading(false);
+    });
   }, [user]);
 
   const chartData = useMemo(() => {
@@ -98,30 +105,8 @@ export default function Dashboard() {
     { title: 'Taxa de Aprovação', value: `${stats.taxaAprovacao}%`, icon: TrendingUp, color: 'text-primary' },
   ];
 
-  const handleManageSubscription = async () => {
-    setPortalLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Erro ao abrir gerenciamento de assinatura');
-    } finally {
-      setPortalLoading(false);
-    }
-  };
-
-  const handleUpgrade = async (planKey: 'essencial' | 'pro') => {
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: PLANS_CONFIG[planKey].price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Erro ao iniciar checkout');
-    }
-  };
+  const handleManageSubscription = () => stripePortal();
+  const handleUpgrade = (planKey: 'essencial' | 'pro') => stripeCheckout(planKey);
 
   if (subLoading) {
     return (
