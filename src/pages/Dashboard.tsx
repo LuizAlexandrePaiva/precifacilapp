@@ -227,7 +227,7 @@ export default function Dashboard() {
               </>
             )}
             {plan === 'pro' && (
-              <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={portalLoading}>
+              <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={stripeLoading}>
                 Gerenciar assinatura
               </Button>
             )}
