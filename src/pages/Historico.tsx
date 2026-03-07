@@ -32,6 +32,7 @@ export default function Historico() {
   const { user } = useAuth();
   const { canAccessHistory, loading: subLoading } = useSubscription();
   const isMobile = useIsMobile();
+  const { checkout: stripeCheckout } = useStripeAction();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editProject, setEditProject] = useState<Project | null>(null);
@@ -213,10 +214,7 @@ export default function Historico() {
     </div>
   );
 
-  const handleUpgradeHistory = () => {
-    const { checkout } = useStripeActionRef.current;
-    checkout('essencial');
-  };
+  const handleUpgradeHistory = () => stripeCheckout('essencial');
 
   if (subLoading) {
     return (
