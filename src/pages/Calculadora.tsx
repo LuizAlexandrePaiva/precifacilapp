@@ -11,11 +11,12 @@ import { InputWithSuffix } from '@/components/InputWithSuffix';
 import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, Lock } from 'lucide-react';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useStripeAction } from '@/hooks/useStripeAction';
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -32,7 +33,7 @@ export default function Calculadora() {
   const [custosFixos, setCustosFixos] = useState(0);
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { loading: stripeLoading, checkout: stripeCheckout } = useStripeAction();
   const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
@@ -127,20 +128,7 @@ export default function Calculadora() {
     }
   };
 
-  const handleUpgrade = async () => {
-    setCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: PLANS_CONFIG.essencial.price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Erro ao iniciar checkout');
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
+  const handleUpgrade = () => stripeCheckout('essencial');
 
   if (subLoading) {
     return (
