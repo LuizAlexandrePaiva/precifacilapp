@@ -155,8 +155,8 @@ export default function Calculadora() {
               <Lock className="h-4 w-4 text-amber-600" />
               <span>Plano Grátis: {canCalculate ? '1 cálculo restante' : '0 cálculos restantes'} este mês.</span>
             </div>
-            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={checkoutLoading}>
-              {checkoutLoading ? 'Aguarde...' : 'Fazer upgrade'}
+            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={stripeLoading}>
+              {stripeLoading ? 'Aguarde...' : 'Fazer upgrade'}
             </Button>
           </CardContent>
         </Card>
@@ -349,8 +349,8 @@ export default function Calculadora() {
           <p className="text-muted-foreground text-sm">
             Você atingiu o limite do plano Grátis. Assine o Essencial para cálculos ilimitados.
           </p>
-          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={checkoutLoading} className="w-full">
-            {checkoutLoading ? 'Redirecionando...' : 'Assinar agora'}
+          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={stripeLoading} className="w-full">
+            {stripeLoading ? 'Redirecionando...' : 'Assinar agora'}
           </Button>
         </DialogContent>
       </Dialog>
