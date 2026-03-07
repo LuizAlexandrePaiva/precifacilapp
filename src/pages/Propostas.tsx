@@ -18,9 +18,10 @@ import { generateProposalPdf } from '@/lib/generatePdf';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useStripeAction } from '@/hooks/useStripeAction';
 
 type PrazoUnidade = 'horas' | 'dias';
 
@@ -66,7 +67,7 @@ export default function Propostas() {
   const { user } = useAuth();
   const { canAccessProposals, canExportPdf, loading: subLoading } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { loading: stripeLoading, checkout: stripeCheckout } = useStripeAction();
   const isMobile = useIsMobile();
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -242,20 +243,7 @@ export default function Propostas() {
     }
   };
 
-  const handleUpgrade = async () => {
-    setCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: PLANS_CONFIG.essencial.price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch (err: any) {
-      toast.error('Erro ao iniciar checkout');
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
+  const handleUpgrade = () => stripeCheckout('essencial');
 
   if (subLoading) {
     return (
