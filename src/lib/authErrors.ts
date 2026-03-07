@@ -1,5 +1,5 @@
 const ERROR_MAP: Record<string, string> = {
-  'Invalid login credentials': 'E-mail ou senha incorretos.',
+  'Invalid login credentials': 'Não encontramos uma conta com este e-mail. Verifique o e-mail ou crie uma conta gratuitamente.',
   'Email not confirmed': 'Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.',
   'User already registered': 'Este e-mail já possui uma conta. Tente Fazer login ou recupere sua senha.',
   'Signup requires a valid password': 'Informe uma senha válida.',
