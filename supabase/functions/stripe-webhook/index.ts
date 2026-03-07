@@ -200,6 +200,37 @@ Deno.serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         const previousAttributes = (event.data as any).previous_attributes;
 
+        // ── Cancelamento agendado (cancel_at_period_end mudou para true) ──
+        if (
+          subscription.cancel_at_period_end === true &&
+          previousAttributes?.cancel_at_period_end === false
+        ) {
+          const customerId = subscription.customer as string;
+          const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+          const email = customer.email;
+          if (!email) {
+            logStep('No email found for cancellation notice');
+            break;
+          }
+
+          const userName = customer.name || await getUserName(email);
+          const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR');
+
+          const cancelHtml = layout(`
+            ${p(`Olá, ${userName.split(' ')[0]}!`)}
+            ${p('Confirmamos o cancelamento da sua assinatura no PreciFácil.')}
+            ${p(`Seu acesso aos recursos do plano permanece ativo até <strong>${accessUntil}</strong>. Após essa data, sua conta será revertida para o plano Grátis.`)}
+            ${p('Caso mude de ideia, você pode reativar sua assinatura a qualquer momento:')}
+            ${btn('Reativar assinatura', `${SITE_URL}/app`)}
+            ${small('Sentiremos sua falta! Estaremos aqui quando precisar.')}
+            ${signature()}
+          `);
+
+          await sendEmail(resend, email, 'Assinatura cancelada — PreciFácil', cancelHtml);
+          logStep('Cancellation notice email sent', { email, accessUntil });
+          break;
+        }
+
         if (!previousAttributes?.items) {
           logStep('Subscription updated but no plan change detected, skipping');
           break;
