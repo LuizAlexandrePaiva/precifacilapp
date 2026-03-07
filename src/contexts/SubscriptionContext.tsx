@@ -185,7 +185,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const canCalculate = isAdmin || hasTrialOrPaid || monthlyCalcCount < 1;
   const canAccessProposals = isAdmin || hasTrialOrPaid;
   const canAccessHistory = isAdmin || hasTrialOrPaid;
-  const canAccessDashboard = isAdmin || effectivePlan === 'pro';
+  const canAccessDashboard = isAdmin || hasTrialOrPaid;
   const canExportPdf = isAdmin || effectivePlan === 'pro';
   const canViewChart = isAdmin || effectivePlan === 'pro';
 
