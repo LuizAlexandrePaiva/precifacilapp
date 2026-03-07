@@ -311,7 +311,7 @@ export default function Propostas() {
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button size="sm" variant="ghost" className={actionBtnDestructive}>
+            <Button size="sm" variant="ghost" className={`${actionBtnDestructive}`}>
               <Trash2 className="h-3 w-3 mr-1" />Excluir
             </Button>
           </AlertDialogTrigger>
