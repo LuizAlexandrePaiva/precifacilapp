@@ -193,7 +193,46 @@ export function trialExpiringEmail(userName: string): { subject: string; html: s
   };
 }
 
-// ========== EMAIL 6 — RECUPERAÇÃO DE SENHA ==========
+// ========== EMAIL 6 — AVISO DE TRIAL EXPIRANDO EM 2 DIAS ==========
+export function trialExpiring2DaysEmail(userName: string): { subject: string; html: string } {
+  const firstName = userName?.split(' ')[0] || 'Usuário';
+  return {
+    subject: 'Seu período grátis termina em 2 dias ⏳',
+    html: layout(`
+      ${paragraph(`Olá, ${firstName}!`)}
+      ${paragraph('Seu período grátis de 14 dias no PreciFácil termina em <strong>2 dias</strong>.')}
+      ${paragraph('Ao voltar para o plano Grátis, você perderá acesso a:')}
+      <ul style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.8;color:${FOREGROUND};">
+        <li>Cálculos ilimitados</li>
+        <li>Gerador de propostas profissionais</li>
+        <li>Histórico completo de projetos</li>
+      </ul>
+      ${paragraph('Garanta seu acesso e continue precificando com segurança:')}
+      ${button('Assinar agora por R$29/mês', `${SITE_URL}/app`)}
+      ${mutedText('Não quer assinar? Tudo bem, você ainda pode usar o plano Grátis com 1 cálculo por mês.')}
+      ${signature()}
+    `),
+  };
+}
+
+// ========== EMAIL 7 — AVISO DE RENOVAÇÃO EM 2 DIAS ==========
+export function renewalReminder2DaysEmail(userName: string, planName: string, planPrice: string): { subject: string; html: string } {
+  const firstName = userName?.split(' ')[0] || 'Usuário';
+  return {
+    subject: 'Sua assinatura renova em 2 dias 🔄',
+    html: layout(`
+      ${paragraph(`Olá, ${firstName}!`)}
+      ${paragraph(`Sua assinatura do plano <strong>${planName}</strong> será renovada automaticamente em <strong>2 dias</strong>.`)}
+      ${paragraph(`O valor de <strong>R$ ${planPrice}</strong> será cobrado no cartão cadastrado. Você não precisa fazer nada — tudo é automático!`)}
+      ${paragraph('Continue aproveitando todos os recursos do PreciFácil sem interrupção.')}
+      ${button('Gerenciar assinatura', `${SITE_URL}/app`)}
+      ${mutedText('Quer cancelar antes da renovação? Acesse suas configurações ou clique em Gerenciar assinatura.')}
+      ${signature()}
+    `),
+  };
+}
+
+// ========== EMAIL 8 — RECUPERAÇÃO DE SENHA ==========
 export function passwordResetEmail(userName: string, resetLink: string): { subject: string; html: string } {
   const firstName = userName?.split(' ')[0] || 'Usuário';
   return {
