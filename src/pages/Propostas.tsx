@@ -270,10 +270,10 @@ export default function Propostas() {
         <Card className="border-amber-500/50">
           <CardContent className="py-12 text-center space-y-4">
             <Lock className="h-12 w-12 text-amber-600 mx-auto" />
-            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
-            <p className="text-muted-foreground">O gerador de propostas está disponível a partir do plano Essencial (R$ 29/mês).</p>
+            <h2 className="text-xl font-semibold">Gerador de propostas disponível no plano Essencial</h2>
+            <p className="text-muted-foreground">Assine o plano Essencial para criar e gerenciar propostas ilimitadas.</p>
             <Button onClick={handleUpgrade} disabled={checkoutLoading}>
-              {checkoutLoading ? 'Redirecionando...' : 'Assinar Essencial'}
+              {checkoutLoading ? 'Redirecionando...' : 'Assinar agora'}
             </Button>
           </CardContent>
         </Card>

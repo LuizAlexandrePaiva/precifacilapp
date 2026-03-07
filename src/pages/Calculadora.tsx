@@ -360,10 +360,10 @@ export default function Calculadora() {
             </DialogTitle>
           </DialogHeader>
           <p className="text-muted-foreground text-sm">
-            No plano Grátis você pode fazer apenas 1 cálculo por mês. Faça upgrade para o plano Essencial e tenha cálculos ilimitados, gerador de propostas e muito mais.
+            Você atingiu o limite do plano Grátis. Assine o Essencial para cálculos ilimitados.
           </p>
           <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={checkoutLoading} className="w-full">
-            {checkoutLoading ? 'Redirecionando...' : 'Fazer upgrade — R$ 29/mês'}
+            {checkoutLoading ? 'Redirecionando...' : 'Assinar agora'}
           </Button>
         </DialogContent>
       </Dialog>
