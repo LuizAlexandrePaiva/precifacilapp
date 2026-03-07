@@ -1,73 +1,128 @@
-# Welcome to your Lovable project
+# PreciFácil
 
-## Project info
+**Calculadora de preço real para freelancers, MEIs e autônomos.**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+PreciFácil é um SaaS que ajuda profissionais independentes a precificar seus serviços de forma justa e sustentável, gerar propostas profissionais e acompanhar seus projetos com métricas financeiras.
 
-## How can I edit this code?
+🔗 **[precifacil.app.br](https://precifacil.app.br)**
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## Funcionalidades
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 🧮 Calculadora de Preço
+- Cálculo do preço/hora real com base em custos fixos, variáveis, impostos, margem de lucro e horas produtivas
+- Meta de renda líquida mensal como referência
+- Comparação entre valor cotado e preço mínimo sustentável
 
-Changes made via Lovable will be committed automatically to this repo.
+### 📝 Propostas Profissionais
+- Criação de propostas comerciais completas com escopo, prazo, forma de pagamento e itens inclusos/não inclusos
+- Envio por e-mail diretamente pela plataforma
+- Exportação em PDF (plano Pro)
 
-**Use your preferred IDE**
+### 📊 Dashboard & Histórico
+- Painel com métricas de faturamento, taxa de aprovação e volume de propostas
+- Gráficos de desempenho ao longo do tempo (plano Pro)
+- Histórico completo de projetos com status e horas reais
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🔔 E-mails Automáticos
+- **Boas-vindas** ao criar conta
+- **Confirmação de pagamento** ao assinar
+- **Atualização de plano** (upgrade/downgrade)
+- **Cancelamento** de assinatura
+- **Aviso de trial expirando** (2 dias e 1 dia antes)
+- **Lembrete de renovação** (2 dias antes da cobrança)
+- **Redefinição de senha** e **confirmação de cadastro**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## Planos
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+| Recurso | Grátis | Essencial · R$29/mês | Pro · R$59/mês |
+|---|:---:|:---:|:---:|
+| Cálculos de preço | 1/mês | Ilimitados | Ilimitados |
+| Propostas | ❌ | Ilimitadas | Ilimitadas |
+| Histórico de projetos | ❌ | ✅ | ✅ |
+| Dashboard | ❌ | Básico | Completo |
+| Exportação PDF | ❌ | ❌ | ✅ |
+| Gráficos e métricas | ❌ | ❌ | ✅ |
+| Suporte WhatsApp | ❌ | ❌ | ✅ |
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Novos usuários recebem **14 dias de trial** com acesso nível Essencial.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## Stack Técnica
+
+| Camada | Tecnologia |
+|---|---|
+| Frontend | React 18, TypeScript, Vite |
+| UI | Tailwind CSS, shadcn/ui, Radix UI, Lucide Icons |
+| Estado | React Context, TanStack React Query |
+| Backend | Lovable Cloud (Supabase) — Auth, Database, Edge Functions |
+| Pagamentos | Stripe (Checkout, Customer Portal, Webhooks) |
+| E-mails transacionais | Resend |
+| E-mails de autenticação | Supabase Auth (domínio `notify.precifacil.app.br`) |
+| PDF | jsPDF |
+| Deploy | Netlify |
+
+---
+
+## Segurança
+
+- **Row Level Security (RLS)** em todas as tabelas — cada usuário acessa apenas seus próprios dados
+- **Validação JWT** em todas as Edge Functions autenticadas
+- **Verificação de assinatura** no webhook do Stripe (`whsec_`)
+- **Headers HTTP** de proteção: `X-Frame-Options`, `Strict-Transport-Security`, `Content-Security-Policy`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`
+- **Rotas protegidas** no frontend com redirecionamento automático
+- Nenhuma chave secreta exposta no código do cliente
+- Proteção contra brute force via Supabase Auth
+
+---
+
+## Estrutura do Projeto
+
+```
+src/
+├── components/       # Componentes reutilizáveis e UI (shadcn)
+├── contexts/         # AuthContext, MetaContext, SubscriptionContext
+├── hooks/            # Hooks customizados
+├── lib/              # Utilitários, cálculos, geração de PDF, envio de e-mail
+├── pages/            # Páginas da aplicação
+└── integrations/     # Cliente e tipos do Supabase (auto-gerados)
+
+supabase/
+└── functions/        # Edge Functions (checkout, subscription, webhooks, e-mails)
+
+public/
+├── _headers          # Headers de segurança (Netlify)
+└── _redirects        # Regras de redirecionamento SPA
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Variáveis de Ambiente
 
-**Use GitHub Codespaces**
+### Frontend (`.env` — gerado automaticamente)
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_PROJECT_ID`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Edge Functions (secrets do Supabase)
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `RESEND_API_KEY`
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## Deploy
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+O projeto é publicado via **Netlify** com deploy contínuo a partir do repositório Git.
 
-## How can I deploy this project?
+As Edge Functions são deployadas automaticamente pelo Lovable Cloud.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## Licença
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Projeto proprietário. Todos os direitos reservados.
