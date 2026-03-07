@@ -221,7 +221,7 @@ export default function Dashboard() {
             {plan === 'essencial' && (
               <>
                 <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Upgrade Pro</Button>
-                <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={portalLoading}>
+                <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={stripeLoading}>
                   Gerenciar
                 </Button>
               </>
