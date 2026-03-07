@@ -24,7 +24,7 @@ const planLabels: Record<string, string> = {
 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export default function Dashboard() {
-  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canAccessDashboard, trialDaysLeft, isTrialExpired } = useSubscription();
+  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canViewStats, canAccessDashboard, trialDaysLeft, isTrialExpired } = useSubscription();
   const { user } = useAuth();
   const { metaMensal, metaLoaded, carregarMeta } = useMeta();
   const [searchParams] = useSearchParams();
@@ -243,19 +243,30 @@ export default function Dashboard() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {cards.map((card) => (
-          <Card key={card.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
-              <card.icon className={`h-5 w-5 ${card.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {canViewStats ? (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {cards.map((card) => (
+            <Card key={card.title}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+                <card.icon className={`h-5 w-5 ${card.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{card.value}</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="border-muted">
+          <CardContent className="py-10 text-center space-y-4">
+            <Lock className="h-10 w-10 text-muted-foreground mx-auto" />
+            <h3 className="font-semibold text-lg">Métricas disponíveis no plano Pro</h3>
+            <p className="text-sm text-muted-foreground">Faturamento do Mês, Propostas Enviadas e Taxa de Aprovação estão disponíveis no plano Pro (R$ 59/mês).</p>
+            <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade para o Pro</Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Meta de Faturamento Card — Read Only */}
       <Card>
