@@ -159,15 +159,15 @@
   <table>
     <thead><tr><th>Camada</th><th>Tecnologia</th></tr></thead>
     <tbody>
-      <tr><td>Frontend</td><td>React 18 + TypeScript + Vite</td></tr>
-      <tr><td>Estilização</td><td>Tailwind CSS + shadcn/ui</td></tr>
-      <tr><td>Roteamento</td><td>React Router v6 (lazy loading em todas as rotas)</td></tr>
-      <tr><td>Estado servidor</td><td>TanStack React Query (cache 2min / gc 5min)</td></tr>
-      <tr><td>Backend / Auth</td><td>Lovable Cloud (Supabase) — PostgreSQL + RLS + Auth</td></tr>
-      <tr><td>Pagamentos</td><td>Stripe (Checkout + Customer Portal + Webhooks)</td></tr>
-      <tr><td>Emails transacionais</td><td>Resend (negócio) + Auth hooks (autenticação)</td></tr>
-      <tr><td>PDF</td><td>jsPDF (geração client-side)</td></tr>
-      <tr><td>Deploy</td><td>Lovable (com _headers e _redirects configurados)</td></tr>
+      <tr><td data-label="Camada">Frontend</td><td data-label="Tecnologia">React 18 + TypeScript + Vite</td></tr>
+      <tr><td data-label="Camada">Estilização</td><td data-label="Tecnologia">Tailwind CSS + shadcn/ui</td></tr>
+      <tr><td data-label="Camada">Roteamento</td><td data-label="Tecnologia">React Router v6 (lazy loading em todas as rotas)</td></tr>
+      <tr><td data-label="Camada">Estado servidor</td><td data-label="Tecnologia">TanStack React Query (cache 2min / gc 5min)</td></tr>
+      <tr><td data-label="Camada">Backend / Auth</td><td data-label="Tecnologia">Lovable Cloud (Supabase) — PostgreSQL + RLS + Auth</td></tr>
+      <tr><td data-label="Camada">Pagamentos</td><td data-label="Tecnologia">Stripe (Checkout + Customer Portal + Webhooks)</td></tr>
+      <tr><td data-label="Camada">Emails transacionais</td><td data-label="Tecnologia">Resend (negócio) + Auth hooks (autenticação)</td></tr>
+      <tr><td data-label="Camada">PDF</td><td data-label="Tecnologia">jsPDF (geração client-side)</td></tr>
+      <tr><td data-label="Camada">Deploy</td><td data-label="Tecnologia">Lovable (com _headers e _redirects configurados)</td></tr>
     </tbody>
   </table>
   </div>
@@ -179,15 +179,15 @@
   <table>
     <thead><tr><th>Recurso</th><th>URL</th></tr></thead>
     <tbody>
-      <tr><td>Produção</td><td>https://precifacil.app.br</td></tr>
-      <tr><td>Landing page</td><td>https://precifacil.app.br/</td></tr>
-      <tr><td>Cadastro</td><td>https://precifacil.app.br/cadastro</td></tr>
-      <tr><td>Login</td><td>https://precifacil.app.br/login</td></tr>
-      <tr><td>App (autenticado)</td><td>https://precifacil.app.br/app</td></tr>
-      <tr><td>Calculadora</td><td>https://precifacil.app.br/app/calculadora</td></tr>
-      <tr><td>Propostas</td><td>https://precifacil.app.br/app/propostas</td></tr>
-      <tr><td>Histórico</td><td>https://precifacil.app.br/app/historico</td></tr>
-      <tr><td>Tutorial</td><td>https://precifacil.app.br/app/tutorial</td></tr>
+      <tr><td data-label="Recurso">Produção</td><td data-label="URL">https://precifacil.app.br</td></tr>
+      <tr><td data-label="Recurso">Landing page</td><td data-label="URL">https://precifacil.app.br/</td></tr>
+      <tr><td data-label="Recurso">Cadastro</td><td data-label="URL">https://precifacil.app.br/cadastro</td></tr>
+      <tr><td data-label="Recurso">Login</td><td data-label="URL">https://precifacil.app.br/login</td></tr>
+      <tr><td data-label="Recurso">App (autenticado)</td><td data-label="URL">https://precifacil.app.br/app</td></tr>
+      <tr><td data-label="Recurso">Calculadora</td><td data-label="URL">https://precifacil.app.br/app/calculadora</td></tr>
+      <tr><td data-label="Recurso">Propostas</td><td data-label="URL">https://precifacil.app.br/app/propostas</td></tr>
+      <tr><td data-label="Recurso">Histórico</td><td data-label="URL">https://precifacil.app.br/app/historico</td></tr>
+      <tr><td data-label="Recurso">Tutorial</td><td data-label="URL">https://precifacil.app.br/app/tutorial</td></tr>
     </tbody>
   </table>
   </div>
@@ -414,15 +414,15 @@
       <tr><th>Email</th><th>Gatilho</th><th>Destinatário</th></tr>
     </thead>
     <tbody>
-      <tr><td>Confirme seu cadastro</td><td>Cadastro com email (auth hook)</td><td>Novo usuário</td></tr>
-      <tr><td>Bem-vindo ao PreciFácil</td><td>Primeiro login após confirmação</td><td>Novo usuário</td></tr>
-      <tr><td>Pagamento confirmado</td><td>Webhook Stripe: <code>checkout.session.completed</code></td><td>Assinante</td></tr>
-      <tr><td>Seu plano foi atualizado</td><td>Webhook Stripe: upgrade/downgrade</td><td>Assinante</td></tr>
-      <tr><td>Assinatura cancelada</td><td>Webhook Stripe: <code>customer.subscription.deleted</code></td><td>Ex-assinante</td></tr>
-      <tr><td>Trial termina em 2 dias ⏳</td><td>Cron: 12º dia após criação da conta</td><td>Usuário em trial</td></tr>
-      <tr><td>Trial termina amanhã</td><td>Cron: 13º dia após criação da conta</td><td>Usuário em trial</td></tr>
-      <tr><td>Assinatura renova em 2 dias 🔄</td><td>Cron: 2 dias antes da renovação</td><td>Assinante ativo</td></tr>
-      <tr><td>Redefinição de senha</td><td>Solicitação de reset (auth hook)</td><td>Usuário solicitante</td></tr>
+      <tr><td data-label="Email">Confirme seu cadastro</td><td data-label="Gatilho">Cadastro com email (auth hook)</td><td data-label="Destinatário">Novo usuário</td></tr>
+      <tr><td data-label="Email">Bem-vindo ao PreciFácil</td><td data-label="Gatilho">Primeiro login após confirmação</td><td data-label="Destinatário">Novo usuário</td></tr>
+      <tr><td data-label="Email">Pagamento confirmado</td><td data-label="Gatilho">Webhook Stripe: <code>checkout.session.completed</code></td><td data-label="Destinatário">Assinante</td></tr>
+      <tr><td data-label="Email">Seu plano foi atualizado</td><td data-label="Gatilho">Webhook Stripe: upgrade/downgrade</td><td data-label="Destinatário">Assinante</td></tr>
+      <tr><td data-label="Email">Assinatura cancelada</td><td data-label="Gatilho">Webhook Stripe: <code>customer.subscription.deleted</code></td><td data-label="Destinatário">Ex-assinante</td></tr>
+      <tr><td data-label="Email">Trial termina em 2 dias ⏳</td><td data-label="Gatilho">Cron: 12º dia após criação da conta</td><td data-label="Destinatário">Usuário em trial</td></tr>
+      <tr><td data-label="Email">Trial termina amanhã</td><td data-label="Gatilho">Cron: 13º dia após criação da conta</td><td data-label="Destinatário">Usuário em trial</td></tr>
+      <tr><td data-label="Email">Assinatura renova em 2 dias 🔄</td><td data-label="Gatilho">Cron: 2 dias antes da renovação</td><td data-label="Destinatário">Assinante ativo</td></tr>
+      <tr><td data-label="Email">Redefinição de senha</td><td data-label="Gatilho">Solicitação de reset (auth hook)</td><td data-label="Destinatário">Usuário solicitante</td></tr>
     </tbody>
   </table>
   </div>
@@ -437,14 +437,14 @@
     <tr><th>Recurso</th><th>Grátis</th><th>Essencial (R$29/mês)</th><th>Pro (R$59/mês)</th></tr>
   </thead>
   <tbody>
-    <tr><td>Calculadora de preço</td><td class="tag-limit">1 cálculo/mês</td><td class="tag-yes">Ilimitado</td><td class="tag-yes">Ilimitado</td></tr>
-    <tr><td>Criar propostas</td><td class="tag-no">Bloqueado</td><td class="tag-yes">Ilimitado</td><td class="tag-yes">Ilimitado</td></tr>
-    <tr><td>Histórico de projetos</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td><td class="tag-yes">✓</td></tr>
-    <tr><td>Dashboard básico</td><td class="tag-no">Bloqueado</td><td class="tag-limit">Parcial (sem métricas financeiras)</td><td class="tag-yes">✓ Completo</td></tr>
-    <tr><td>Métricas: Faturamento, Propostas, Taxa de Aprovação</td><td class="tag-no">Bloqueado</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td></tr>
-    <tr><td>Exportar proposta em PDF</td><td class="tag-no">Bloqueado</td><td class="tag-no">Bloqueado</td><td class="tag-yes">✓</td></tr>
-    <tr><td>Suporte WhatsApp</td><td class="tag-no">—</td><td class="tag-no">—</td><td class="tag-yes">✓</td></tr>
-    <tr><td>Trial 14 dias (nível Essencial)</td><td class="tag-yes" colspan="3" style="text-align:center">Automático para novos cadastros</td></tr>
+    <tr><td data-label="Recurso">Calculadora de preço</td><td data-label="Grátis" class="tag-limit">1 cálculo/mês</td><td data-label="Essencial" class="tag-yes">Ilimitado</td><td data-label="Pro" class="tag-yes">Ilimitado</td></tr>
+    <tr><td data-label="Recurso">Criar propostas</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-yes">Ilimitado</td><td data-label="Pro" class="tag-yes">Ilimitado</td></tr>
+    <tr><td data-label="Recurso">Histórico de projetos</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-yes">✓</td><td data-label="Pro" class="tag-yes">✓</td></tr>
+    <tr><td data-label="Recurso">Dashboard básico</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-limit">Parcial (sem métricas financeiras)</td><td data-label="Pro" class="tag-yes">✓ Completo</td></tr>
+    <tr><td data-label="Recurso">Métricas: Faturamento, Propostas, Taxa de Aprovação</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-no">Bloqueado</td><td data-label="Pro" class="tag-yes">✓</td></tr>
+    <tr><td data-label="Recurso">Exportar proposta em PDF</td><td data-label="Grátis" class="tag-no">Bloqueado</td><td data-label="Essencial" class="tag-no">Bloqueado</td><td data-label="Pro" class="tag-yes">✓</td></tr>
+    <tr><td data-label="Recurso">Suporte WhatsApp</td><td data-label="Grátis" class="tag-no">—</td><td data-label="Essencial" class="tag-no">—</td><td data-label="Pro" class="tag-yes">✓</td></tr>
+    <tr><td data-label="Recurso">Trial 14 dias (nível Essencial)</td><td data-label="" class="tag-yes" colspan="3" style="text-align:center">Automático para novos cadastros</td></tr>
   </tbody>
 </table>
 </div>
