@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,7 +25,7 @@ const menuItems = [
   { title: 'Como Usar?', url: '/app/tutorial', icon: BookOpen },
 ];
 
-export function AppSidebar() {
+export const AppSidebar = memo(function AppSidebar() {
   const { state, setOpenMobile } = useSidebar();
   const collapsed = state === 'collapsed';
   const { signOut } = useAuth();
@@ -89,4 +90,4 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+});

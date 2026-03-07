@@ -11,11 +11,12 @@ import { InputWithSuffix } from '@/components/InputWithSuffix';
 import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
 import { Calculator, ArrowRight, Lock } from 'lucide-react';
-import { useSubscription, PLANS_CONFIG } from '@/contexts/SubscriptionContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useStripeAction } from '@/hooks/useStripeAction';
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -32,7 +33,7 @@ export default function Calculadora() {
   const [custosFixos, setCustosFixos] = useState(0);
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { loading: stripeLoading, checkout: stripeCheckout } = useStripeAction();
   const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
@@ -127,20 +128,7 @@ export default function Calculadora() {
     }
   };
 
-  const handleUpgrade = async () => {
-    setCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: PLANS_CONFIG.essencial.price_id },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
-    } catch {
-      toast.error('Erro ao iniciar checkout');
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
+  const handleUpgrade = () => stripeCheckout('essencial');
 
   if (subLoading) {
     return (
@@ -167,8 +155,8 @@ export default function Calculadora() {
               <Lock className="h-4 w-4 text-amber-600" />
               <span>Plano Grátis: {canCalculate ? '1 cálculo restante' : '0 cálculos restantes'} este mês.</span>
             </div>
-            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={checkoutLoading}>
-              {checkoutLoading ? 'Aguarde...' : 'Fazer upgrade'}
+            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={stripeLoading}>
+              {stripeLoading ? 'Aguarde...' : 'Fazer upgrade'}
             </Button>
           </CardContent>
         </Card>
@@ -361,8 +349,8 @@ export default function Calculadora() {
           <p className="text-muted-foreground text-sm">
             Você atingiu o limite do plano Grátis. Assine o Essencial para cálculos ilimitados.
           </p>
-          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={checkoutLoading} className="w-full">
-            {checkoutLoading ? 'Redirecionando...' : 'Assinar agora'}
+          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={stripeLoading} className="w-full">
+            {stripeLoading ? 'Redirecionando...' : 'Assinar agora'}
           </Button>
         </DialogContent>
       </Dialog>
