@@ -309,27 +309,29 @@ export default function Propostas() {
             <InfoModal title="Exportar PDF" content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
           </span>
         )}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button size="sm" variant="ghost" className={actionBtnDestructive}>
-              <Trash2 className="h-3 w-3 mr-1" />Excluir
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
-              <AlertDialogDescription>
-                Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                Excluir
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <div className="flex-1 min-w-0">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="ghost" className={`${actionBtnDestructive} w-full`}>
+                <Trash2 className="h-3 w-3 mr-1" />Excluir
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </div>
   );
