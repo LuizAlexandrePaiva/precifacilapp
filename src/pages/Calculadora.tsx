@@ -22,7 +22,7 @@ const formatBR = (v: number) =>
 
 export default function Calculadora() {
   const navigate = useNavigate();
-  const { plan, canCalculate, incrementCalcCount } = useSubscription();
+  const { plan, canCalculate, incrementCalcCount, loading: subLoading } = useSubscription();
   const { user } = useAuth();
   const { metaMensal: ctxMetaMensal, metaLiquida: ctxMetaLiquida, metaLoaded, carregarMeta, atualizarMeta } = useMeta();
 
@@ -141,6 +141,14 @@ export default function Calculadora() {
       setCheckoutLoading(false);
     }
   };
+
+  if (subLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

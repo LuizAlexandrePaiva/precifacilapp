@@ -64,7 +64,7 @@ function calculateTrialDaysLeft(userCreatedAt: string | undefined): number | nul
 }
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const { user, session } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
   const [plan, setPlan] = useState<Plan>('free');
   const [subscribed, setSubscribed] = useState(false);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
@@ -156,6 +156,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [session?.access_token, isAdmin, user?.created_at]);
 
   useEffect(() => {
+    if (authLoading) {
+      // Auth still loading — keep subscription in loading state
+      setLoading(true);
+      return;
+    }
     if (isAdmin) {
       setPlan('pro');
       setSubscribed(true);
@@ -171,7 +176,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       setTrialDaysLeft(null);
       setLoading(false);
     }
-  }, [session, refreshSubscription, isAdmin]);
+  }, [session, refreshSubscription, isAdmin, authLoading]);
 
   useEffect(() => {
     if (!session || isAdmin) return;
