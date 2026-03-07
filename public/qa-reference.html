@@ -397,24 +397,17 @@
 <div class="screen-section">
   <h3>Emails Automáticos <span class="screen-badge">Backend</span></h3>
   <p class="label">Lista de emails e gatilhos</p>
-  <div class="table-wrap">
-  <table class="email-table">
-    <thead>
-      <tr><th>Email</th><th>Gatilho</th><th>Destinatário</th></tr>
-    </thead>
-    <tbody>
-      <tr><td data-label="Email">Confirme seu cadastro</td><td data-label="Gatilho">Cadastro com email (auth hook)</td><td data-label="Destinatário">Novo usuário</td></tr>
-      <tr><td data-label="Email">Bem-vindo ao PreciFácil</td><td data-label="Gatilho">Primeiro login após confirmação</td><td data-label="Destinatário">Novo usuário</td></tr>
-      <tr><td data-label="Email">Pagamento confirmado</td><td data-label="Gatilho">Webhook Stripe: <code>checkout.session.completed</code></td><td data-label="Destinatário">Assinante</td></tr>
-      <tr><td data-label="Email">Seu plano foi atualizado</td><td data-label="Gatilho">Webhook Stripe: upgrade/downgrade</td><td data-label="Destinatário">Assinante</td></tr>
-      <tr><td data-label="Email">Assinatura cancelada</td><td data-label="Gatilho">Webhook Stripe: <code>customer.subscription.deleted</code></td><td data-label="Destinatário">Ex-assinante</td></tr>
-      <tr><td data-label="Email">Trial termina em 2 dias ⏳</td><td data-label="Gatilho">Cron: 12º dia após criação da conta</td><td data-label="Destinatário">Usuário em trial</td></tr>
-      <tr><td data-label="Email">Trial termina amanhã</td><td data-label="Gatilho">Cron: 13º dia após criação da conta</td><td data-label="Destinatário">Usuário em trial</td></tr>
-      <tr><td data-label="Email">Assinatura renova em 2 dias 🔄</td><td data-label="Gatilho">Cron: 2 dias antes da renovação</td><td data-label="Destinatário">Assinante ativo</td></tr>
-      <tr><td data-label="Email">Redefinição de senha</td><td data-label="Gatilho">Solicitação de reset (auth hook)</td><td data-label="Destinatário">Usuário solicitante</td></tr>
-    </tbody>
-  </table>
-  </div>
+  <ul>
+    <li><strong>Confirme seu cadastro</strong> — Cadastro com email (auth hook) → Novo usuário</li>
+    <li><strong>Bem-vindo ao PreciFácil</strong> — Primeiro login após confirmação → Novo usuário</li>
+    <li><strong>Pagamento confirmado</strong> — Webhook Stripe: <code>checkout.session.completed</code> → Assinante</li>
+    <li><strong>Seu plano foi atualizado</strong> — Webhook Stripe: upgrade/downgrade → Assinante</li>
+    <li><strong>Assinatura cancelada</strong> — Webhook Stripe: <code>customer.subscription.deleted</code> → Ex-assinante</li>
+    <li><strong>Trial termina em 2 dias ⏳</strong> — Cron: 12º dia após criação da conta → Usuário em trial</li>
+    <li><strong>Trial termina amanhã</strong> — Cron: 13º dia após criação da conta → Usuário em trial</li>
+    <li><strong>Assinatura renova em 2 dias 🔄</strong> — Cron: 2 dias antes da renovação → Assinante ativo</li>
+    <li><strong>Redefinição de senha</strong> — Solicitação de reset (auth hook) → Usuário solicitante</li>
+  </ul>
   <p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Tom: profissional, tratamento pelo primeiro nome, assinado "Equipe PreciFácil". Emojis apenas nos assuntos de retenção.</p>
 </div>
 
