@@ -238,8 +238,8 @@ export default function Historico() {
           <CardContent className="py-12 text-center space-y-4">
             <Lock className="h-12 w-12 text-amber-600 mx-auto" />
             <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
-            <p className="text-muted-foreground">O Histórico de Projetos está disponível a partir do plano Essencial (R$ 29/mês).</p>
-            <Button onClick={handleUpgradeHistory}>Assinar Essencial</Button>
+            <p className="text-muted-foreground">Histórico de projetos disponível no plano Essencial.</p>
+            <Button onClick={handleUpgradeHistory}>Assinar agora</Button>
           </CardContent>
         </Card>
       </div>
