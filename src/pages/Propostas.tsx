@@ -103,7 +103,7 @@ export default function Propostas() {
     if (!user) return;
     const { data, error } = await supabase
       .from('proposals')
-      .select('*')
+      .select('id, cliente, projeto, escopo, inclusos, nao_inclusos, forma_pagamento, validade_dias, freelancer_nome, freelancer_email, freelancer_whatsapp, prazo, prazo_unidade, preco_hora, pacote, valor_pacote, status, created_at')
       .order('created_at', { ascending: false });
     if (error) {
       toast.error('Erro ao carregar propostas');
