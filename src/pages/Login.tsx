@@ -59,7 +59,16 @@ export default function Login() {
       }
 
       const msg = translateSupabaseError(error.message, 'login');
-      toast.error(msg);
+      if (error.message.includes('Invalid login credentials')) {
+        toast.error(() => (
+          <span>
+            Não encontramos uma conta com este e-mail. Verifique o e-mail ou{' '}
+            <a href="/cadastro" className="text-primary underline font-medium">crie uma conta</a> gratuitamente.
+          </span>
+        ));
+      } else {
+        toast.error(msg);
+      }
       setLoading(false);
       return;
     }
