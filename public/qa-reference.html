@@ -75,11 +75,20 @@
 
     .screen-section { padding: .8rem .9rem; border-radius: 8px; }
 
-    /* Tables: smaller text, wrapper handles scroll */
-    table { font-size: .75rem; min-width: 420px; }
-    th, td { padding: .35rem .45rem; }
+    /* Tables: stacked card layout on mobile */
+    .table-wrap table,
+    .table-wrap thead,
+    .table-wrap tbody,
+    .table-wrap tr,
+    .table-wrap th,
+    .table-wrap td { display: block; width: 100%; }
+    .table-wrap thead { display: none; }
+    .table-wrap tr { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: .6rem; padding: .6rem .8rem; }
+    .table-wrap tr:nth-child(even) { background: #f8fafc; }
+    .table-wrap td { padding: .25rem 0; border: none; font-size: .85rem; }
+    .table-wrap td::before { content: attr(data-label); display: block; font-weight: 700; font-size: .72rem; color: #475569; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 1px; }
 
-    .email-table td:first-child { white-space: normal; min-width: 120px; }
+    .email-table td:first-child { white-space: normal; }
 
     .cred-box { padding: .8rem .9rem; }
     .cred-box code { word-break: break-all; }
