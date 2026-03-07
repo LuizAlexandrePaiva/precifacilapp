@@ -24,7 +24,7 @@ const planLabels: Record<string, string> = {
 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export default function Dashboard() {
-  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canViewStats, canAccessDashboard, trialDaysLeft, isTrialExpired } = useSubscription();
+  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canViewStats, canAccessDashboard, trialDaysLeft, isTrialExpired, loading: subLoading } = useSubscription();
   const { user } = useAuth();
   const { metaMensal, metaLoaded, carregarMeta } = useMeta();
   const [searchParams] = useSearchParams();
@@ -122,6 +122,14 @@ export default function Dashboard() {
       toast.error('Erro ao iniciar checkout');
     }
   };
+
+  if (subLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (!canAccessDashboard) {
     return (

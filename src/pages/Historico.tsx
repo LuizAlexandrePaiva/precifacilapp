@@ -29,7 +29,7 @@ interface Project {
 
 export default function Historico() {
   const { user } = useAuth();
-  const { canAccessHistory } = useSubscription();
+  const { canAccessHistory, loading: subLoading } = useSubscription();
   const isMobile = useIsMobile();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -223,6 +223,14 @@ export default function Historico() {
       toast.error('Erro ao iniciar checkout');
     }
   };
+
+  if (subLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (!canAccessHistory) {
     return (

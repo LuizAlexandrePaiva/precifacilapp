@@ -64,7 +64,7 @@ function maskPhone(value: string) {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
-  const { canAccessProposals, canExportPdf } = useSubscription();
+  const { canAccessProposals, canExportPdf, loading: subLoading } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -256,6 +256,14 @@ export default function Propostas() {
       setCheckoutLoading(false);
     }
   };
+
+  if (subLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (!canAccessProposals) {
     return (
