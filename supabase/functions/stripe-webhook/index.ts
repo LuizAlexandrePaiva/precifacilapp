@@ -214,7 +214,7 @@ Deno.serve(async (req) => {
           }
 
           const userName = customer.name || await getUserName(email);
-          const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR');
+          const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 
           const cancelHtml = layout(`
             ${p(`Olá, ${userName.split(' ')[0]}!`)}
@@ -273,7 +273,7 @@ Deno.serve(async (req) => {
         if (!email) break;
 
         const userName = customer.name || await getUserName(email);
-        const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR');
+        const accessUntil = new Date(subscription.current_period_end * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 
         const html = layout(`
           ${p(`Olá, ${userName.split(' ')[0]}!`)}
