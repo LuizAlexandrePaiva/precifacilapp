@@ -78,6 +78,87 @@
 <!-- ═══════════════════ CONTEÚDO ═══════════════════ -->
 <div class="content">
 
+<h2>0. Sobre o PreciFácil</h2>
+
+<div class="screen-section">
+  <h3>O que é</h3>
+  <p>O PreciFácil é um SaaS brasileiro que ajuda freelancers, autônomos e MEIs a calcular seu preço/hora real e gerar propostas comerciais profissionais. A plataforma elimina o achismo na precificação, considerando custos fixos, horas disponíveis, impostos e margem de lucro para chegar a um valor justo e sustentável.</p>
+</div>
+
+<div class="screen-section">
+  <h3>Para quem é</h3>
+  <ul>
+    <li>Freelancers de qualquer área (design, desenvolvimento, redação, marketing, etc.)</li>
+    <li>Profissionais autônomos que prestam serviços por projeto ou hora</li>
+    <li>MEIs que precisam precificar serviços de forma profissional</li>
+  </ul>
+</div>
+
+<div class="screen-section">
+  <h3>Qual problema resolve</h3>
+  <p>A maioria dos freelancers define preços "no chute", sem considerar todos os custos envolvidos — e acaba trabalhando abaixo do valor mínimo viável. O PreciFácil transforma dados financeiros reais (custos fixos, horas produtivas, impostos, margem desejada) em três faixas de preço: Mínimo, Justo e Premium. A partir disso, o profissional pode gerar propostas comerciais padronizadas e acompanhar seu histórico de projetos.</p>
+</div>
+
+<div class="screen-section">
+  <h3>Fluxo principal do usuário</h3>
+  <ol style="padding-left:1.4rem;">
+    <li><strong>Cadastro</strong> — via email+senha ou Google OAuth. Recebe trial de 14 dias (nível Essencial).</li>
+    <li><strong>Calculadora</strong> — preenche custos fixos mensais, horas disponíveis e margem de lucro. O sistema calcula o preço/hora mínimo, justo (×1.4) e premium (×2).</li>
+    <li><strong>Proposta</strong> — com os valores calculados, cria uma proposta comercial com dados do cliente, escopo, itens inclusos/não inclusos, prazo e condições de pagamento.</li>
+    <li><strong>Exportação PDF</strong> (Pro) — gera um documento profissional com tabela de pacotes, badge "Recomendado" e validade automática.</li>
+    <li><strong>Histórico</strong> — acompanha projetos criados, valores cotados e status.</li>
+    <li><strong>Dashboard</strong> (Pro) — visualiza métricas de faturamento, propostas enviadas e taxa de aprovação.</li>
+  </ol>
+</div>
+
+<div class="screen-section">
+  <h3>Stack técnica</h3>
+  <table>
+    <thead><tr><th>Camada</th><th>Tecnologia</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td>React 18 + TypeScript + Vite</td></tr>
+      <tr><td>Estilização</td><td>Tailwind CSS + shadcn/ui</td></tr>
+      <tr><td>Roteamento</td><td>React Router v6 (lazy loading em todas as rotas)</td></tr>
+      <tr><td>Estado servidor</td><td>TanStack React Query (cache 2min / gc 5min)</td></tr>
+      <tr><td>Backend / Auth</td><td>Lovable Cloud (Supabase) — PostgreSQL + RLS + Auth</td></tr>
+      <tr><td>Pagamentos</td><td>Stripe (Checkout + Customer Portal + Webhooks)</td></tr>
+      <tr><td>Emails transacionais</td><td>Resend (negócio) + Auth hooks (autenticação)</td></tr>
+      <tr><td>PDF</td><td>jsPDF (geração client-side)</td></tr>
+      <tr><td>Deploy</td><td>Lovable (com _headers e _redirects configurados)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="screen-section">
+  <h3>URLs importantes</h3>
+  <table>
+    <thead><tr><th>Recurso</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Produção</td><td>https://precifacil.app.br</td></tr>
+      <tr><td>Landing page</td><td>https://precifacil.app.br/</td></tr>
+      <tr><td>Cadastro</td><td>https://precifacil.app.br/cadastro</td></tr>
+      <tr><td>Login</td><td>https://precifacil.app.br/login</td></tr>
+      <tr><td>App (autenticado)</td><td>https://precifacil.app.br/app</td></tr>
+      <tr><td>Calculadora</td><td>https://precifacil.app.br/app/calculadora</td></tr>
+      <tr><td>Propostas</td><td>https://precifacil.app.br/app/propostas</td></tr>
+      <tr><td>Histórico</td><td>https://precifacil.app.br/app/historico</td></tr>
+      <tr><td>Tutorial</td><td>https://precifacil.app.br/app/tutorial</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="cred-box">
+  <p class="label" style="margin-bottom:.4rem">Instruções de credenciais de teste</p>
+  <p>Não existem contas de teste pré-configuradas. O QA deve criar suas próprias contas pelo fluxo normal de cadastro (<code>/cadastro</code>), utilizando email real para receber os emails transacionais.</p>
+  <p style="margin-top:.5rem;"><strong>Para testar cada plano:</strong></p>
+  <ul style="margin-top:.3rem;">
+    <li><strong>Trial (Essencial):</strong> criar conta nova — o trial de 14 dias é ativado automaticamente.</li>
+    <li><strong>Grátis:</strong> usar conta com trial expirado (>14 dias) e sem assinatura ativa.</li>
+    <li><strong>Essencial / Pro:</strong> assinar pelo checkout Stripe usando cartão de teste <code>4242 4242 4242 4242</code> (qualquer data futura, qualquer CVC).</li>
+  </ul>
+  <p style="margin-top:.5rem;font-size:.85rem;color:#92400e;">⚠ Para dúvidas durante os testes, entre em contato com <strong>suporte@precifacil.app.br</strong>.</p>
+</div>
+
 <h2>1. Fluxos a Testar</h2>
 
 <!-- ─── LANDING PAGE ─── -->
