@@ -125,7 +125,7 @@ export default function Historico() {
   );
 
   const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    `R$\u00A0${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const helpIcon = (title: string, text: React.ReactNode) => (
     <InfoModal title={title} content={text} iconSize="h-3.5 w-3.5" />
