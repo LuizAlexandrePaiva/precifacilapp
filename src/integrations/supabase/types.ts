@@ -157,6 +157,30 @@ export type Database = {
         }
         Relationships: []
       }
+      retention_emails_sent: {
+        Row: {
+          email_type: string
+          id: string
+          sent_at: string
+          trigger_ref: string | null
+          user_id: string
+        }
+        Insert: {
+          email_type: string
+          id?: string
+          sent_at?: string
+          trigger_ref?: string | null
+          user_id: string
+        }
+        Update: {
+          email_type?: string
+          id?: string
+          sent_at?: string
+          trigger_ref?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
