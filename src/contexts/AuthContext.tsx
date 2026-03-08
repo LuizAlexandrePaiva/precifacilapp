@@ -66,16 +66,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(null);
       }
 
-      // Send welcome email only on first confirmed sign-in
+      // Send welcome email only on first sign-in (works for email + Google OAuth)
       if (event === 'SIGNED_IN' && session?.user) {
         const u = session.user;
-        const isNewUser = u.confirmed_at && 
-          new Date(u.confirmed_at).getTime() > Date.now() - 60_000;
+        const createdAt = u.created_at ? new Date(u.created_at).getTime() : 0;
+        const isNewUser = createdAt > Date.now() - 120_000; // created within last 2 minutes
         const alreadySent = welcomeSentRef.current.has(u.id);
 
         if (isNewUser && !alreadySent) {
           welcomeSentRef.current.add(u.id);
-          // Welcome email is now handled by auth email templates
+          const name = u.user_metadata?.full_name || u.user_metadata?.name || u.email || '';
+          const email = u.email;
+          if (email) {
+            const { subject, html } = welcomeEmail(name);
+            supabase.functions.invoke('send-email', {
+              body: { to: email, subject, html },
+            }).catch((err) => console.error('Erro ao enviar email de boas-vindas:', err));
+          }
         }
       }
     });
