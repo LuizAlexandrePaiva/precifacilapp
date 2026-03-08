@@ -7,15 +7,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { InfoModal } from '@/components/InfoModal';
-import { History, Trash2, Lock } from 'lucide-react';
+import { History, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useStripeAction } from '@/hooks/useStripeAction';
 
 interface Project {
   id: string;
@@ -30,9 +28,7 @@ interface Project {
 
 export default function Historico() {
   const { user } = useAuth();
-  const { canAccessHistory, loading: subLoading } = useSubscription();
   const isMobile = useIsMobile();
-  const { checkout: stripeCheckout } = useStripeAction();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editProject, setEditProject] = useState<Project | null>(null);
@@ -93,8 +89,8 @@ export default function Historico() {
   const margemBadge = (acimaMin: boolean | null) => {
     if (acimaMin === null) return <span className="text-muted-foreground text-xs">—</span>;
     return acimaMin
-      ? <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✓ Acima</Badge>
-      : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs md:text-xs font-medium px-2 py-0.5 md:px-2 md:py-0.5 mobile-badge">✗ Abaixo</Badge>;
+      ? <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200 text-xs font-medium px-2 py-0.5">✓ Acima</Badge>
+      : <Badge className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200 text-xs font-medium px-2 py-0.5">✗ Abaixo</Badge>;
   };
 
   const margemTooltipContent = (
@@ -170,9 +166,7 @@ export default function Historico() {
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor/Hora Real</p>
                   <p className="text-[15px] font-semibold text-foreground">
-                    {valorHoraReal !== null
-                      ? formatCurrency(valorHoraReal)
-                      : '—'}
+                    {valorHoraReal !== null ? formatCurrency(valorHoraReal) : '—'}
                   </p>
                 </div>
                 <div>
@@ -213,38 +207,6 @@ export default function Historico() {
       })}
     </div>
   );
-
-  const handleUpgradeHistory = () => stripeCheckout('essencial');
-
-  if (subLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  if (!canAccessHistory) {
-    return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <History className="h-6 w-6 text-primary" />
-            Histórico de Projetos
-          </h1>
-          <p className="text-muted-foreground mt-1">Acompanhe seus projetos aprovados e compare com o preço mínimo</p>
-        </div>
-        <Card className="border-amber-500/50">
-          <CardContent className="py-12 text-center space-y-4">
-            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
-            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
-            <p className="text-muted-foreground">Histórico de projetos disponível no plano Essencial.</p>
-            <Button onClick={handleUpgradeHistory}>Assinar agora</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

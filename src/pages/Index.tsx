@@ -1,12 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Gift } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { PLANS_CONFIG } from '@/contexts/SubscriptionContext';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import {
   Accordion,
@@ -14,36 +11,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-
-const plans = [
-  {
-    name: 'Grátis',
-    price: 'R$ 0',
-    period: '/mês',
-    features: ['1 cálculo por mês', 'Veja seu preço mínimo por hora', 'Sem propostas'],
-    cta: 'Começar Grátis',
-    highlighted: false,
-    planKey: 'free' as const,
-  },
-  {
-    name: 'Essencial',
-    price: 'R$ 29',
-    period: '/mês',
-    features: ['Cálculos ilimitados', 'Gerador de propostas', 'Histórico de projetos', 'Acompanhe suas propostas'],
-    cta: 'Assinar Essencial',
-    highlighted: true,
-    planKey: 'essencial' as const,
-  },
-  {
-    name: 'Pro',
-    price: 'R$ 59',
-    period: '/mês',
-    features: ['Tudo do Essencial', 'Exportar propostas em PDF', 'Dashboard completo', 'Suporte via WhatsApp'],
-    cta: 'Assinar Pro',
-    highlighted: false,
-    planKey: 'pro' as const,
-  },
-];
 
 const painPoints = [
   {
@@ -93,9 +60,9 @@ const proofNumbers = [
     text: 'de proposta: Mínimo, Justo e Premium',
   },
   {
-    icon: Gift,
-    number: '14 dias',
-    text: 'grátis para testar sem cartão',
+    icon: Sparkles,
+    number: '100%',
+    text: 'gratuito — todos os recursos liberados',
   },
 ];
 
@@ -109,10 +76,6 @@ const faqs = [
     a: 'Não. O PreciFácil foi feito para quem não entende de contabilidade. Você responde perguntas simples em português e o sistema faz todos os cálculos automaticamente.',
   },
   {
-    q: 'Posso cancelar quando quiser?',
-    a: 'Sim. Não há fidelidade nem multa. Você cancela com um clique quando quiser.',
-  },
-  {
     q: 'A proposta gerada é profissional o suficiente para enviar ao cliente?',
     a: 'Sim. A proposta é gerada em formato limpo e profissional, com as 3 opções de pacote, escopo e prazo — pronta para enviar por email ou WhatsApp.',
   },
@@ -122,7 +85,7 @@ const faqs = [
   },
   {
     q: 'Posso refazer o cálculo quantas vezes quiser?',
-    a: 'Sim, sem limite no plano Essencial e Pro. Você pode simular cenários diferentes — mudar sua meta de ganho, ajustar horas ou custos — e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
+    a: 'Sim, sem limite. Você pode simular cenários diferentes — mudar sua meta de ganho, ajustar horas ou custos — e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
   },
   {
     q: 'Ainda tem dúvidas?',
@@ -133,43 +96,10 @@ const faqs = [
 export default function Index() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) navigate('/app', { replace: true });
   }, [user, navigate]);
-
-  const handleCheckout = async (planKey: 'essencial' | 'pro') => {
-    if (!user) {
-      window.location.href = '/cadastro';
-      return;
-    }
-    setCheckoutLoading(planKey);
-    try {
-      const priceId = PLANS_CONFIG[planKey].price_id;
-      const { data: sessionData } = await supabase.auth.getSession();
-      const accessToken = sessionData.session?.access_token;
-
-      if (!accessToken) {
-        toast.error('Sua sessão expirou. Faça login novamente.');
-        window.location.href = '/login';
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: { priceId },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (err: any) {
-      toast.error('Erro ao iniciar checkout: ' + (err.message || 'Tente novamente'));
-    } finally {
-      setCheckoutLoading(null);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -190,7 +120,7 @@ export default function Index() {
                   <Link to="/login">Entrar</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/cadastro">Criar conta</Link>
+                  <Link to="/cadastro">Criar conta grátis</Link>
                 </Button>
               </>
             )}
@@ -213,12 +143,12 @@ export default function Index() {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            O PreciFácil calcula o preço mínimo que você precisa cobrar para não trabalhar no prejuízo. Leva 2 minutos. É grátis para começar.
+            O PreciFácil calcula o preço mínimo que você precisa cobrar para não trabalhar no prejuízo. Leva 2 minutos. É 100% gratuito.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
             <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora — é grátis</Link>
           </Button>
-          <p className="text-sm text-blue-200/60 mt-4">14 dias grátis · Sem cartão de crédito · Cancele quando quiser</p>
+          <p className="text-sm text-blue-200/60 mt-4">100% gratuito · Sem cartão de crédito · Todos os recursos liberados</p>
         </div>
       </section>
 
@@ -313,60 +243,35 @@ export default function Index() {
             Cada proposta enviada sem cálculo é dinheiro que você não vai recuperar. Comece agora e descubra o preço que você realmente precisa cobrar.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="text-center whitespace-nowrap">Descobrir meu preço real — é grátis</Link>
+            <Link to="/cadastro" className="text-center whitespace-nowrap">Criar conta grátis agora</Link>
           </Button>
         </div>
       </section>
 
-      {/* 6. Pricing */}
+      {/* 6. Features highlight */}
       <section className="py-20">
         <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Comece grátis. Evolua quando quiser.</h2>
-          <p className="text-center text-muted-foreground mb-14 text-lg">14 dias grátis para testar. Cancele quando quiser. Sem fidelidade.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <Card
-                key={plan.name}
-                className={`relative flex flex-col ${plan.highlighted ? 'border-primary shadow-lg shadow-primary/10 scale-105' : 'border shadow-sm'}`}
-              >
-                {plan.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
-                    Mais popular
-                  </div>
-                )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <CardDescription>
-                    <span className="text-3xl font-bold text-foreground">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col flex-1">
-                  <ul className="space-y-3 mb-6 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  {plan.planKey === 'free' ? (
-                    <Button className="w-full" variant="outline" asChild>
-                      <Link to="/cadastro">{plan.cta}</Link>
-                    </Button>
-                  ) : (
-                    <Button
-                      className="w-full"
-                      variant={plan.highlighted ? 'default' : 'outline'}
-                      onClick={() => handleCheckout(plan.planKey)}
-                      disabled={checkoutLoading === plan.planKey}
-                    >
-                      {checkoutLoading === plan.planKey ? 'Redirecionando...' : plan.cta}
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Tudo que você precisa, sem pagar nada.</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Crie sua conta e tenha acesso completo a todas as ferramentas.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {[
+              'Cálculos ilimitados de preço mínimo',
+              'Gerador de propostas profissionais',
+              'Exportação de propostas em PDF',
+              'Dashboard completo com gráficos',
+              'Histórico de projetos',
+              'Suporte por email',
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-3 p-3">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span className="text-foreground">{feature}</span>
+              </div>
             ))}
+          </div>
+          <div className="text-center mt-10">
+            <Button size="lg" className="px-10 py-7 text-base rounded-xl font-bold" asChild>
+              <Link to="/cadastro">Começar agora — é grátis</Link>
+            </Button>
           </div>
         </div>
       </section>

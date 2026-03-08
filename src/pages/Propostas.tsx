@@ -13,15 +13,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { InfoModal } from '@/components/InfoModal';
 import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
-import { FileText, Plus, Check, X, Clock, Trash2, Lock, Download } from 'lucide-react';
+import { FileText, Plus, Check, X, Clock, Trash2, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription } from '@/contexts/SubscriptionContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useStripeAction } from '@/hooks/useStripeAction';
 
 type PrazoUnidade = 'horas' | 'dias';
 
@@ -65,16 +63,13 @@ function maskPhone(value: string) {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
-  const { canAccessProposals, canExportPdf, loading: subLoading } = useSubscription();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
-  const { loading: stripeLoading, checkout: stripeCheckout } = useStripeAction();
   const isMobile = useIsMobile();
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
-  // Form fields
   const [cliente, setCliente] = useState('');
   const [projeto, setProjeto] = useState('');
   const [escopo, setEscopo] = useState('');
@@ -87,7 +82,6 @@ export default function Propostas() {
   const [precoHora, setPrecoHora] = useState(0);
   const [pacote, setPacote] = useState<'basico' | 'padrao' | 'premium' | 'selecione'>('selecione');
 
-  // Freelancer info
   const [freelancerNome, setFreelancerNome] = useState('');
   const [freelancerEmail, setFreelancerEmail] = useState('');
   const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
@@ -118,7 +112,6 @@ export default function Propostas() {
   }, [user]);
 
   const getPrazoNum = () => parseBR(prazo) || 0;
-
   const getActivePacote = () => (pacote === 'selecione' ? 'padrao' : pacote);
   const calcValorPacote = () => {
     const prazoHoras = prazoUnidade === 'dias' ? getPrazoNum() * 8 : getPrazoNum();
@@ -243,40 +236,6 @@ export default function Propostas() {
     }
   };
 
-  const handleUpgrade = () => stripeCheckout('essencial');
-
-  if (subLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  if (!canAccessProposals) {
-    return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" />
-            Propostas
-          </h1>
-          <p className="text-muted-foreground mt-1">Gerencie suas propostas enviadas a clientes</p>
-        </div>
-        <Card className="border-amber-500/50">
-          <CardContent className="py-12 text-center space-y-4">
-            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
-            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
-            <p className="text-muted-foreground">Gerador de propostas disponível no plano Essencial.</p>
-            <Button onClick={handleUpgrade} disabled={stripeLoading}>
-              {stripeLoading ? 'Redirecionando...' : 'Assinar agora'}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   const actionBtnPrimary = "h-8 text-xs flex-1 min-w-0 border border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer";
   const actionBtnDestructive = "h-8 text-xs flex-1 min-w-0 border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer";
 
@@ -293,18 +252,9 @@ export default function Propostas() {
         </div>
       )}
       <div className="flex gap-1.5">
-        {canExportPdf ? (
-          <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleDownloadPdf(p)}>
-            <Download className="h-3 w-3 mr-1" />PDF
-          </Button>
-        ) : (
-          <span className="flex items-center gap-1 flex-1 min-w-0">
-            <Button size="sm" variant="ghost" className={`${actionBtnPrimary} opacity-50 !cursor-not-allowed`} disabled>
-              <Lock className="h-3 w-3 mr-1" />PDF
-            </Button>
-            <InfoModal title="Exportar PDF" content="Disponível no plano Pro. Faça upgrade para exportar propostas em PDF." iconSize="h-3.5 w-3.5" />
-          </span>
-        )}
+        <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleDownloadPdf(p)}>
+          <Download className="h-3 w-3 mr-1" />PDF
+        </Button>
         <div className="flex-1 min-w-0">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -385,7 +335,6 @@ export default function Propostas() {
             </DialogHeader>
             <div className="flex-1 overflow-y-auto px-6 pb-0">
               <form id="proposal-form" onSubmit={handleSave} className="space-y-5 py-4">
-                {/* Section: Seus dados */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Seus dados</h3>
                   <p className="text-xs text-muted-foreground -mt-2">Essas informações aparecem no PDF da proposta</p>
@@ -419,10 +368,8 @@ export default function Propostas() {
 
                 <Separator />
 
-                {/* Section: Dados do projeto */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Dados do projeto</h3>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Nome do cliente</Label>
@@ -434,54 +381,35 @@ export default function Propostas() {
                     </div>
                   </div>
 
-                  {/* Inclusos */}
                   <div className="space-y-2">
                     <Label className="flex items-center gap-1">
                       Está incluído
                       <InfoModal title="Está incluído" content="Tudo que será entregue ao cliente conforme combinado." />
                     </Label>
-                    <Textarea
-                      value={inclusos}
-                      onChange={(e) => setInclusos(e.target.value)}
-                      placeholder=""
-                      className="min-h-[100px] resize-y"
-                    />
+                    <Textarea value={inclusos} onChange={(e) => setInclusos(e.target.value)} placeholder="" className="min-h-[100px] resize-y" />
                   </div>
 
-                  {/* Não inclusos */}
                   <div className="space-y-2">
                     <Label className="flex items-center gap-1">
                       Não está incluído
                       <InfoModal title="Não está incluído" content="Tudo que está fora do escopo para evitar mal-entendidos." />
                     </Label>
-                    <Textarea
-                      value={naoInclusos}
-                      onChange={(e) => setNaoInclusos(e.target.value)}
-                      placeholder=""
-                      className="min-h-[100px] resize-y"
-                    />
+                    <Textarea value={naoInclusos} onChange={(e) => setNaoInclusos(e.target.value)} placeholder="" className="min-h-[100px] resize-y" />
                   </div>
 
-                  {/* Preço/hora + Nível */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="h-5 flex items-center">Preço/hora</Label>
-                      <CurrencyInput
-                        value={precoHora}
-                        onValueChange={setPrecoHora}
-                        placeholder="R$ 0,00"
-                        required
-                        className="h-11"
-                      />
+                      <CurrencyInput value={precoHora} onValueChange={setPrecoHora} placeholder="R$ 0,00" required className="h-11" />
                     </div>
                     <div className="space-y-2">
                       <Label className="flex items-center gap-1 h-5">
                         Nível da proposta
                         <InfoModal title="Nível da proposta" content={
                           <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                            <li style={{ marginBottom: 8 }}><strong>Preço Mínimo</strong> — cobre exatamente seus custos. Use quando precisar fechar o projeto a qualquer custo.</li>
-                            <li style={{ marginBottom: 8 }}><strong>Preço Justo</strong> — adiciona uma margem saudável de 40%. Recomendado para a maioria dos projetos.</li>
-                            <li><strong>Preço Premium</strong> — dobra o valor base. Ideal para projetos urgentes, complexos ou fora da sua especialidade.</li>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Mínimo</strong> — cobre exatamente seus custos.</li>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Justo</strong> — margem saudável de 40%. Recomendado.</li>
+                            <li><strong>Preço Premium</strong> — dobra o valor base. Para projetos urgentes ou complexos.</li>
                           </ul>
                         } />
                       </Label>
@@ -499,19 +427,11 @@ export default function Propostas() {
                     </div>
                   </div>
 
-                  {/* Prazo + Validade */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Prazo estimado</Label>
                       <div className="flex gap-2">
-                        <Input
-                          inputMode="decimal"
-                          placeholder="Ex: 40"
-                          value={prazo}
-                          onChange={(e) => setPrazo(e.target.value)}
-                          required
-                          className="flex-1 h-11"
-                        />
+                        <Input inputMode="decimal" placeholder="Ex: 40" value={prazo} onChange={(e) => setPrazo(e.target.value)} required className="flex-1 h-11" />
                         <Select value={prazoUnidade} onValueChange={(v) => setPrazoUnidade(v as PrazoUnidade)}>
                           <SelectTrigger className="w-24 h-11"><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -527,7 +447,6 @@ export default function Propostas() {
                     </div>
                   </div>
 
-                  {/* Forma de pagamento — full width */}
                   <div className="space-y-2">
                     <Label>Forma de pagamento</Label>
                     <Input value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)} placeholder="Ex: 50% na assinatura, 50% na entrega" className="h-11" />
@@ -544,7 +463,6 @@ export default function Propostas() {
                 </div>
               </form>
             </div>
-            {/* Sticky footer button */}
             <div className="px-6 py-4 border-t bg-background">
               <Button type="submit" form="proposal-form" className="w-full h-12 text-base" size="lg">
                 Salvar Proposta
@@ -578,9 +496,9 @@ export default function Propostas() {
                       <InfoModal title="Ações" content={
                         <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
                           <li style={{ marginBottom: 8 }}><strong>Aprovar</strong> — cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Recusar</strong> — registra propostas não aceitas para acompanhamento.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong> — exporta a proposta em PDF profissional. Disponível no plano Pro.</li>
-                          <li><strong>Excluir</strong> — remove a proposta permanentemente. Ação irreversível.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Recusar</strong> — registra propostas não aceitas.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong> — exporta a proposta em PDF profissional.</li>
+                          <li><strong>Excluir</strong> — remove a proposta permanentemente.</li>
                         </ul>
                       } iconSize="h-3.5 w-3.5" />
                     </div>
