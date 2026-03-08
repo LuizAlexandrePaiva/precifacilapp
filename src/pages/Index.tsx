@@ -1,11 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles } from 'lucide-react';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SEO } from '@/components/SEO';
 import { Helmet } from 'react-helmet-async';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 import {
   Accordion,
