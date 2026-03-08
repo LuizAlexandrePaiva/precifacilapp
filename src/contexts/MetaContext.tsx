@@ -15,6 +15,7 @@ const MetaContext = createContext<MetaContextType | undefined>(undefined);
 export function MetaProvider({ children }: { children: ReactNode }) {
   const [metaMensal, setMetaMensal] = useState<number | null>(null);
   const [metaLiquida, setMetaLiquida] = useState<number | null>(null);
+  const [precoHora, setPrecoHora] = useState<number | null>(null);
   const [metaLoaded, setMetaLoaded] = useState(false);
 
   const carregarMeta = useCallback(async (userId: string) => {
@@ -29,9 +30,10 @@ export function MetaProvider({ children }: { children: ReactNode }) {
     }
 
     if (data && data.length > 0) {
-      const row = data[0];
+      const row = data[0] as any;
       const ml = row.meta_liquida;
       const mm = Number(row.meta_mensal);
+      const ph = row.preco_hora != null ? Number(row.preco_hora) : null;
       if (ml != null && Number(ml) > 0) {
         setMetaMensal(mm);
         setMetaLiquida(Number(ml));
@@ -39,13 +41,17 @@ export function MetaProvider({ children }: { children: ReactNode }) {
         setMetaMensal(null);
         setMetaLiquida(null);
       }
+      if (ph != null && ph > 0) {
+        setPrecoHora(ph);
+      }
     }
     setMetaLoaded(true);
   }, []);
 
-  const atualizarMeta = useCallback((newMetaMensal: number, newMetaLiquida: number) => {
+  const atualizarMeta = useCallback((newMetaMensal: number, newMetaLiquida: number, newPrecoHora?: number) => {
     setMetaMensal(newMetaMensal);
     setMetaLiquida(newMetaLiquida);
+    if (newPrecoHora != null) setPrecoHora(newPrecoHora);
   }, []);
 
   // Auto-load meta from auth session directly
