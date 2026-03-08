@@ -5,11 +5,11 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { InputWithSuffix } from '@/components/InputWithSuffix';
 import { InfoModal } from '@/components/InfoModal';
-import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
+import { RegimeFields } from '@/components/RegimeFields';
+import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario, AtividadeMEI, FaixaRendaPF, AnexoSimples, FaixaFaturamentoSimples } from '@/lib/calculator';
 import { Calculator, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
@@ -32,6 +32,12 @@ export default function Calculadora() {
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
 
+  // Sub-fields
+  const [atividadeMEI, setAtividadeMEI] = useState<AtividadeMEI | ''>('');
+  const [faixaRendaPF, setFaixaRendaPF] = useState<FaixaRendaPF | ''>('');
+  const [anexoSimples, setAnexoSimples] = useState<AnexoSimples | ''>('');
+  const [faixaFaturamentoSimples, setFaixaFaturamentoSimples] = useState<FaixaFaturamentoSimples | ''>('');
+
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
   const [isClosingConfirm, setIsClosingConfirm] = useState(false);
@@ -48,14 +54,48 @@ export default function Calculadora() {
     }
   }, [metaLoaded, ctxMetaLiquida]);
 
+  // Clear sub-fields when regime changes
+  const handleRegimeChange = (newRegime: RegimeTributario) => {
+    setRegime(newRegime);
+    setAtividadeMEI('');
+    setFaixaRendaPF('');
+    setAnexoSimples('');
+    setFaixaFaturamentoSimples('');
+  };
+
+  const isSubFieldsComplete = (): boolean => {
+    switch (regime) {
+      case 'mei': return atividadeMEI !== '';
+      case 'autonomo_pf': return faixaRendaPF !== '';
+      case 'pj_simples': return anexoSimples !== '' && faixaFaturamentoSimples !== '';
+    }
+  };
+
+  const getImpostoLabel = (): string => {
+    if (regime === 'mei') return 'DAS-MEI (custo fixo)';
+    if (regime === 'autonomo_pf') {
+      const map: Record<string, string> = { ate_5000: '11%', '5001_7350': '18%', '7351_10000': '26%', acima_10000: '33%' };
+      return `Impostos (PF ${map[faixaRendaPF] || ''})`;
+    }
+    return `Impostos (Simples Nacional)`;
+  };
+
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSubFieldsComplete()) {
+      toast.error('Preencha todos os campos do regime tributário.');
+      return;
+    }
     const input: CalculationInput = {
       metaLiquida,
       horasPorSemana: parseFloat(horasPorSemana) || 0,
       regime,
       custosFixos,
       semanasFerias: parseFloat(semanasFerias) || 0,
+      atividadeMEI: atividadeMEI || undefined,
+      faixaRendaPF: faixaRendaPF || undefined,
+      anexoSimples: anexoSimples || undefined,
+      faixaFaturamentoSimples: faixaFaturamentoSimples || undefined,
     };
     const calcResult = calcularPreco(input);
     trackEvent('first_calculation', { regime });
@@ -79,7 +119,6 @@ export default function Calculadora() {
         p_meta_mensal: Number(newMeta),
         p_meta_liquida: Number(metaLiquida),
       });
-
       if (error) {
         console.error('Erro ao salvar meta:', error);
         toast.error('Erro ao salvar meta: ' + error.message);
@@ -145,64 +184,32 @@ export default function Calculadora() {
                     }
                   />
                 </Label>
-                <CurrencyInput
-                  value={metaLiquida}
-                  onValueChange={setMetaLiquida}
-                  placeholder="R$ 0,00"
-                  className="h-11"
-                />
+                <CurrencyInput value={metaLiquida} onValueChange={setMetaLiquida} placeholder="R$ 0,00" className="h-11" />
                 <p className="text-xs text-muted-foreground">Valor líquido desejado após impostos e despesas</p>
               </div>
 
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
-                <InputWithSuffix
-                  inputMode="decimal"
-                  placeholder="Ex: 40"
-                  suffix="horas"
-                  value={horasPorSemana}
-                  onChange={(e) => setHorasPorSemana(e.target.value)}
-                  required
-                />
+                <InputWithSuffix inputMode="decimal" placeholder="Ex: 40" suffix="horas" value={horasPorSemana} onChange={(e) => setHorasPorSemana(e.target.value)} required />
                 <p className="text-xs text-muted-foreground">Horas semanais dedicadas ao trabalho</p>
               </div>
 
-              <div className="space-y-2">
-                <Label className="flex items-center gap-1 h-5">
-                  Regime tributário
-                  <InfoModal
-                    title="Regime tributário"
-                    content={
-                      <div>
-                        <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                          <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong>: fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~27,5%)</strong>: sem CNPJ. Paga INSS e IR sobre o lucro.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~12%)</strong>: CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
-                        </ul>
-                        <p style={{ marginTop: 12 }}>Escolha o regime correto para calcular o impacto real no seu preço.</p>
-                      </div>
-                    }
-                  />
-                </Label>
-                <Select value={regime} onValueChange={(v) => setRegime(v as RegimeTributario)}>
-                  <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="mei">MEI (~5% de imposto)</SelectItem>
-                    <SelectItem value="autonomo_pf">Autônomo PF (~27,5%)</SelectItem>
-                    <SelectItem value="pj_simples">PJ Simples Nacional (~12%)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">Como você emite nota fiscal</p>
-              </div>
+              <RegimeFields
+                regime={regime}
+                onRegimeChange={handleRegimeChange}
+                atividadeMEI={atividadeMEI}
+                onAtividadeMEIChange={setAtividadeMEI}
+                faixaRendaPF={faixaRendaPF}
+                onFaixaRendaPFChange={setFaixaRendaPF}
+                anexoSimples={anexoSimples}
+                onAnexoSimplesChange={setAnexoSimples}
+                faixaFaturamentoSimples={faixaFaturamentoSimples}
+                onFaixaFaturamentoSimplesChange={setFaixaFaturamentoSimples}
+              />
 
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Custos fixos mensais</Label>
-                <CurrencyInput
-                  value={custosFixos}
-                  onValueChange={setCustosFixos}
-                  placeholder="R$ 0,00"
-                  className="h-11"
-                />
+                <CurrencyInput value={custosFixos} onValueChange={setCustosFixos} placeholder="R$ 0,00" className="h-11" />
                 <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas e assinaturas</p>
               </div>
             </div>
@@ -223,17 +230,10 @@ export default function Calculadora() {
                   }
                 />
               </Label>
-              <InputWithSuffix
-                inputMode="decimal"
-                placeholder="Ex: 4"
-                suffix="semanas"
-                value={semanasFerias}
-                onChange={(e) => setSemanasFerias(e.target.value)}
-                required
-              />
+              <InputWithSuffix inputMode="decimal" placeholder="Ex: 4" suffix="semanas" value={semanasFerias} onChange={(e) => setSemanasFerias(e.target.value)} required />
             </div>
 
-            <Button type="submit" className="w-full h-[52px] mt-6 text-base" size="lg">
+            <Button type="submit" className="w-full h-[52px] mt-6 text-base" size="lg" disabled={!isSubFieldsComplete()}>
               Calcular
             </Button>
           </form>
@@ -263,20 +263,29 @@ export default function Calculadora() {
               <h4 className="font-semibold mb-3">Como chegamos nesse valor?</h4>
               {[
                 { label: 'Salário desejado', value: `R$ ${formatBR(metaLiquida)}` },
-                { label: `Impostos (${regime === 'mei' ? 'MEI ~5%' : regime === 'autonomo_pf' ? 'PF ~27,5%' : 'Simples ~12%'})`, value: `R$ ${formatBR(result.impostoEstimado)}` },
-                { label: 'Custos fixos', value: `R$ ${formatBR(custosFixos)}` },
-                { label: 'Horas faturáveis/mês', value: `${result.horasFaturaveis.toFixed(0)}h`, tooltipTitle: 'Horas faturáveis', tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.' },
+                {
+                  label: getImpostoLabel(),
+                  value: regime === 'mei'
+                    ? `R$ ${formatBR(result.dasMEI ?? 0)}`
+                    : `R$ ${formatBR(result.impostoEstimado)}`,
+                },
+                {
+                  label: 'Custos fixos',
+                  value: `R$ ${formatBR(custosFixos)}`,
+                },
+                {
+                  label: 'Horas faturáveis/mês',
+                  value: `${result.horasFaturaveis.toFixed(0)}h`,
+                  tooltipTitle: 'Horas faturáveis',
+                  tooltip: 'Horas que você realmente trabalha para clientes, descontando reuniões, e-mails e imprevistos.',
+                },
                 { label: 'Total necessário', value: `R$ ${formatBR(result.custoTotal)}` },
               ].map((item) => (
                 <div key={item.label} className="flex items-start justify-between gap-2 text-[13px] sm:text-sm">
                   <span className="flex items-center gap-1 min-w-0 max-w-[55%]">
                     <span className="text-muted-foreground break-words">{item.label}</span>
                     {item.tooltip && (
-                      <InfoModal
-                        title={item.tooltipTitle!}
-                        content={item.tooltip}
-                        iconSize="h-3.5 w-3.5"
-                      />
+                      <InfoModal title={item.tooltipTitle!} content={item.tooltip} iconSize="h-3.5 w-3.5" />
                     )}
                   </span>
                   <span className="font-semibold text-right max-w-[45%] break-words">{item.value}</span>
