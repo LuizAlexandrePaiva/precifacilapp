@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { sendEmail } from '@/lib/sendEmail';
 import { welcomeEmail } from '@/lib/emailTemplates';
 
 interface AuthContextType {
@@ -75,9 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (isNewUser && !alreadySent) {
           welcomeSentRef.current.add(u.id);
-          const userName = u.user_metadata?.full_name || u.user_metadata?.name || u.email?.split('@')[0] || 'Usuário';
-          const { subject, html } = welcomeEmail(userName);
-          sendEmail({ to: u.email!, subject, html }).catch(console.error);
+          // Welcome email is now handled by auth email templates
         }
       }
     });
