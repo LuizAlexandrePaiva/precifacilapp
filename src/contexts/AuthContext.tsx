@@ -66,15 +66,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(null);
       }
 
-      // Send welcome email only on first sign-in (works for email + Google OAuth)
+      // Send welcome email only once per user (works for email + Google OAuth)
       if (event === 'SIGNED_IN' && session?.user) {
         const u = session.user;
         const createdAt = u.created_at ? new Date(u.created_at).getTime() : 0;
-        const isNewUser = createdAt > Date.now() - 120_000; // created within last 2 minutes
-        const alreadySent = welcomeSentRef.current.has(u.id);
+        const isNewUser = createdAt > Date.now() - 120_000;
+        const storageKey = `welcome_sent_${u.id}`;
+        const alreadySent = welcomeSentRef.current.has(u.id) || localStorage.getItem(storageKey) === '1';
 
         if (isNewUser && !alreadySent) {
           welcomeSentRef.current.add(u.id);
+          localStorage.setItem(storageKey, '1');
           const name = u.user_metadata?.full_name || u.user_metadata?.name || u.email || '';
           const email = u.email;
           if (email) {
