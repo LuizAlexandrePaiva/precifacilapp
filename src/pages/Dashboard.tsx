@@ -1,46 +1,25 @@
 import { InfoModal } from '@/components/InfoModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, AlertTriangle, Crown, Lock, Clock, ArrowRight } from 'lucide-react';
-import { useSubscription } from '@/contexts/SubscriptionContext';
+import { LayoutDashboard, DollarSign, Target, FileText, TrendingUp, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
-import { useStripeAction } from '@/hooks/useStripeAction';
-
-const planLabels: Record<string, string> = {
-  free: 'Grátis',
-  trial: 'Teste Gratuito',
-  essencial: 'Essencial',
-  pro: 'Pro',
-};
 
 const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export default function Dashboard() {
-  const { plan, subscriptionEnd, refreshSubscription, canViewChart, canViewStats, canAccessDashboard, trialDaysLeft, isTrialExpired, loading: subLoading } = useSubscription();
   const { user } = useAuth();
   const { metaMensal, metaLoaded, carregarMeta } = useMeta();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { loading: stripeLoading, checkout: stripeCheckout, portal: stripePortal } = useStripeAction();
   const [projects, setProjects] = useState<any[]>([]);
   const [proposals, setProposals] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-
-  useEffect(() => {
-    if (searchParams.get('checkout') === 'success') {
-      toast.success('Pagamento confirmado! Atualizando seu plano...');
-      refreshSubscription();
-    }
-  }, [searchParams, refreshSubscription]);
 
   useEffect(() => {
     if (!user) return;
@@ -105,39 +84,6 @@ export default function Dashboard() {
     { title: 'Taxa de Aprovação', value: `${stats.taxaAprovacao}%`, icon: TrendingUp, color: 'text-primary' },
   ];
 
-  const handleManageSubscription = () => stripePortal();
-  const handleUpgrade = (planKey: 'essencial' | 'pro') => stripeCheckout(planKey);
-
-  if (subLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  if (!canAccessDashboard) {
-    return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6 text-primary" />
-            Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1">Visão geral do seu negócio</p>
-        </div>
-        <Card className="border-amber-500/50">
-          <CardContent className="py-12 text-center space-y-4">
-            <Lock className="h-12 w-12 text-amber-600 mx-auto" />
-            <h2 className="text-xl font-semibold">Recurso disponível nos planos pagos</h2>
-            <p className="text-muted-foreground">O Dashboard está disponível a partir do plano Essencial (R$ 29/mês).</p>
-            <Button onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
@@ -148,120 +94,22 @@ export default function Dashboard() {
         <p className="text-muted-foreground mt-1">Visão geral do seu negócio</p>
       </div>
 
-      {/* Trial Banner */}
-      {plan === 'trial' && trialDaysLeft !== null && trialDaysLeft > 0 && (
-        <Card className="border-primary/50 bg-accent">
-          <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary flex-shrink-0" />
-              <div>
-                <p className="font-semibold text-sm">
-                  Período gratuito: <span className="text-primary">{trialDaysLeft} {trialDaysLeft === 1 ? 'dia restante' : 'dias restantes'}</span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Aproveite todos os recursos do PreciFácil durante o seu teste gratuito de 14 dias.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
-              <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Assinar Pro</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Trial Expired Banner */}
-      {isTrialExpired && plan === 'free' && (
-        <Card className="border-destructive/50 bg-destructive/5">
-          <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
-              <div>
-                <p className="font-semibold text-sm">Seu período gratuito de 14 dias expirou</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Escolha um plano para continuar utilizando todos os recursos sem interrupção.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" onClick={() => handleUpgrade('essencial')}>Essencial — R$ 29/mês</Button>
-              <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Pro — R$ 59/mês</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Subscription Card */}
-      <Card className="border-primary/30">
-        <CardContent className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Crown className="h-5 w-5 text-primary" />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">Plano atual:</span>
-                <Badge
-                  variant={plan === 'free' || plan === 'trial' ? 'outline' : 'default'}
-                  className={plan === 'free' || plan === 'trial' ? 'border-primary/40 bg-primary/10 text-primary font-semibold' : ''}
-                >
-                  {planLabels[plan]}
-                </Badge>
-              </div>
-              {subscriptionEnd && (
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Renova em {new Date(subscriptionEnd).toLocaleDateString('pt-BR')}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {plan === 'free' && (
-              <Button size="sm" onClick={() => handleUpgrade('essencial')}>Assinar Essencial</Button>
-            )}
-            {plan === 'essencial' && (
-              <>
-                <Button size="sm" variant="outline" onClick={() => handleUpgrade('pro')}>Upgrade Pro</Button>
-                <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={stripeLoading}>
-                  Gerenciar
-                </Button>
-              </>
-            )}
-            {plan === 'pro' && (
-              <Button size="sm" variant="ghost" onClick={handleManageSubscription} disabled={stripeLoading}>
-                Gerenciar assinatura
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Stats Cards */}
-      {canViewStats ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {cards.map((card) => (
-            <Card key={card.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
-                <card.icon className={`h-5 w-5 ${card.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{card.value}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="border-muted">
-          <CardContent className="py-10 text-center space-y-4">
-            <Lock className="h-10 w-10 text-muted-foreground mx-auto" />
-            <h3 className="font-semibold text-lg">Métricas disponíveis no plano Pro</h3>
-            <p className="text-sm text-muted-foreground">Faturamento do Mês, Propostas Enviadas e Taxa de Aprovação estão disponíveis no plano Pro (R$ 59/mês).</p>
-            <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade para o Pro</Button>
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {cards.map((card) => (
+          <Card key={card.title}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+              <card.icon className={`h-5 w-5 ${card.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{card.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      {/* Meta de Faturamento Card — Read Only */}
+      {/* Meta de Faturamento Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -314,40 +162,29 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Revenue Chart - Pro only */}
-      {canViewChart ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Evolução do Faturamento (6 meses)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(v) => `R$${v}`} />
-                <RechartsTooltip
-                  formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Faturamento']}
-                  contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }}
-                />
-                <Bar dataKey="faturamento" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="border-muted">
-          <CardContent className="py-10 text-center space-y-4">
-            <Lock className="h-10 w-10 text-muted-foreground mx-auto" />
-            <h3 className="font-semibold text-lg">Gráfico de evolução disponível no plano Pro</h3>
-            <p className="text-sm text-muted-foreground">Acompanhe a evolução do seu faturamento mês a mês com o plano Pro (R$ 59/mês).</p>
-            <Button onClick={() => handleUpgrade('pro')}>Fazer upgrade para o Pro</Button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Revenue Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Evolução do Faturamento (6 meses)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="name" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(v) => `R$${v}`} />
+              <RechartsTooltip
+                formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Faturamento']}
+                contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }}
+              />
+              <Bar dataKey="faturamento" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="py-12 text-center text-muted-foreground">

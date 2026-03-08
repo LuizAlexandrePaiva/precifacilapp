@@ -5,25 +5,21 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { InputWithSuffix } from '@/components/InputWithSuffix';
 import { InfoModal } from '@/components/InfoModal';
 import { calcularPreco, CalculationInput, CalculationResult, RegimeTributario } from '@/lib/calculator';
-import { Calculator, ArrowRight, Lock } from 'lucide-react';
-import { useSubscription } from '@/contexts/SubscriptionContext';
+import { Calculator, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useStripeAction } from '@/hooks/useStripeAction';
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function Calculadora() {
   const navigate = useNavigate();
-  const { plan, canCalculate, incrementCalcCount, loading: subLoading } = useSubscription();
   const { user } = useAuth();
   const { metaMensal: ctxMetaMensal, metaLiquida: ctxMetaLiquida, metaLoaded, carregarMeta, atualizarMeta } = useMeta();
 
@@ -33,8 +29,6 @@ export default function Calculadora() {
   const [custosFixos, setCustosFixos] = useState(0);
   const [semanasFerias, setSemanasFerias] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const { loading: stripeLoading, checkout: stripeCheckout } = useStripeAction();
-  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [showMetaConfirm, setShowMetaConfirm] = useState(false);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
@@ -54,10 +48,6 @@ export default function Calculadora() {
 
   const handleCalc = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canCalculate) {
-      setShowLimitModal(true);
-      return;
-    }
     const input: CalculationInput = {
       metaLiquida,
       horasPorSemana: parseFloat(horasPorSemana) || 0,
@@ -70,26 +60,22 @@ export default function Calculadora() {
     const valorAtual = Number(metaLiquida);
     const valorSalvo = Number(ctxMetaLiquida ?? 0);
 
-
     if (valorAtual > 0 && valorAtual !== valorSalvo) {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
     } else {
       setResult(calcResult);
     }
-    if (plan === 'free') incrementCalcCount();
   };
 
   const saveMetaAndFinish = async (calcResult: CalculationResult) => {
     const newMeta = calcResult.custoTotal;
     if (user) {
-
       const { error } = await supabase.rpc('update_user_meta', {
         p_user_id: user.id,
         p_meta_mensal: Number(newMeta),
         p_meta_liquida: Number(metaLiquida),
       });
-
 
       if (error) {
         console.error('Erro ao salvar meta:', error);
@@ -128,16 +114,6 @@ export default function Calculadora() {
     }
   };
 
-  const handleUpgrade = () => stripeCheckout('essencial');
-
-  if (subLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
@@ -148,25 +124,10 @@ export default function Calculadora() {
         <p className="text-muted-foreground mt-1">Descubra seu preço mínimo por hora e por dia</p>
       </div>
 
-      {plan === 'free' && (
-        <Card className="border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
-          <CardContent className="py-4 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Lock className="h-4 w-4 text-amber-600" />
-              <span>Plano Grátis: {canCalculate ? '1 cálculo restante' : '0 cálculos restantes'} este mês.</span>
-            </div>
-            <Button size="sm" variant="outline" onClick={handleUpgrade} disabled={stripeLoading}>
-              {stripeLoading ? 'Aguarde...' : 'Fazer upgrade'}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handleCalc} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Col 1 Row 1 — Meta */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-1 h-5">
                   Quanto quero ganhar por mês
@@ -189,7 +150,6 @@ export default function Calculadora() {
                 <p className="text-xs text-muted-foreground">Valor líquido desejado após impostos e despesas</p>
               </div>
 
-              {/* Col 2 Row 1 — Horas */}
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
                 <InputWithSuffix
@@ -203,7 +163,6 @@ export default function Calculadora() {
                 <p className="text-xs text-muted-foreground">Horas semanais dedicadas ao trabalho</p>
               </div>
 
-              {/* Col 1 Row 2 — Regime */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-1 h-5">
                   Regime tributário
@@ -215,7 +174,6 @@ export default function Calculadora() {
                           <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong> — fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
                           <li style={{ marginBottom: 8 }}><strong>Autônomo (~27,5%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
                           <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~12%)</strong> — CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
-                          
                         </ul>
                         <p style={{ marginTop: 12 }}>Escolha o regime correto para calcular o impacto real no seu preço.</p>
                       </div>
@@ -233,7 +191,6 @@ export default function Calculadora() {
                 <p className="text-xs text-muted-foreground">Como você emite nota fiscal</p>
               </div>
 
-              {/* Col 2 Row 2 — Custos fixos */}
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Custos fixos mensais</Label>
                 <CurrencyInput
@@ -246,7 +203,6 @@ export default function Calculadora() {
               </div>
             </div>
 
-            {/* Full width — Semanas férias */}
             <div className="space-y-2">
               <Label className="flex items-center gap-1">
                 Semanas sem trabalhar por ano
@@ -273,8 +229,8 @@ export default function Calculadora() {
               />
             </div>
 
-            <Button type="submit" className="w-full h-[52px] mt-6 text-base" size="lg" disabled={!canCalculate && plan === 'free'}>
-              {!canCalculate && plan === 'free' ? 'Limite atingido — Faça upgrade' : 'Calcular'}
+            <Button type="submit" className="w-full h-[52px] mt-6 text-base" size="lg">
+              Calcular
             </Button>
           </form>
         </CardContent>
@@ -336,24 +292,6 @@ export default function Calculadora() {
           </CardContent>
         </Card>
       )}
-
-      {/* Limit modal */}
-      <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
-        <DialogContent className="max-w-sm text-center">
-          <DialogHeader>
-            <DialogTitle className="flex flex-col items-center gap-3">
-              <Lock className="h-10 w-10 text-amber-500" />
-              Limite atingido
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-muted-foreground text-sm">
-            Você atingiu o limite do plano Grátis. Assine o Essencial para cálculos ilimitados.
-          </p>
-          <Button onClick={() => { setShowLimitModal(false); handleUpgrade(); }} disabled={stripeLoading} className="w-full">
-            {stripeLoading ? 'Redirecionando...' : 'Assinar agora'}
-          </Button>
-        </DialogContent>
-      </Dialog>
 
       {/* Meta confirmation modal */}
       {showMetaConfirm && createPortal(
