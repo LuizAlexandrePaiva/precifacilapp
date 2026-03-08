@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen } from 'lucide-react';
+import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen, Newspaper } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
