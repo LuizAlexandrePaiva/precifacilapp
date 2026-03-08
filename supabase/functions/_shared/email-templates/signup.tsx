@@ -34,7 +34,7 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Confirme seu cadastro — PreciFácil</Preview>
+    <Preview>Confirme seu cadastro no PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>

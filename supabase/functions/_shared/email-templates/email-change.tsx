@@ -34,7 +34,7 @@ export const EmailChangeEmail = ({
 }: EmailChangeEmailProps) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Confirme a alteração do seu email — PreciFácil</Preview>
+    <Preview>Confirme a alteração do seu email · PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>

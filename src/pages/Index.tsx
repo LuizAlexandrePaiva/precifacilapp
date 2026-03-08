@@ -30,20 +30,20 @@ const painPoints = [
 const steps = [
   {
     icon: Calculator,
-    title: 'Informe sua meta e seus custos',
-    desc: 'Quanto você quer ganhar por mês? Quantas horas trabalha? O PreciFácil faz o resto.',
+    title: 'Diga quanto quer ganhar',
+    desc: 'Informe sua meta mensal, seus custos e quantas horas trabalha. O PreciFácil calcula tudo automaticamente.',
     step: '01',
   },
   {
     icon: FileText,
-    title: 'Receba seu preço mínimo real',
-    desc: 'Veja exatamente quanto precisa cobrar por hora e por projeto — com a explicação completa do cálculo.',
+    title: 'Descubra seu preço real',
+    desc: 'Veja o valor mínimo que você precisa cobrar por hora para não sair no prejuízo, com o cálculo completo na tela.',
     step: '02',
   },
   {
     icon: Send,
-    title: 'Gere uma proposta profissional',
-    desc: 'Monte uma proposta com 3 opções de preço, baixe em PDF profissional e compartilhe com o cliente pelo canal que preferir.',
+    title: 'Envie uma proposta profissional',
+    desc: 'Monte uma proposta com 3 opções de preço, exporte em PDF e envie para o cliente pelo canal que preferir.',
     step: '03',
   },
 ];
@@ -62,7 +62,7 @@ const proofNumbers = [
   {
     icon: Sparkles,
     number: '100%',
-    text: 'gratuito — todos os recursos liberados',
+    text: 'gratuito, com todos os recursos liberados',
   },
 ];
 
@@ -77,19 +77,19 @@ const faqs = [
   },
   {
     q: 'A proposta gerada é profissional o suficiente para enviar ao cliente?',
-    a: 'Sim. A proposta é gerada em formato limpo e profissional, com as 3 opções de pacote, escopo e prazo — pronta para enviar por email ou WhatsApp.',
+    a: 'Sim. A proposta é gerada em formato limpo e profissional, com 3 opções de pacote, escopo e prazo. Pronta para enviar por email ou WhatsApp.',
   },
   {
     q: 'Funciona para MEI, autônomo e PJ?',
-    a: 'Sim. O PreciFácil foi feito para a realidade brasileira. Na calculadora você escolhe seu regime tributário — MEI (~5%), Autônomo PF (~27,5%) ou PJ Simples Nacional (~12%) — e o sistema já aplica o imposto correto no cálculo do seu preço mínimo. Sem precisar entender de contabilidade.',
+    a: 'Sim. O PreciFácil foi feito para a realidade brasileira. Na calculadora você escolhe seu regime tributário (MEI ~5%, Autônomo PF ~27,5% ou PJ Simples Nacional ~12%) e o sistema aplica o imposto correto no cálculo do seu preço mínimo. Sem precisar entender de contabilidade.',
   },
   {
     q: 'Posso refazer o cálculo quantas vezes quiser?',
-    a: 'Sim, sem limite. Você pode simular cenários diferentes — mudar sua meta de ganho, ajustar horas ou custos — e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
+    a: 'Sim, sem limite. Você pode simular cenários diferentes, mudar sua meta de ganho, ajustar horas ou custos e ver como isso afeta seu preço mínimo em tempo real. Quanto mais você testar, mais seguro fica na hora de cobrar.',
   },
   {
     q: 'Ainda tem dúvidas?',
-    a: 'Fale com a gente pelo e-mail <a href="mailto:suporte@precifacil.app.br" class="text-primary underline">suporte@precifacil.app.br</a> — respondemos em até 1 dia útil.',
+    a: 'Fale com a gente pelo e-mail <a href="mailto:suporte@precifacil.app.br" class="text-primary underline">suporte@precifacil.app.br</a>. Respondemos em até 1 dia útil.',
   },
 ];
 
@@ -137,16 +137,16 @@ export default function Index() {
         }} />
         <div className="container text-center max-w-3xl mx-auto relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
-            Você sabe quanto cobrar{' '}
+            Descubra o preço certo{' '}
             <span className="bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
-              ou acha que sabe?
+              antes de perder dinheiro.
             </span>
           </h1>
           <p className="text-lg md:text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            O PreciFácil calcula o preço mínimo que você precisa cobrar para não trabalhar no prejuízo. Leva 2 minutos. É 100% gratuito.
+            O PreciFácil calcula o mínimo que você precisa cobrar para não trabalhar no prejuízo. Em 2 minutos. 100% gratuito.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora, é grátis</Link>
+            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora</Link>
           </Button>
           <p className="text-sm text-blue-200/60 mt-4">100% gratuito · Sem cartão de crédito · Todos os recursos liberados</p>
         </div>
@@ -156,7 +156,7 @@ export default function Index() {
       <section className="py-20 bg-muted/50">
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Você se identifica com isso?
+            Isso soa familiar?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {painPoints.map((p, i) => (
@@ -171,7 +171,7 @@ export default function Index() {
             ))}
           </div>
           <p className="text-center text-lg md:text-xl font-semibold text-primary max-w-2xl mx-auto">
-            Se você se identificou com qualquer um desses, o PreciFácil foi feito pra você.
+            Se algum desses é o seu caso, o PreciFácil resolve isso pra você.
           </p>
         </div>
       </section>
@@ -179,8 +179,8 @@ export default function Index() {
       {/* 3. How It Works */}
       <section className="py-20">
         <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Como funciona para você</h2>
-          <p className="text-center text-muted-foreground mb-14 text-lg">Feito para freelancers, MEIs e autônomos. Três passos simples.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Como funciona</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Três passos simples. Nenhuma planilha. Nenhum contador.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((s, i) => (
               <div key={i} className="relative text-center">
@@ -200,13 +200,13 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 4. Social Proof — Numbers */}
+      {/* 4. Social Proof */}
       <section className="py-20" style={{
         background: 'linear-gradient(160deg, hsl(213 74% 97%) 0%, hsl(213 30% 93%) 100%)',
       }}>
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-foreground">
-            Simples, rápido e feito para a realidade brasileira
+            Feito para a realidade do freelancer brasileiro
           </h2>
           <p className="text-center text-muted-foreground mb-14 text-lg">
             Sem planilha, sem contador, sem complicação.
@@ -236,14 +236,14 @@ export default function Index() {
         }} />
         <div className="container text-center max-w-3xl mx-auto relative z-10">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
-            Cada mês que passa cobrando errado é dinheiro que você{' '}
-            <span className="text-blue-300">nunca vai recuperar.</span>
+            Cada mês cobrando errado é dinheiro que você{' '}
+            <span className="text-blue-300">não vai recuperar.</span>
           </h2>
           <p className="text-lg text-blue-100/70 mb-10 max-w-xl mx-auto">
-            Cada proposta enviada sem cálculo é dinheiro que você não vai recuperar. Comece agora e descubra o preço que você realmente precisa cobrar.
+            Cada proposta enviada sem cálculo é lucro perdido. Descubra agora o preço que cobre seus custos de verdade.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="text-center whitespace-nowrap">Criar conta grátis agora</Link>
+            <Link to="/cadastro" className="text-center whitespace-nowrap">Criar conta grátis</Link>
           </Button>
         </div>
       </section>
@@ -251,8 +251,8 @@ export default function Index() {
       {/* 6. Features highlight */}
       <section className="py-20">
         <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Tudo que você precisa, sem pagar nada.</h2>
-          <p className="text-center text-muted-foreground mb-14 text-lg">Crie sua conta e tenha acesso completo a todas as ferramentas.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">Tudo liberado. Zero custo.</h2>
+          <p className="text-center text-muted-foreground mb-14 text-lg">Crie sua conta e use todas as ferramentas sem restrição.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {[
               'Cálculos ilimitados de preço mínimo',
@@ -270,7 +270,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-10">
             <Button size="lg" className="px-10 py-7 text-base rounded-xl font-bold" asChild>
-              <Link to="/cadastro">Começar agora — é grátis</Link>
+              <Link to="/cadastro">Começar agora, é grátis</Link>
             </Button>
           </div>
         </div>

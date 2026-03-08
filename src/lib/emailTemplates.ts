@@ -1,4 +1,4 @@
-// PreciFácil — Templates de emails essenciais (autenticação)
+// PreciFácil: Templates de emails essenciais (autenticação)
 const PRIMARY = '#2563EB';
 const FOREGROUND = '#0A0F1E';
 const MUTED = '#6B7280';
@@ -70,7 +70,7 @@ function signature(): string {
   return `<p style="margin:24px 0 0;font-size:15px;line-height:1.6;color:${FOREGROUND};">Equipe PreciFácil</p>`;
 }
 
-// ========== EMAIL 1 — BOAS-VINDAS ==========
+// ========== EMAIL 1: BOAS-VINDAS ==========
 export function welcomeEmail(userName: string): { subject: string; html: string } {
   const firstName = userName?.split(' ')[0] || 'Usuário';
   return {
@@ -93,17 +93,17 @@ export function welcomeEmail(userName: string): { subject: string; html: string 
   };
 }
 
-// ========== EMAIL 2 — RECUPERAÇÃO DE SENHA ==========
+// ========== EMAIL 2: RECUPERAÇÃO DE SENHA ==========
 export function passwordResetEmail(userName: string, resetLink: string): { subject: string; html: string } {
   const firstName = userName?.split(' ')[0] || 'Usuário';
   return {
-    subject: 'Redefinição de senha — PreciFácil',
+    subject: 'Redefinição de senha · PreciFácil',
     html: layout(`
       ${paragraph(`Olá, ${firstName}!`)}
       ${paragraph('Recebemos uma solicitação para redefinir a senha da sua conta no PreciFácil.')}
       ${paragraph('Clique no botão abaixo para criar uma nova senha:')}
       ${button('Redefinir minha senha', resetLink)}
-      ${mutedText('Este link expira em 1 hora. Se você não solicitou a redefinição de senha, ignore este email — sua conta permanece segura.')}
+      ${mutedText('Este link expira em 1 hora. Se você não solicitou a redefinição de senha, ignore este email. Sua conta permanece segura.')}
       ${signature()}
     `),
   };

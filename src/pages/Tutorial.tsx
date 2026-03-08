@@ -216,7 +216,7 @@ export default function Tutorial() {
                 icon: TrendingUp,
                 title: 'Escolha entre 3 níveis de preço',
                 description:
-                  'Mínimo (x1): cobre seus custos. Justo (x1,4): margem confortável — recomendado. Premium (x2): projetos de alto valor ou urgentes.',
+                  'Mínimo (x1): cobre seus custos. Justo (x1,4): margem confortável e recomendado. Premium (x2): projetos de alto valor ou urgentes.',
               },
               {
                 stepNumber: 3,
@@ -270,25 +270,20 @@ export default function Tutorial() {
 
         {/* Conta */}
         <TabsContent value="conta">
-          <Section
-            navigate={navigate}
-            steps={[
-              {
-                stepNumber: 1,
-                icon: CreditCard,
-                title: 'Sua conta',
-                description:
-                  'O PreciFácil é 100% gratuito. Todos os recursos estão disponíveis para você sem nenhum custo.',
-              },
-              {
-                stepNumber: 2,
-                icon: DollarSign,
-                title: 'Dúvidas?',
-                description:
-                  'Entre em contato pelo email suporte@precifacil.app.br — respondemos em até 1 dia útil.',
-              },
-            ]}
-          />
+          <div className="space-y-3">
+            <StepCard
+              stepNumber={1}
+              icon={CreditCard}
+              title="Sua conta"
+              description="O PreciFácil é 100% gratuito. Todos os recursos estão disponíveis para você sem nenhum custo."
+            />
+            <StepCard
+              stepNumber={2}
+              icon={DollarSign}
+              title="Dúvidas?"
+              description="Entre em contato pelo email suporte@precifacil.app.br. Respondemos em até 1 dia útil."
+            />
+          </div>
         </TabsContent>
       </Tabs>
 
