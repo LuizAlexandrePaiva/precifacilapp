@@ -149,7 +149,7 @@ export default function Historico() {
               <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor Cotado</p>
-                  <p className="text-[15px] font-semibold text-foreground">{formatCurrency(Number(p.valor_cotado))}</p>
+                  <p className="text-[15px] font-semibold text-foreground whitespace-nowrap">{formatCurrency(Number(p.valor_cotado))}</p>
                 </div>
                 <div className="min-h-[2.5rem] flex flex-col">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Horas Reais</p>
