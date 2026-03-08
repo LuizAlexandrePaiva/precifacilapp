@@ -37,7 +37,7 @@ function StepCard({ stepNumber, icon: Icon, title, description }: StepCardProps)
 
 interface SectionProps {
   steps: StepCardProps[];
-  actionLabel: string;
+  actionLabel?: string;
   actionPath?: string;
   actionOnClick?: () => void;
   navigate: (path: string) => void;
