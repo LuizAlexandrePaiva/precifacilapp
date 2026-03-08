@@ -146,7 +146,7 @@ export default function Index() {
             O PreciFácil calcula o preço mínimo que você precisa cobrar para não trabalhar no prejuízo. Leva 2 minutos. É 100% gratuito.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 py-8 rounded-xl font-bold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all w-full sm:w-auto" asChild>
-            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora — é grátis</Link>
+            <Link to="/cadastro" className="whitespace-nowrap">Calcular meu preço agora, é grátis</Link>
           </Button>
           <p className="text-sm text-blue-200/60 mt-4">100% gratuito · Sem cartão de crédito · Todos os recursos liberados</p>
         </div>
