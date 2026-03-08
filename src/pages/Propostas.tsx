@@ -20,6 +20,7 @@ import { trackEvent } from '@/lib/analytics';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMeta } from '@/contexts/MetaContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
