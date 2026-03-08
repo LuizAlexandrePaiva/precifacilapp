@@ -198,13 +198,11 @@ export default function Calculadora() {
                   />
                 </Label>
                 <CurrencyInput value={metaLiquida} onValueChange={setMetaLiquida} placeholder="R$ 0,00" className="h-11" />
-                <p className="text-xs text-muted-foreground hidden md:block">Valor líquido desejado após impostos e despesas</p>
               </div>
 
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
                 <InputWithSuffix inputMode="decimal" placeholder="Ex: 40" suffix="horas" value={horasPorSemana} onChange={(e) => setHorasPorSemana(e.target.value)} required />
-                <p className="text-xs text-muted-foreground hidden md:block">Horas semanais dedicadas ao trabalho</p>
               </div>
 
               <RegimeFields
@@ -224,7 +222,6 @@ export default function Calculadora() {
                 <div className="space-y-2">
                   <Label className="h-5 flex items-center">Custos fixos mensais</Label>
                   <CurrencyInput value={custosFixos} onValueChange={setCustosFixos} placeholder="R$ 0,00" className="h-11" />
-                   <p className="text-xs text-muted-foreground hidden md:block">Aluguel, internet, ferramentas e assinaturas</p>
                 </div>
               )}
             </div>
@@ -233,7 +230,6 @@ export default function Calculadora() {
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Custos fixos mensais</Label>
                 <CurrencyInput value={custosFixos} onValueChange={setCustosFixos} placeholder="R$ 0,00" className="h-11" />
-                <p className="text-xs text-muted-foreground hidden md:block">Aluguel, internet, ferramentas e assinaturas</p>
               </div>
             )}
 
