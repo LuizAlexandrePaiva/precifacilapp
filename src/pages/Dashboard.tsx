@@ -47,16 +47,16 @@ export default function Dashboard() {
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
-      const total = projects
+      const total = proposals
         .filter((p) => {
           const pd = new Date(p.created_at);
-          return `${pd.getFullYear()}-${pd.getMonth()}` === monthKey && p.status === 'concluido';
+          return `${pd.getFullYear()}-${pd.getMonth()}` === monthKey && (p.status === 'aprovada' || p.status === 'aceita');
         })
-        .reduce((sum, p) => sum + Number(p.valor_cotado || 0), 0);
+        .reduce((sum, p) => sum + Number(p.valor_pacote || 0), 0);
       months.push({ name: monthNames[d.getMonth()], faturamento: total });
     }
     return months;
-  }, [projects]);
+  }, [proposals]);
 
   const stats = useMemo(() => {
     const now = new Date();
