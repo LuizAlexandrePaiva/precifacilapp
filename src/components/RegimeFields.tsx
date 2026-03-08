@@ -76,7 +76,20 @@ export function RegimeFields({
       {/* Sub-campos Autônomo PF */}
       {regime === 'autonomo_pf' && (
         <div className="space-y-2">
-          <Label className="h-5 flex items-center">Renda mensal esperada</Label>
+          <Label className="flex items-center gap-1 h-5">
+            Renda mensal esperada
+            <InfoModal
+              title="Renda mensal esperada"
+              content={
+                <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                  <li style={{ marginBottom: 8 }}><strong>O que é</strong>: quanto você espera <strong>receber por mês</strong> como autônomo PF.</li>
+                  <li style={{ marginBottom: 8 }}><strong>Para que serve</strong>: define a <strong>alíquota efetiva</strong> (IR + INSS) aplicada no cálculo do preço/hora.</li>
+                  <li style={{ marginBottom: 8 }}><strong>Faixas</strong>: baseadas na <strong>tabela progressiva 2026</strong> (Lei nº 15.270/2025).</li>
+                  <li><strong>Importante</strong>: é uma estimativa. <strong>Consulte um contador</strong> para cálculo exato.</li>
+                </ul>
+              }
+            />
+          </Label>
           <Select value={faixaRendaPF} onValueChange={(v) => onFaixaRendaPFChange(v as FaixaRendaPF)}>
             <SelectTrigger className="h-11"><SelectValue placeholder="Selecione a faixa" /></SelectTrigger>
             <SelectContent>
@@ -86,9 +99,7 @@ export function RegimeFields({
               <SelectItem value="acima_10000">Acima de R$ 10.000/mês — 33%</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
-            Estimativa baseada na tabela progressiva 2026 (Lei nº 15.270/2025). Consulte um contador para cálculo exato.
-          </p>
+          <p className="text-xs text-muted-foreground">Quanto você espera ganhar por mês</p>
         </div>
       )}
 
