@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { SEO } from '@/components/SEO';
 import { useNavigate } from 'react-router-dom';
 import {
   Calculator, FileText, History, LayoutDashboard, BookOpen, ArrowRight, Settings,
