@@ -30,7 +30,7 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Redefinição de senha — PreciFácil</Preview>
+    <Preview>Redefinição de senha · PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
@@ -49,7 +49,7 @@ export const RecoveryEmail = ({
             Redefinir minha senha
           </Button>
           <Text style={smallText}>
-            Este link expira em 1 hora. Se você não solicitou a redefinição de senha, ignore este email — sua conta permanece segura.
+            Este link expira em 1 hora. Se você não solicitou a redefinição de senha, ignore este email. Sua conta permanece segura.
           </Text>
           <Text style={signatureStyle}>Equipe PreciFácil</Text>
         </Section>
