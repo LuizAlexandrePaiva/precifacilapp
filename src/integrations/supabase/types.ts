@@ -219,6 +219,7 @@ export type Database = {
         Args: {
           p_meta_liquida: number
           p_meta_mensal: number
+          p_preco_hora?: number
           p_user_id: string
         }
         Returns: undefined
