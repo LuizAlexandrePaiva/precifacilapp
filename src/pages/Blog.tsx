@@ -31,7 +31,8 @@ export default function Blog() {
           <Link to="/" className="text-xl font-bold tracking-tight text-secondary-foreground">
             Preci<span className="text-primary">Fácil</span>
           </Link>
-           {user ? (
+          <div className="flex gap-2">
+            {user ? (
               <Button asChild>
                 <Link to="/app">Ir para o App</Link>
               </Button>
