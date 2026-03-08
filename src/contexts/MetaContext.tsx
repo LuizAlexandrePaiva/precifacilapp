@@ -71,6 +71,7 @@ export function MetaProvider({ children }: { children: ReactNode }) {
         setMetaMensal(null);
         setMetaLiquida(null);
         setMetaLoaded(false);
+        setPrecoHora(null);
       }
     });
 
@@ -78,7 +79,7 @@ export function MetaProvider({ children }: { children: ReactNode }) {
   }, [carregarMeta]);
 
   return (
-    <MetaContext.Provider value={{ metaMensal, metaLiquida, metaLoaded, carregarMeta, atualizarMeta }}>
+    <MetaContext.Provider value={{ metaMensal, metaLiquida, precoHora, metaLoaded, carregarMeta, atualizarMeta }}>
       {children}
     </MetaContext.Provider>
   );
