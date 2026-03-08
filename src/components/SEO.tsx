@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 const SITE_URL = 'https://precifacil.app.br';
 const SITE_NAME = 'PreciFácil';
-const OG_IMAGE = 'https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1b051f8b-69b1-43f3-82fb-dbc86e64a453/id-preview-dc31026c--8545a8b9-a8a1-4ffa-a9af-1c6657fcdd1a.lovable.app-1772672326458.png';
+const OG_IMAGE = 'https://precifacil.app.br/og-image.png';
 
 interface SEOProps {
   title: string;
