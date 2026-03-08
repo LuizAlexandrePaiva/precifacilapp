@@ -33,6 +33,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <SEO title="Nova senha" description="Defina uma nova senha para sua conta no PreciFácil." path="/reset-password" noindex />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Nova Senha</CardTitle>
