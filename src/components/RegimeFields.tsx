@@ -48,7 +48,7 @@ export function RegimeFields({
             <SelectItem value="pj_simples">PJ Simples Nacional</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">Como você emite nota fiscal</p>
+        <p className="text-xs text-muted-foreground hidden md:block">Como você emite nota fiscal</p>
       </div>
 
       {/* Sub-campos MEI */}
