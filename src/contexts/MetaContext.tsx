@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 interface MetaContextType {
   metaMensal: number | null;
   metaLiquida: number | null;
+  precoHora: number | null;
   metaLoaded: boolean;
   carregarMeta: (userId: string) => Promise<void>;
-  atualizarMeta: (metaMensal: number, metaLiquida: number) => void;
+  atualizarMeta: (metaMensal: number, metaLiquida: number, precoHora?: number) => void;
 }
 
 const MetaContext = createContext<MetaContextType | undefined>(undefined);
