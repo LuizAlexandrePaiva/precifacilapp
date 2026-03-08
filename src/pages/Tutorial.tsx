@@ -81,6 +81,7 @@ export default function Tutorial() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 overflow-hidden">
+      <SEO title="Como Usar" description="Aprenda a usar o PreciFácil passo a passo." path="/app/tutorial" noindex />
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />
