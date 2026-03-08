@@ -92,9 +92,6 @@ export default function BlogPost() {
             Preci<span className="text-primary">Fácil</span>
           </Link>
           <div className="flex gap-2">
-            <Button variant="ghost" className="text-secondary-foreground hover:text-primary" asChild>
-              <Link to="/blog">Blog</Link>
-            </Button>
             {user ? (
               <Button asChild>
                 <Link to="/app">Ir para o App</Link>
