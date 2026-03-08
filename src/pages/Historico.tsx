@@ -267,7 +267,7 @@ export default function Historico() {
                     <TableRow key={p.id}>
                       <TableCell className="font-medium">{p.cliente}</TableCell>
                       <TableCell>{p.projeto}</TableCell>
-                      <TableCell>{formatCurrency(Number(p.valor_cotado))}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatCurrency(Number(p.valor_cotado))}</TableCell>
                       <TableCell>
                         {p.horas_reais !== null ? (
                           `${p.horas_reais}h`
@@ -277,9 +277,9 @@ export default function Historico() {
                           </Button>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {valorHoraReal !== null
-                          ? `R$ ${valorHoraReal.toFixed(2).replace('.', ',')}`
+                          ? formatCurrency(valorHoraReal)
                           : <span className="text-muted-foreground">-</span>}
                       </TableCell>
                       <TableCell>
