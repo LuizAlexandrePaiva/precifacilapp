@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { InfoModal } from '@/components/InfoModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -86,6 +87,7 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <SEO title="Dashboard" description="Acompanhe seu faturamento, propostas e metas de precificação." path="/app" noindex />
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <LayoutDashboard className="h-6 w-6 text-primary" />

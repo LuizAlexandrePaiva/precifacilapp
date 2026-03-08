@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { SEO } from '@/components/SEO';
 import { useNavigate } from 'react-router-dom';
 import {
   Calculator, FileText, History, LayoutDashboard, BookOpen, ArrowRight, Settings,
@@ -80,6 +81,7 @@ export default function Tutorial() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 overflow-hidden">
+      <SEO title="Como Usar" description="Aprenda a usar o PreciFácil passo a passo." path="/app/tutorial" noindex />
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-primary" />

@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
+import { SEO } from '@/components/SEO';
 
 export default function Cadastro() {
   const [fullName, setFullName] = useState('');
@@ -86,6 +87,7 @@ export default function Cadastro() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <SEO title="Criar conta grátis" description="Crie sua conta gratuita no PreciFácil e descubra quanto cobrar como freelancer. Calculadora de preço por hora e proposta comercial para MEIs e autônomos." path="/cadastro" />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="text-2xl font-bold tracking-tight mb-2 inline-block">

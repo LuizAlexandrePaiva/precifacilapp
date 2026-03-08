@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
+import { SEO } from "@/components/SEO";
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const NotFound = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
+      <SEO title="Página não encontrada" description="O endereço que você acessou não existe ou foi removido." noindex />
       <div className="text-center px-4">
         <h1 className="text-[80px] font-[800] leading-none text-foreground">404</h1>
         <p className="mt-4 text-xl text-foreground">Página não encontrada</p>

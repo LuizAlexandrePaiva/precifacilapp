@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { SEO } from '@/components/SEO';
 
 export default function EsqueciSenha() {
   const [email, setEmail] = useState('');
@@ -28,6 +29,7 @@ export default function EsqueciSenha() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <SEO title="Recuperar senha" description="Recupere a senha da sua conta no PreciFácil. Enviaremos um link seguro para redefinir sua senha." path="/esqueci-senha" />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="text-2xl font-bold tracking-tight mb-2 inline-block">

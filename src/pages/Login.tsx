@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
 import { supabase } from '@/integrations/supabase/client';
+import { SEO } from '@/components/SEO';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -99,6 +100,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <SEO title="Entrar" description="Acesse sua conta no PreciFácil. Calculadora de preço por hora e gerador de propostas comerciais para freelancers e MEIs." path="/login" />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="text-2xl font-bold tracking-tight mb-2 inline-block">
