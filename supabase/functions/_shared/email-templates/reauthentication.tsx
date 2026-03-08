@@ -25,7 +25,7 @@ const LOGO_URL = 'https://beoprlaomytanmlwlfsi.supabase.co/storage/v1/object/pub
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
-    <Preview>Seu código de verificação — PreciFácil</Preview>
+    <Preview>Seu código de verificação · PreciFácil</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
