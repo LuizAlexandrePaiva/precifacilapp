@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN preco_hora numeric DEFAULT NULL;

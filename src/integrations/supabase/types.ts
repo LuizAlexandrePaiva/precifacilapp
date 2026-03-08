@@ -43,6 +43,7 @@ export type Database = {
           meta_liquida: number | null
           meta_mensal: number
           onboarding_concluido: boolean | null
+          preco_hora: number | null
           updated_at: string
         }
         Insert: {
@@ -52,6 +53,7 @@ export type Database = {
           meta_liquida?: number | null
           meta_mensal?: number
           onboarding_concluido?: boolean | null
+          preco_hora?: number | null
           updated_at?: string
         }
         Update: {
@@ -61,6 +63,7 @@ export type Database = {
           meta_liquida?: number | null
           meta_mensal?: number
           onboarding_concluido?: boolean | null
+          preco_hora?: number | null
           updated_at?: string
         }
         Relationships: []
