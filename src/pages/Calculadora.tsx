@@ -207,12 +207,22 @@ export default function Calculadora() {
                 onFaixaFaturamentoSimplesChange={setFaixaFaturamentoSimples}
               />
 
+              {regime === 'pj_simples' && (
+                <div className="space-y-2">
+                  <Label className="h-5 flex items-center">Custos fixos mensais</Label>
+                  <CurrencyInput value={custosFixos} onValueChange={setCustosFixos} placeholder="R$ 0,00" className="h-11" />
+                  <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas e assinaturas</p>
+                </div>
+              )}
+            </div>
+
+            {(regime === 'mei' || regime === 'autonomo_pf') && (
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Custos fixos mensais</Label>
                 <CurrencyInput value={custosFixos} onValueChange={setCustosFixos} placeholder="R$ 0,00" className="h-11" />
                 <p className="text-xs text-muted-foreground">Aluguel, internet, ferramentas e assinaturas</p>
               </div>
-            </div>
+            )}
 
             <div className="space-y-2">
               <Label className="flex items-center gap-1">
