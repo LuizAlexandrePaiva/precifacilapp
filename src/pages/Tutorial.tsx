@@ -1,9 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useSubscription } from '@/contexts/SubscriptionContext';
 import {
   Calculator, FileText, History, LayoutDashboard, BookOpen, ArrowRight, Settings,
   CreditCard, Target, TrendingUp, Clock, DollarSign, BarChart3,
@@ -276,22 +272,20 @@ export default function Tutorial() {
         <TabsContent value="conta">
           <Section
             navigate={navigate}
-            actionLabel="Gerenciar assinatura"
-            actionOnClick={handleManageSubscription}
             steps={[
               {
                 stepNumber: 1,
                 icon: CreditCard,
-                title: 'Gerencie seu plano pelo portal Stripe',
+                title: 'Sua conta',
                 description:
-                  'Faça upgrade, downgrade ou altere sua forma de pagamento diretamente pelo portal seguro da Stripe. Clique em "Gerenciar assinatura" abaixo.',
+                  'O PreciFácil é 100% gratuito. Todos os recursos estão disponíveis para você sem nenhum custo.',
               },
               {
                 stepNumber: 2,
                 icon: DollarSign,
-                title: 'Cancele quando quiser pela Stripe',
+                title: 'Dúvidas?',
                 description:
-                  'Sem fidelidade. Cancele a assinatura a qualquer momento pelo portal da Stripe. Seu acesso continua até o fim do período pago.',
+                  'Entre em contato pelo email suporte@precifacil.app.br — respondemos em até 1 dia útil.',
               },
             ]}
           />
