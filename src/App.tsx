@@ -62,6 +62,8 @@ const App = () => (
                   <Route path="historico" element={<Historico />} />
                   <Route path="tutorial" element={<Tutorial />} />
                 </Route>
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPostPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

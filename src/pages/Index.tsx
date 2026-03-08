@@ -138,6 +138,9 @@ export default function Index() {
             Preci<span className="text-primary">Fácil</span>
           </span>
           <div className="flex gap-2">
+            <Button variant="ghost" className="text-secondary-foreground hover:text-primary" asChild>
+              <Link to="/blog">Blog</Link>
+            </Button>
             {user ? (
               <Button asChild>
                 <Link to="/app">Ir para o App</Link>

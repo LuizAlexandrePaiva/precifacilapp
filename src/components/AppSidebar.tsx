@@ -23,6 +23,7 @@ const menuItems = [
   { title: 'Propostas', url: '/app/propostas', icon: FileText },
   { title: 'Histórico de Projetos', url: '/app/historico', icon: History },
   { title: 'Como Usar?', url: '/app/tutorial', icon: BookOpen },
+  { title: 'Blog', url: '/blog', icon: Newspaper },
 ];
 
 export const AppSidebar = memo(function AppSidebar() {
