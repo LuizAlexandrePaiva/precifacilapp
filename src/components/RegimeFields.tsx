@@ -48,7 +48,7 @@ export function RegimeFields({
             <SelectItem value="pj_simples">PJ Simples Nacional</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">Como você emite nota fiscal</p>
+        <p className="text-xs text-muted-foreground hidden md:block">Como você emite nota fiscal</p>
       </div>
 
       {/* Sub-campos MEI */}
@@ -69,7 +69,7 @@ export function RegimeFields({
               <SelectItem value="comercio_servicos">Comércio e Serviços — R$ 87,05/mês</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">O DAS será somado aos seus custos fixos</p>
+          <p className="text-xs text-muted-foreground hidden md:block">O DAS será somado aos seus custos fixos</p>
         </div>
       )}
 
@@ -99,7 +99,7 @@ export function RegimeFields({
               <SelectItem value="acima_10000">Acima de R$ 10.000/mês — 33%</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">Quanto você espera ganhar por mês</p>
+          <p className="text-xs text-muted-foreground hidden md:block">Quanto você espera ganhar por mês</p>
         </div>
       )}
 
