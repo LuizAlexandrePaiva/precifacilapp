@@ -107,6 +107,18 @@ export default function Calculadora() {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
     } else {
+      // Still save precoHora even if meta doesn't change
+      if (user) {
+        const { error } = await supabase.rpc('update_user_meta', {
+          p_user_id: user.id,
+          p_meta_mensal: Number(ctxMetaMensal ?? calcResult.custoTotal),
+          p_meta_liquida: Number(metaLiquida),
+          p_preco_hora: Number(calcResult.precoHora),
+        } as any);
+        if (!error) {
+          atualizarMeta(ctxMetaMensal ?? calcResult.custoTotal, metaLiquida, calcResult.precoHora);
+        }
+      }
       setResult(calcResult);
     }
   };
