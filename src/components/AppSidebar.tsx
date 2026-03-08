@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen } from 'lucide-react';
+import { Calculator, LayoutDashboard, FileText, History, LogOut, BookOpen, Newspaper } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ const menuItems = [
   { title: 'Propostas', url: '/app/propostas', icon: FileText },
   { title: 'Histórico de Projetos', url: '/app/historico', icon: History },
   { title: 'Como Usar?', url: '/app/tutorial', icon: BookOpen },
+  { title: 'Blog', url: '/blog', icon: Newspaper },
 ];
 
 export const AppSidebar = memo(function AppSidebar() {
