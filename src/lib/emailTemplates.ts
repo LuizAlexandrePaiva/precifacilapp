@@ -108,3 +108,38 @@ export function passwordResetEmail(userName: string, resetLink: string): { subje
     `),
   };
 }
+
+// ========== EMAIL 3: RETENÇÃO — RECALCULAR PREÇO (30 DIAS) ==========
+export function recalculateEmail(userName: string): { subject: string; html: string } {
+  const firstName = userName?.split(' ')[0] || 'Usuário';
+  return {
+    subject: 'Seus custos mudaram? Hora de recalcular seu preço',
+    html: layout(`
+      ${paragraph(`Olá, ${firstName}!`)}
+      ${paragraph('Já faz um mês desde o seu cadastro no PreciFácil. Nesse período, é natural que alguns dos seus custos tenham mudado: aluguel, ferramentas, impostos ou até o seu custo de vida.')}
+      ${paragraph('Manter o preço da sua hora atualizado é essencial para garantir que você esteja cobrando de forma justa e sustentável.')}
+      ${paragraph('Reserve 2 minutos para revisar seus números na calculadora:')}
+      ${button('Atualizar minha calculadora', `${SITE_URL}/calculadora`)}
+      ${mutedText('Recomendamos recalcular seu preço sempre que houver mudanças nos seus custos fixos ou variáveis.')}
+      ${signature()}
+    `),
+  };
+}
+
+// ========== EMAIL 4: RETENÇÃO — PROPOSTAS PENDENTES (7 DIAS) ==========
+export function pendingProposalsEmail(userName: string, count: number): { subject: string; html: string } {
+  const firstName = userName?.split(' ')[0] || 'Usuário';
+  const proposalText = count === 1 ? '1 proposta enviada' : `${count} propostas enviadas`;
+  return {
+    subject: 'Você tem propostas aguardando atualização',
+    html: layout(`
+      ${paragraph(`Olá, ${firstName}!`)}
+      ${paragraph(`Notamos que você tem ${proposalText} há mais de 7 dias sem atualização de status.`)}
+      ${paragraph('Manter o resultado das suas propostas atualizado ajuda você a acompanhar sua taxa de conversão e tomar decisões melhores sobre precificação.')}
+      ${paragraph('Acesse suas propostas e marque o resultado de cada uma:')}
+      ${button('Ver minhas propostas', `${SITE_URL}/propostas`)}
+      ${mutedText('Basta clicar em cada proposta e selecionar se foi aprovada ou recusada.')}
+      ${signature()}
+    `),
+  };
+}
