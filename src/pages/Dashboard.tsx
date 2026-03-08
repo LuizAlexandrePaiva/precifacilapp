@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { InfoModal } from '@/components/InfoModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
