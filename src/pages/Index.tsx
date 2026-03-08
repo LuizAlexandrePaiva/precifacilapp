@@ -262,7 +262,7 @@ export default function Index() {
               'Histórico de projetos',
               'Suporte por email',
             ].map((feature) => (
-              <div key={feature} className="flex items-center gap-3 p-3">
+              <div key={feature} className="flex items-start gap-3 p-3">
                 <Check className="h-5 w-5 text-primary flex-shrink-0" />
                 <span className="text-foreground">{feature}</span>
               </div>
