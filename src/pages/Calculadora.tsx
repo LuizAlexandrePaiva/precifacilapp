@@ -198,7 +198,7 @@ export default function Calculadora() {
                   />
                 </Label>
                 <CurrencyInput value={metaLiquida} onValueChange={setMetaLiquida} placeholder="R$ 0,00" className="h-11" />
-                <p className="text-xs text-muted-foreground">Valor líquido desejado após impostos e despesas</p>
+                <p className="text-xs text-muted-foreground hidden md:block">Valor líquido desejado após impostos e despesas</p>
               </div>
 
               <div className="space-y-2">
