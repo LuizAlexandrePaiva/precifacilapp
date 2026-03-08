@@ -163,7 +163,8 @@ export default function Propostas() {
     } as any);
 
     if (error) {
-      toast.error('Erro ao salvar proposta');
+      console.error('Supabase insert error:', error);
+      toast.error(`Erro ao salvar proposta: ${error.message}`);
     } else {
       trackEvent('proposal_created');
       toast.success('Proposta salva com sucesso!');
