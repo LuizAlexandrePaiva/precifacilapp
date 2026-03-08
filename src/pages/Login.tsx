@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
 import { supabase } from '@/integrations/supabase/client';
+import { SEO } from '@/components/SEO';
 
 export default function Login() {
   const [email, setEmail] = useState('');

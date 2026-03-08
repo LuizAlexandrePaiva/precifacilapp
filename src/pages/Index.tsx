@@ -4,6 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
+import { SEO } from '@/components/SEO';
+import { Helmet } from 'react-helmet-async';
 
 import {
   Accordion,
@@ -103,6 +105,32 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="PreciFácil · Calculadora de preço para freelancers"
+        description="Descubra quanto cobrar como freelancer em 2 minutos. Calculadora de preço por hora, gerador de propostas comerciais e dashboard gratuito para MEIs e autônomos."
+        path="/"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "PreciFácil",
+          "url": "https://precifacil.app.br",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BRL"
+          },
+          "description": "Calculadora de precificação para freelancers, MEIs e autônomos. Calcule seu preço mínimo por hora, gere propostas comerciais profissionais em PDF e acompanhe seus projetos.",
+          "inLanguage": "pt-BR",
+          "creator": {
+            "@type": "Organization",
+            "name": "PreciFácil"
+          }
+        })}</script>
+      </Helmet>
       {/* Header */}
       <header className="border-b border-border/50 bg-secondary/95 backdrop-blur-md sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">

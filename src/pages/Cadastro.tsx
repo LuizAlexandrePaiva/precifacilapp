@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
+import { SEO } from '@/components/SEO';
 
 export default function Cadastro() {
   const [fullName, setFullName] = useState('');
