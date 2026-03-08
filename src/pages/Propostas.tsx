@@ -466,7 +466,10 @@ export default function Propostas() {
               </form>
             </div>
             <div className="px-6 py-4 border-t bg-background">
-              <Button type="submit" form="proposal-form" className="w-full h-12 text-base" size="lg">
+              <Button type="button" onClick={() => {
+                const form = document.getElementById('proposal-form') as HTMLFormElement;
+                if (form) form.requestSubmit();
+              }} className="w-full h-12 text-base" size="lg">
                 Salvar Proposta
               </Button>
             </div>
