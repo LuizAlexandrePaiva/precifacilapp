@@ -32,7 +32,7 @@ export default function Dashboard() {
         .order('created_at', { ascending: false }),
       supabase
         .from('proposals')
-        .select('id, status')
+        .select('id, status, valor_pacote, created_at')
         .order('created_at', { ascending: false }),
     ]).then(([projRes, propRes]) => {
       setProjects(projRes.data || []);
@@ -47,26 +47,26 @@ export default function Dashboard() {
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
-      const total = projects
+      const total = proposals
         .filter((p) => {
           const pd = new Date(p.created_at);
-          return `${pd.getFullYear()}-${pd.getMonth()}` === monthKey && p.status === 'concluido';
+          return `${pd.getFullYear()}-${pd.getMonth()}` === monthKey && (p.status === 'aprovada' || p.status === 'aceita');
         })
-        .reduce((sum, p) => sum + Number(p.valor_cotado || 0), 0);
+        .reduce((sum, p) => sum + Number(p.valor_pacote || 0), 0);
       months.push({ name: monthNames[d.getMonth()], faturamento: total });
     }
     return months;
-  }, [projects]);
+  }, [proposals]);
 
   const stats = useMemo(() => {
     const now = new Date();
-    const thisMonth = projects.filter((p) => {
+    const proposalsThisMonth = proposals.filter((p) => {
       const pd = new Date(p.created_at);
       return pd.getMonth() === now.getMonth() && pd.getFullYear() === now.getFullYear();
     });
-    const faturamentoMes = thisMonth
-      .filter((p) => p.status === 'concluido')
-      .reduce((s, p) => s + Number(p.valor_cotado || 0), 0);
+    const faturamentoMes = proposalsThisMonth
+      .filter((p) => p.status === 'aprovada' || p.status === 'aceita')
+      .reduce((s, p) => s + Number(p.valor_pacote || 0), 0);
 
     const totalPropostas = proposals.length;
     const propostasAprovadas = proposals.filter(p => p.status === 'aprovada' || p.status === 'aceita').length;
@@ -75,7 +75,7 @@ export default function Dashboard() {
       : 0;
 
     return { faturamentoMes, totalPropostas, taxaAprovacao };
-  }, [projects, proposals]);
+  }, [proposals]);
 
   const metaProgress = metaMensal && metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
