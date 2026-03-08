@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMeta } from '@/contexts/MetaContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { trackEvent } from '@/lib/analytics';
 
 const formatBR = (v: number) =>
   v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -57,6 +58,7 @@ export default function Calculadora() {
       semanasFerias: parseFloat(semanasFerias) || 0,
     };
     const calcResult = calcularPreco(input);
+    trackEvent('first_calculation', { regime });
 
     const valorAtual = Number(metaLiquida);
     const valorSalvo = Number(ctxMetaLiquida ?? 0);
