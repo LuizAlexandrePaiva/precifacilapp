@@ -1,11 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles } from 'lucide-react';
+import { Calculator, FileText, Send, Check, DollarSign, AlertTriangle, HelpCircle, Clock, Layers, Sparkles, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SEO } from '@/components/SEO';
 import { Helmet } from 'react-helmet-async';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 import {
   Accordion,
@@ -103,6 +110,8 @@ export default function Index() {
     if (user) navigate('/app', { replace: true });
   }, [user, navigate]);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEO
@@ -137,7 +146,9 @@ export default function Index() {
           <span className="text-xl font-bold tracking-tight text-secondary-foreground">
             Preci<span className="text-primary">Fácil</span>
           </span>
-          <div className="flex gap-2">
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex gap-2">
             <Button variant="ghost" className="text-secondary-foreground hover:text-primary" asChild>
               <Link to="/blog">Blog</Link>
             </Button>
@@ -156,6 +167,39 @@ export default function Index() {
               </>
             )}
           </div>
+
+          {/* Mobile hamburger */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon" className="text-secondary-foreground">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72 pt-10">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Menu</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-2">
+                <Button variant="ghost" className="justify-start text-base h-12" asChild onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/blog">Blog</Link>
+                </Button>
+                {user ? (
+                  <Button className="justify-start text-base h-12" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/app">Ir para o App</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="justify-start text-base h-12" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link to="/login">Entrar</Link>
+                    </Button>
+                    <Button className="justify-start text-base h-12 mt-2" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link to="/cadastro">Criar conta grátis</Link>
+                    </Button>
+                  </>
+                )}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 
