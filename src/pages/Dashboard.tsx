@@ -32,7 +32,7 @@ export default function Dashboard() {
         .order('created_at', { ascending: false }),
       supabase
         .from('proposals')
-        .select('id, status')
+        .select('id, status, valor_pacote, created_at')
         .order('created_at', { ascending: false }),
     ]).then(([projRes, propRes]) => {
       setProjects(projRes.data || []);
