@@ -240,45 +240,41 @@ export default function Propostas() {
   const actionBtnDestructive = "h-8 text-xs flex-1 min-w-0 border border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 cursor-pointer";
 
   const renderProposalActions = (p: Proposal) => (
-    <div className="flex flex-col gap-1.5 w-full min-w-[180px]">
+    <div className="grid grid-cols-2 gap-1.5 w-full min-w-[180px]">
       {p.status === 'pendente' && (
-        <div className="flex gap-1.5">
+        <>
           <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleStatusChange(p, 'aprovada')}>
             <Check className="h-3 w-3 mr-1" />Aprovar
           </Button>
           <Button size="sm" variant="ghost" className={actionBtnDestructive} onClick={() => handleStatusChange(p, 'recusada')}>
             <X className="h-3 w-3 mr-1" />Recusar
           </Button>
-        </div>
+        </>
       )}
-      <div className="flex gap-1.5">
-        <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleDownloadPdf(p)}>
-          <Download className="h-3 w-3 mr-1" />PDF
-        </Button>
-        <div className="flex-1 min-w-0">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button size="sm" variant="ghost" className={`${actionBtnDestructive} w-full`}>
-                <Trash2 className="h-3 w-3 mr-1" />Excluir
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+      <Button size="sm" variant="ghost" className={actionBtnPrimary} onClick={() => handleDownloadPdf(p)}>
+        <Download className="h-3 w-3 mr-1" />PDF
+      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button size="sm" variant="ghost" className={actionBtnDestructive}>
+            <Trash2 className="h-3 w-3 mr-1" />Excluir
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir proposta</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta proposta? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleDelete(p.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 
