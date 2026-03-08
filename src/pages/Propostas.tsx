@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { CurrencyInput } from '@/components/CurrencyInput';
 import { FileText, Plus, Check, X, Clock, Trash2, Download } from 'lucide-react';
 import { generateProposalPdf } from '@/lib/generatePdf';
+import { trackEvent } from '@/lib/analytics';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -164,6 +165,7 @@ export default function Propostas() {
     if (error) {
       toast.error('Erro ao salvar proposta');
     } else {
+      trackEvent('proposal_created');
       toast.success('Proposta salva com sucesso!');
       resetForm();
       setOpen(false);
@@ -210,6 +212,7 @@ export default function Propostas() {
   };
 
   const handleDownloadPdf = (p: Proposal) => {
+    trackEvent('pdf_exported');
     generateProposalPdf({
       cliente: p.cliente,
       projeto: p.projeto,

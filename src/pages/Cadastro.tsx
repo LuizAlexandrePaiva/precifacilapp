@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { signInWithGoogleOAuth } from '@/lib/cloudAuth';
 import { translateSupabaseError } from '@/lib/authErrors';
 import { SEO } from '@/components/SEO';
+import { trackEvent } from '@/lib/analytics';
 
 export default function Cadastro() {
   const [fullName, setFullName] = useState('');
@@ -67,6 +68,7 @@ export default function Cadastro() {
       return;
     }
 
+    trackEvent('signup_completed', { method: 'email' });
     toast.success('Conta criada! Verifique seu email para confirmar.');
     navigate('/login');
   };
