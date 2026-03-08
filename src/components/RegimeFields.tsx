@@ -99,7 +99,7 @@ export function RegimeFields({
               <SelectItem value="acima_10000">Acima de R$ 10.000/mês — 33%</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground hidden md:block">Quanto você espera ganhar por mês</p>
+          
         </div>
       )}
 
