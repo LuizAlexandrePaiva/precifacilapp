@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// ── Email HTML helpers (mirrors src/lib/emailTemplates.ts) ──────────
+// ── Email HTML helpers ──────────────────────────────────────────────
 
 const PRIMARY = "#2563EB";
 const FOREGROUND = "#0A0F1E";
@@ -15,6 +15,8 @@ const MUTED = "#6B7280";
 const BG_LIGHT = "#F8FAFC";
 const BORDER = "#E2E8F0";
 const SITE_URL = "https://precifacil.app.br";
+
+let UNSUBSCRIBE_BASE = "";
 
 function layout(content: string): string {
   return `<!DOCTYPE html>
@@ -51,9 +53,15 @@ const muted = (t: string) =>
 const sig = () =>
   `<p style="margin:24px 0 0;font-size:15px;line-height:1.6;color:${FOREGROUND};">Equipe PreciFácil</p>`;
 
+function unsubLink(userId: string, emailType: string): string {
+  const url = `${UNSUBSCRIBE_BASE}?user_id=${userId}&type=${emailType}`;
+  return `<p style="margin:24px 0 0;font-size:12px;line-height:1.5;color:${MUTED};text-align:center;">
+<a href="${url}" style="color:${MUTED};text-decoration:underline;">Cancelar recebimento destes emails</a></p>`;
+}
+
 // ── Email builders ──────────────────────────────────────────────────
 
-function buildRecalculateEmail(firstName: string) {
+function buildRecalculateEmail(firstName: string, userId: string) {
   return {
     subject: "Seus custos mudaram? Hora de recalcular seu preço",
     html: layout(`
@@ -64,11 +72,12 @@ function buildRecalculateEmail(firstName: string) {
       ${button("Atualizar minha calculadora", `${SITE_URL}/calculadora`)}
       ${muted("Recomendamos recalcular seu preço sempre que houver mudanças nos seus custos fixos ou variáveis.")}
       ${sig()}
+      ${unsubLink(userId, "recalculate_30d")}
     `),
   };
 }
 
-function buildPendingProposalsEmail(firstName: string, count: number) {
+function buildPendingProposalsEmail(firstName: string, count: number, userId: string) {
   const proposalText =
     count === 1 ? "1 proposta enviada" : `${count} propostas enviadas`;
   return {
@@ -81,6 +90,7 @@ function buildPendingProposalsEmail(firstName: string, count: number) {
       ${button("Ver minhas propostas", `${SITE_URL}/propostas`)}
       ${muted("Basta clicar em cada proposta e selecionar se foi aprovada ou recusada.")}
       ${sig()}
+      ${unsubLink(userId, "pending_proposals_7d")}
     `),
   };
 }
@@ -97,13 +107,25 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const resendKey = Deno.env.get("RESEND_API_KEY")!;
 
+    UNSUBSCRIBE_BASE = `${supabaseUrl}/functions/v1/handle-unsubscribe`;
+
     const supabase = createClient(supabaseUrl, serviceKey);
     const resend = new Resend(resendKey);
 
-    const results = { recalculate: 0, pending_proposals: 0, errors: [] as string[] };
+    const results = { recalculate: 0, pending_proposals: 0, skipped_unsubscribed: 0, errors: [] as string[] };
+
+    // ── Helper: check if user unsubscribed ──────────────────────────
+    async function isUnsubscribed(userId: string, emailType: string): Promise<boolean> {
+      const { data } = await supabase
+        .from("email_unsubscribes")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("email_type", emailType)
+        .maybeSingle();
+      return !!data;
+    }
 
     // ── TRIGGER 1: 30 days after signup ─────────────────────────────
-    // Find users who signed up 30+ days ago and haven't received this email
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data: eligibleUsers, error: usersError } = await supabase
@@ -117,7 +139,6 @@ Deno.serve(async (req) => {
     }
 
     if (eligibleUsers && eligibleUsers.length > 0) {
-      // Get already-sent emails for this type
       const userIds = eligibleUsers.map((u: any) => u.id);
       const { data: alreadySent } = await supabase
         .from("retention_emails_sent")
@@ -127,11 +148,15 @@ Deno.serve(async (req) => {
 
       const sentSet = new Set((alreadySent || []).map((r: any) => r.user_id));
 
-      // Need user emails from auth — use service role to query auth users
       for (const profile of eligibleUsers) {
         if (sentSet.has(profile.id)) continue;
 
-        // Get user email from auth
+        // Check unsubscribe
+        if (await isUnsubscribed(profile.id, "recalculate_30d")) {
+          results.skipped_unsubscribed++;
+          continue;
+        }
+
         const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(profile.id);
         if (authError || !authUser?.user?.email) {
           console.error("Error fetching auth user:", profile.id, authError);
@@ -139,13 +164,18 @@ Deno.serve(async (req) => {
         }
 
         const firstName = profile.full_name?.split(" ")[0] || "Usuário";
-        const { subject, html } = buildRecalculateEmail(firstName);
+        const { subject, html } = buildRecalculateEmail(firstName, profile.id);
+        const unsubUrl = `${UNSUBSCRIBE_BASE}?user_id=${profile.id}&type=recalculate_30d`;
 
         const { error: sendError } = await resend.emails.send({
           from: "PreciFácil <noreply@precifacil.app.br>",
           to: [authUser.user.email],
           subject,
           html,
+          headers: {
+            "List-Unsubscribe": `<${unsubUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
         });
 
         if (sendError) {
@@ -154,7 +184,6 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Record sent
         await supabase.from("retention_emails_sent").insert({
           user_id: profile.id,
           email_type: "recalculate_30d",
@@ -180,7 +209,6 @@ Deno.serve(async (req) => {
     }
 
     if (staleProposals && staleProposals.length > 0) {
-      // Group by user
       const userProposalMap = new Map<string, string[]>();
       for (const prop of staleProposals) {
         const existing = userProposalMap.get(prop.user_id) || [];
@@ -190,15 +218,12 @@ Deno.serve(async (req) => {
 
       const affectedUserIds = Array.from(userProposalMap.keys());
 
-      // Check already sent — trigger_ref is per-proposal batch snapshot
-      // We use a composite ref: sorted proposal IDs hash to detect same set
       const { data: alreadySentProp } = await supabase
         .from("retention_emails_sent")
         .select("user_id, trigger_ref")
         .eq("email_type", "pending_proposals_7d")
         .in("user_id", affectedUserIds);
 
-      // For pending proposals, we send once per user per unique set of proposal IDs
       const sentRefs = new Set(
         (alreadySentProp || []).map((r: any) => `${r.user_id}::${r.trigger_ref}`)
       );
@@ -208,7 +233,12 @@ Deno.serve(async (req) => {
         const key = `${userId}::${triggerRef}`;
         if (sentRefs.has(key)) continue;
 
-        // Get user info
+        // Check unsubscribe
+        if (await isUnsubscribed(userId, "pending_proposals_7d")) {
+          results.skipped_unsubscribed++;
+          continue;
+        }
+
         const { data: profile } = await supabase
           .from("profiles")
           .select("full_name")
@@ -219,13 +249,18 @@ Deno.serve(async (req) => {
         if (authError || !authUser?.user?.email) continue;
 
         const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
-        const { subject, html } = buildPendingProposalsEmail(firstName, proposalIds.length);
+        const { subject, html } = buildPendingProposalsEmail(firstName, proposalIds.length, userId);
+        const unsubUrl = `${UNSUBSCRIBE_BASE}?user_id=${userId}&type=pending_proposals_7d`;
 
         const { error: sendError } = await resend.emails.send({
           from: "PreciFácil <noreply@precifacil.app.br>",
           to: [authUser.user.email],
           subject,
           html,
+          headers: {
+            "List-Unsubscribe": `<${unsubUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
         });
 
         if (sendError) {
