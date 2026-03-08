@@ -110,6 +110,8 @@ export default function Index() {
     if (user) navigate('/app', { replace: true });
   }, [user, navigate]);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEO
