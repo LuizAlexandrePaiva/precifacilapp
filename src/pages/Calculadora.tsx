@@ -203,7 +203,6 @@ export default function Calculadora() {
               <div className="space-y-2">
                 <Label className="h-5 flex items-center">Horas de trabalho por semana</Label>
                 <InputWithSuffix inputMode="decimal" placeholder="Ex: 40" suffix="horas" value={horasPorSemana} onChange={(e) => setHorasPorSemana(e.target.value)} required />
-                <p className="text-xs text-muted-foreground hidden md:block">Horas semanais dedicadas ao trabalho</p>
               </div>
 
               <RegimeFields
