@@ -60,13 +60,13 @@ export default function Dashboard() {
 
   const stats = useMemo(() => {
     const now = new Date();
-    const thisMonth = projects.filter((p) => {
+    const proposalsThisMonth = proposals.filter((p) => {
       const pd = new Date(p.created_at);
       return pd.getMonth() === now.getMonth() && pd.getFullYear() === now.getFullYear();
     });
-    const faturamentoMes = thisMonth
-      .filter((p) => p.status === 'concluido')
-      .reduce((s, p) => s + Number(p.valor_cotado || 0), 0);
+    const faturamentoMes = proposalsThisMonth
+      .filter((p) => p.status === 'aprovada' || p.status === 'aceita')
+      .reduce((s, p) => s + Number(p.valor_pacote || 0), 0);
 
     const totalPropostas = proposals.length;
     const propostasAprovadas = proposals.filter(p => p.status === 'aprovada' || p.status === 'aceita').length;
@@ -75,7 +75,7 @@ export default function Dashboard() {
       : 0;
 
     return { faturamentoMes, totalPropostas, taxaAprovacao };
-  }, [projects, proposals]);
+  }, [proposals]);
 
   const metaProgress = metaMensal && metaMensal > 0 ? Math.min(100, Math.round((stats.faturamentoMes / metaMensal) * 100)) : 0;
 
