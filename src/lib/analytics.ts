@@ -1,8 +1,10 @@
+const IS_PROD = import.meta.env.PROD;
+
 // Google Analytics 4
 const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
 
 export function initGA() {
-  if (!GA_ID) return;
+  if (!GA_ID || !IS_PROD) return;
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
@@ -27,7 +29,7 @@ export function trackEvent(name: string, params?: Record<string, any>) {
 const CLARITY_ID = import.meta.env.VITE_CLARITY_ID as string | undefined;
 
 export function initClarity() {
-  if (!CLARITY_ID) return;
+  if (!CLARITY_ID || !IS_PROD) return;
   (function (c: any, l: any, a: any, r: any, i: any) {
     c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
     const t = l.createElement(r) as HTMLScriptElement;
