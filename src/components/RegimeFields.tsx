@@ -69,7 +69,7 @@ export function RegimeFields({
               <SelectItem value="comercio_servicos">Comércio e Serviços — R$ 87,05/mês</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">O DAS será somado aos seus custos fixos</p>
+          <p className="text-xs text-muted-foreground hidden md:block">O DAS será somado aos seus custos fixos</p>
         </div>
       )}
 
