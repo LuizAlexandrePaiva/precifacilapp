@@ -314,6 +314,7 @@ export default function Propostas() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <SEO title="Propostas" description="Gerencie suas propostas comerciais para clientes." path="/app/propostas" noindex />
       <div className="flex items-start md:items-center justify-between gap-4">
         <div className="min-w-0 w-min">
           <h1 className="text-2xl font-bold flex items-center gap-2 whitespace-nowrap">
