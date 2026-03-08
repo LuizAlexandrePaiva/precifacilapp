@@ -9,3 +9,5 @@ project_id = "beoprlaomytanmlwlfsi"
     verify_jwt = false
   [functions.customer-portal]
     verify_jwt = false
+  [functions.retention-check]
+    verify_jwt = false
