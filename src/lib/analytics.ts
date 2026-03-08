@@ -1,3 +1,5 @@
+const IS_PROD = import.meta.env.PROD;
+
 // Google Analytics 4
 const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
 
