@@ -166,7 +166,7 @@ export default function Historico() {
                 </div>
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor/Hora Real</p>
-                  <p className="text-[15px] font-semibold text-foreground">
+                  <p className="text-[15px] font-semibold text-foreground whitespace-nowrap">
                     {valorHoraReal !== null ? formatCurrency(valorHoraReal) : '-'}
                   </p>
                 </div>
