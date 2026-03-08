@@ -56,7 +56,7 @@
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/SEU_USUARIO/precifacil.git
+git clone https://github.com/LuizAlexandrePaiva/precifacilapp.git
 cd precifacil
 
 # 2. Instale as dependências
