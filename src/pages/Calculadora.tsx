@@ -117,6 +117,7 @@ export default function Calculadora() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <SEO title="Calculadora de Preço" description="Calcule seu preço mínimo por hora como freelancer." path="/app/calculadora" noindex />
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Calculator className="h-6 w-6 text-primary" />
