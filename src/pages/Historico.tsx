@@ -125,7 +125,7 @@ export default function Historico() {
   );
 
   const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    `R$\u00A0${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const helpIcon = (title: string, text: React.ReactNode) => (
     <InfoModal title={title} content={text} iconSize="h-3.5 w-3.5" />
@@ -166,7 +166,7 @@ export default function Historico() {
                 </div>
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Valor/Hora Real</p>
-                  <p className="text-[15px] font-semibold text-foreground">
+                  <p className="text-[15px] font-semibold text-foreground whitespace-nowrap">
                     {valorHoraReal !== null ? formatCurrency(valorHoraReal) : '-'}
                   </p>
                 </div>
@@ -267,7 +267,7 @@ export default function Historico() {
                     <TableRow key={p.id}>
                       <TableCell className="font-medium">{p.cliente}</TableCell>
                       <TableCell>{p.projeto}</TableCell>
-                      <TableCell>{formatCurrency(Number(p.valor_cotado))}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatCurrency(Number(p.valor_cotado))}</TableCell>
                       <TableCell>
                         {p.horas_reais !== null ? (
                           `${p.horas_reais}h`
@@ -277,9 +277,9 @@ export default function Historico() {
                           </Button>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {valorHoraReal !== null
-                          ? `R$ ${valorHoraReal.toFixed(2).replace('.', ',')}`
+                          ? formatCurrency(valorHoraReal)
                           : <span className="text-muted-foreground">-</span>}
                       </TableCell>
                       <TableCell>
