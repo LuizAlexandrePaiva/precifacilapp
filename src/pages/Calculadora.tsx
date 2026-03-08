@@ -80,7 +80,7 @@ export default function Calculadora() {
     return `Impostos (Simples Nacional)`;
   };
 
-  const handleCalc = (e: React.FormEvent) => {
+  const handleCalc = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isSubFieldsComplete()) {
       toast.error('Preencha todos os campos do regime tributário.');
