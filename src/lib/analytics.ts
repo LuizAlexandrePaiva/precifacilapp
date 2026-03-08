@@ -4,7 +4,7 @@ const IS_PROD = import.meta.env.PROD;
 const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
 
 export function initGA() {
-  if (!GA_ID) return;
+  if (!GA_ID || !IS_PROD) return;
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
