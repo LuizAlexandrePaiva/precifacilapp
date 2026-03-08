@@ -66,6 +66,7 @@ function maskPhone(value: string) {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
+  const { precoHora: savedPrecoHora, metaLoaded } = useMeta();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
   const isMobile = useIsMobile();
 
@@ -89,12 +90,15 @@ export default function Propostas() {
   const [freelancerEmail, setFreelancerEmail] = useState('');
   const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
 
+  // Load saved precoHora from context when available
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
       setPrecoHora(precoHoraFromCalc);
       setOpen(true);
+    } else if (metaLoaded && savedPrecoHora != null && savedPrecoHora > 0 && precoHora === 0) {
+      setPrecoHora(savedPrecoHora);
     }
-  }, [precoHoraFromCalc]);
+  }, [precoHoraFromCalc, metaLoaded, savedPrecoHora]);
 
   const fetchProposals = async () => {
     if (!user) return;
