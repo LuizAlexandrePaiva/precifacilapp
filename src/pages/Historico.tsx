@@ -240,13 +240,13 @@ export default function Historico() {
                   <TableHead>Projeto</TableHead>
                   <TableHead>Valor Cotado</TableHead>
                   <TableHead>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 whitespace-nowrap">
                       Horas Reais
                       {helpIcon('Horas reais trabalhadas', horasReaisContent)}
                     </div>
                   </TableHead>
                   <TableHead>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 whitespace-nowrap">
                       Valor/Hora Real
                       {helpIcon('Valor por hora real', valorHoraRealContent)}
                     </div>
