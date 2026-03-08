@@ -137,7 +137,7 @@ export default function Index() {
         }} />
         <div className="container text-center max-w-3xl mx-auto relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
-            Você sabe quanto cobrar —{' '}
+            Você sabe quanto cobrar{' '}
             <span className="bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
               ou acha que sabe?
             </span>
