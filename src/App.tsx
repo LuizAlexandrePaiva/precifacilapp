@@ -20,6 +20,8 @@ const Calculadora = lazy(() => import("./pages/Calculadora"));
 const Propostas = lazy(() => import("./pages/Propostas"));
 const Historico = lazy(() => import("./pages/Historico"));
 const Tutorial = lazy(() => import("./pages/Tutorial"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPostPage = lazy(() => import("./pages/BlogPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
