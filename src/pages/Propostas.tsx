@@ -20,6 +20,7 @@ import { trackEvent } from '@/lib/analytics';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMeta } from '@/contexts/MetaContext';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -65,6 +66,7 @@ function maskPhone(value: string) {
 export default function Propostas() {
   const location = useLocation();
   const { user } = useAuth();
+  const { precoHora: savedPrecoHora, metaLoaded } = useMeta();
   const precoHoraFromCalc = (location.state as any)?.precoHora || 0;
   const isMobile = useIsMobile();
 
@@ -88,12 +90,15 @@ export default function Propostas() {
   const [freelancerEmail, setFreelancerEmail] = useState('');
   const [freelancerWhatsapp, setFreelancerWhatsapp] = useState('');
 
+  // Load saved precoHora from context when available
   useEffect(() => {
     if (precoHoraFromCalc > 0) {
       setPrecoHora(precoHoraFromCalc);
       setOpen(true);
+    } else if (metaLoaded && savedPrecoHora != null && savedPrecoHora > 0 && precoHora === 0) {
+      setPrecoHora(savedPrecoHora);
     }
-  }, [precoHoraFromCalc]);
+  }, [precoHoraFromCalc, metaLoaded, savedPrecoHora]);
 
   const fetchProposals = async () => {
     if (!user) return;
@@ -401,7 +406,19 @@ export default function Propostas() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="h-5 flex items-center">Preço/hora</Label>
+                      <Label className="flex items-center gap-1 h-5">
+                        Preço/hora
+                        <InfoModal
+                          title="Preço por hora"
+                          content={
+                            <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
+                              <li style={{ marginBottom: 8 }}><strong>Valor salvo automaticamente</strong>: este campo é preenchido com o resultado do seu <strong>último cálculo na Calculadora</strong>.</li>
+                              <li style={{ marginBottom: 8 }}><strong>Para alterar</strong>: o ideal é fazer um <strong>novo cálculo na Calculadora</strong>, pois leva em conta impostos, custos e horas disponíveis.</li>
+                              <li><strong>Edição manual</strong>: você pode digitar outro valor aqui, mas <strong>não é recomendado</strong> — o preço pode não refletir seus custos reais.</li>
+                            </ul>
+                          }
+                        />
+                      </Label>
                       <CurrencyInput value={precoHora} onValueChange={setPrecoHora} placeholder="R$ 0,00" required className="h-11" />
                     </div>
                     <div className="space-y-2">

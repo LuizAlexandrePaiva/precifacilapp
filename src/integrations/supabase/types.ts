@@ -212,6 +212,7 @@ export type Database = {
         Returns: {
           meta_liquida: number
           meta_mensal: number
+          preco_hora: number
         }[]
       }
       update_user_meta: {

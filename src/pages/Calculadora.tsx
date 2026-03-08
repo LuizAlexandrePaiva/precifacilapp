@@ -80,7 +80,7 @@ export default function Calculadora() {
     return `Impostos (Simples Nacional)`;
   };
 
-  const handleCalc = (e: React.FormEvent) => {
+  const handleCalc = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isSubFieldsComplete()) {
       toast.error('Preencha todos os campos do regime tributário.');
@@ -107,6 +107,18 @@ export default function Calculadora() {
       setPendingResult(calcResult);
       setShowMetaConfirm(true);
     } else {
+      // Still save precoHora even if meta doesn't change
+      if (user) {
+        const { error } = await supabase.rpc('update_user_meta', {
+          p_user_id: user.id,
+          p_meta_mensal: Number(ctxMetaMensal ?? calcResult.custoTotal),
+          p_meta_liquida: Number(metaLiquida),
+          p_preco_hora: Number(calcResult.precoHora),
+        } as any);
+        if (!error) {
+          atualizarMeta(ctxMetaMensal ?? calcResult.custoTotal, metaLiquida, calcResult.precoHora);
+        }
+      }
       setResult(calcResult);
     }
   };
@@ -118,13 +130,14 @@ export default function Calculadora() {
         p_user_id: user.id,
         p_meta_mensal: Number(newMeta),
         p_meta_liquida: Number(metaLiquida),
-      });
+        p_preco_hora: Number(calcResult.precoHora),
+      } as any);
       if (error) {
         console.error('Erro ao salvar meta:', error);
         toast.error('Erro ao salvar meta: ' + error.message);
         return;
       }
-      atualizarMeta(newMeta, metaLiquida);
+      atualizarMeta(newMeta, metaLiquida, calcResult.precoHora);
       toast.success('Meta de faturamento atualizada no Dashboard!');
     }
     setResult(calcResult);
