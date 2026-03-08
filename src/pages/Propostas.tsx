@@ -407,9 +407,9 @@ export default function Propostas() {
                         Nível da proposta
                         <InfoModal title="Nível da proposta" content={
                           <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                            <li style={{ marginBottom: 8 }}><strong>Preço Mínimo</strong> — cobre exatamente seus custos.</li>
-                            <li style={{ marginBottom: 8 }}><strong>Preço Justo</strong> — margem saudável de 40%. Recomendado.</li>
-                            <li><strong>Preço Premium</strong> — dobra o valor base. Para projetos urgentes ou complexos.</li>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Mínimo</strong>: cobre exatamente seus custos.</li>
+                            <li style={{ marginBottom: 8 }}><strong>Preço Justo</strong>: margem saudável de 40%. Recomendado.</li>
+                            <li><strong>Preço Premium</strong>: dobra o valor base. Para projetos urgentes ou complexos.</li>
                           </ul>
                         } />
                       </Label>
@@ -495,10 +495,10 @@ export default function Propostas() {
                       Ações
                       <InfoModal title="Ações" content={
                         <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                          <li style={{ marginBottom: 8 }}><strong>Aprovar</strong> — cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Recusar</strong> — registra propostas não aceitas.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong> — exporta a proposta em PDF profissional.</li>
-                          <li><strong>Excluir</strong> — remove a proposta permanentemente.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Aprovar</strong>: cliente aceitou. A proposta vai automaticamente para o Histórico.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Recusar</strong>: registra propostas não aceitas.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Baixar PDF</strong>: exporta a proposta em PDF profissional.</li>
+                          <li><strong>Excluir</strong>: remove a proposta permanentemente.</li>
                         </ul>
                       } iconSize="h-3.5 w-3.5" />
                     </div>

@@ -97,15 +97,15 @@ export default function Historico() {
     <div>
       <p style={{ marginBottom: 8 }}>Mostra se você cobrou acima ou abaixo do seu custo mínimo neste projeto.</p>
       <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-        <li style={{ marginBottom: 8 }}><strong>Verde</strong> — você cobrou acima do mínimo. Resultado saudável.</li>
-        <li><strong>Vermelho</strong> — você cobrou abaixo do mínimo. Prejuízo real.</li>
+        <li style={{ marginBottom: 8 }}><strong>Verde</strong>: você cobrou acima do mínimo. Resultado saudável.</li>
+        <li><strong>Vermelho</strong>: você cobrou abaixo do mínimo. Prejuízo real.</li>
       </ul>
     </div>
   );
 
   const horasReaisContent = (
     <div>
-      <p style={{ marginBottom: 8 }}>Registre as horas que você realmente trabalhou — não as estimadas.</p>
+      <p style={{ marginBottom: 8 }}>Registre as horas que você realmente trabalhou, não as estimadas.</p>
       <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
         <li style={{ marginBottom: 8 }}><strong>Se for maior que o estimado</strong>, você cobrou menos do que deveria.</li>
         <li><strong>Use esse dado</strong> para melhorar suas estimativas nos próximos projetos.</li>
@@ -321,7 +321,7 @@ export default function Historico() {
             <DialogTitle>Informar Horas Reais</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Projeto: <strong>{editProject?.projeto}</strong> — Cliente: <strong>{editProject?.cliente}</strong>
+            Projeto: <strong>{editProject?.projeto}</strong> · Cliente: <strong>{editProject?.cliente}</strong>
           </p>
           <div className="space-y-2">
             <Label className="flex items-center gap-1">

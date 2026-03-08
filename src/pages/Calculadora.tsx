@@ -135,7 +135,7 @@ export default function Calculadora() {
                     title="Quanto quero ganhar por mês"
                     content={
                       <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                        <li style={{ marginBottom: 8 }}><strong>Valor líquido</strong> — o que você quer receber no bolso, já descontados impostos e despesas.</li>
+                        <li style={{ marginBottom: 8 }}><strong>Valor líquido</strong>: o que você quer receber no bolso, já descontados impostos e despesas.</li>
                         <li><strong>Define sua Meta de Faturamento</strong> no Dashboard e calcula seu preço mínimo por hora.</li>
                       </ul>
                     }
@@ -171,9 +171,9 @@ export default function Calculadora() {
                     content={
                       <div>
                         <ul style={{ margin: 0, paddingLeft: 16, listStyleType: 'disc' }}>
-                          <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong> — fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~27,5%)</strong> — sem CNPJ. Paga INSS e IR sobre o lucro.</li>
-                          <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~12%)</strong> — CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
+                          <li style={{ marginBottom: 8 }}><strong>MEI (~5%)</strong>: fatura até R$ 81 mil/ano. Imposto fixo e simples.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Autônomo (~27,5%)</strong>: sem CNPJ. Paga INSS e IR sobre o lucro.</li>
+                          <li style={{ marginBottom: 8 }}><strong>Simples Nacional (~12%)</strong>: CNPJ até R$ 4,8 milhões. Alíquota varia por atividade.</li>
                         </ul>
                         <p style={{ marginTop: 12 }}>Escolha o regime correto para calcular o impacto real no seu preço.</p>
                       </div>
