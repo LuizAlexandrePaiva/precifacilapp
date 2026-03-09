@@ -1,22 +1,8 @@
 const IS_PROD = import.meta.env.PROD;
 
-// Google Analytics 4
-const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
-
+// GA4 is now loaded directly in index.html — no dynamic init needed
 export function initGA() {
-  if (!GA_ID || !IS_PROD) return;
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(script);
-
-  (window as any).dataLayer = (window as any).dataLayer || [];
-  function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
-  }
-  (window as any).gtag = gtag;
-  gtag('js', new Date());
-  gtag('config', GA_ID);
+  // noop — script is hardcoded in index.html
 }
 
 export function trackEvent(name: string, params?: Record<string, any>) {
