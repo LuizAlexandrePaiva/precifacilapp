@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Calculadora de precificação para freelancers, MEIs e autônomos brasileiros.  
-> Descubra quanto cobrar por hora em 2 minutos, gere propostas profissionais em PDF e acompanhe seus projetos — 100% gratuito.
+> Descubra quanto cobrar por hora em 2 minutos, gere propostas profissionais em PDF e acompanhe seus projetos.
 
 🔗 **[precifacil.app.br](https://precifacil.app.br)**
 
@@ -110,11 +110,17 @@ As Edge Functions precisam dos seguintes secrets configurados no painel do Supab
 
 - O motor de cálculo (`src/lib/calculator.ts`) aplica alíquotas reais para **MEI (~5%)**, **Autônomo PF (~27,5%)** e **PJ Simples Nacional (~12%)**, considerando semanas de férias, horas semanais e custos fixos.
 
+### 📱 Interface mobile-first
+
+- Formulários com espaçamento otimizado para telas pequenas, sem textos descritivos redundantes nos inputs.
+- Tooltips via modais informativos nos labels dos campos, mantendo a interface limpa e acessível.
+- Prevenção de zoom automático em inputs iOS e valores monetários com `whitespace-nowrap`.
+
 ### 🚀 Performance e UX
 
 - **Code splitting** com `React.lazy` + `Suspense` para carregamento sob demanda de cada página.
 - **React Query** para cache inteligente de dados do backend (stale time de 2min).
-- **Design responsivo** com layout mobile-first, prevenção de zoom automático em inputs iOS e `whitespace-nowrap` em valores monetários.
+- **Design responsivo** com layout adaptativo e grid simétrico de 2 colunas em telas maiores.
 
 ---
 
