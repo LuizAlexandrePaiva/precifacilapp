@@ -90,7 +90,7 @@ const faqs = [
   },
   {
     q: 'Funciona para MEI, autônomo e PJ?',
-    a: 'Sim. O PreciFácil foi feito para a realidade brasileira. Na calculadora você escolhe seu regime tributário (MEI ~5%, Autônomo PF ~27,5% ou PJ Simples Nacional ~12%) e o sistema aplica o imposto correto no cálculo do seu preço mínimo. Sem precisar entender de contabilidade.',
+    a: 'Sim. O PreciFácil foi feito para a realidade brasileira. Na calculadora você escolhe seu regime tributário e o sistema aplica o imposto correto no cálculo do seu preço mínimo. Sem precisar entender de contabilidade.',
   },
   {
     q: 'Posso refazer o cálculo quantas vezes quiser?',
